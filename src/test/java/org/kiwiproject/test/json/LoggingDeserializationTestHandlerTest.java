@@ -110,10 +110,12 @@ class LoggingDeserializationTestHandlerTest {
                 .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
+    @SuppressWarnings("unused")
     static class Foo {
         public String foo = "foo";
     }
 
+    @SuppressWarnings("unused")
     static class Bar {
         public String bar;
     }
@@ -121,23 +123,4 @@ class LoggingDeserializationTestHandlerTest {
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class Baz {
     }
-
-//    private static final String LINE_SEPARATOR = System.lineSeparator();
-//    private static final String WARNING_MESSAGE = LINE_SEPARATOR +
-//            "--------------------------------------------------------------------------------" + LINE_SEPARATOR +
-//            "To avoid these errors, you can: " + LINE_SEPARATOR +
-//            "* Use @JsonIgnoreProperties(ignoreUnknown = true)" + LINE_SEPARATOR +
-//            "* Disable DeserializationFeature#FAIL_ON_UNKNOWN_PROPERTIES on the ObjectMapper" + LINE_SEPARATOR +
-//            "* Use kiwi's org.kiwiproject.json.LoggingDeserializationProblemHandler)" + LINE_SEPARATOR +
-//            "--------------------------------------------------------------------------------";
-//
-//    @Test
-//    void testTEMP() {
-//        var path = ".ssn";
-//        var className = "com.acme.model.User";
-//
-//        LOG.warn("Unable to deserialize path: '{}' for class: {}", path, className);
-//
-//        LOG.info(WARNING_MESSAGE);
-//    }
 }
