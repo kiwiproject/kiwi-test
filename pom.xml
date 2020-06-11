@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.kiwiproject</groupId>
+    <artifactId>kiwi-test</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        Kiwi Test is a test utility library.
+    </description>
+    <url>https://github.com/kiwiproject/kiwi-test</url>
+    <inceptionYear>2020</inceptionYear>
+
+    <organization>
+        <name>Kiwi Project</name>
+        <url>https://github.com/kiwiproject</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Chris Rohr</name>
+            <organization>Fortitude Technologies, LLC</organization>
+            <organizationUrl>https://github.com/fortitudetec</organizationUrl>
+            <url>https://github.com/chrisrohr</url>
+        </developer>
+        <developer>
+            <name>Scott Leberknight</name>
+            <organization>Fortitude Technologies, LLC</organization>
+            <organizationUrl>https://github.com/fortitudetec</organizationUrl>
+            <url>https://github.com/sleberknight</url>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/kiwiproject/kiwi-test.git</connection>
+        <developerConnection>scm:git:git@github.com:kiwiproject/kiwi-test.git</developerConnection>
+        <url>https://github.com/kiwiproject/kiwi-test</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <!-- Collect arguments for use by release plugin -->
+        <arguments/>
+
+        <!-- Versions for required dependencies -->
+        <guava.version>28.2-jre</guava.version>
+        <kiwi.version>0.6.0</kiwi.version>
+        <slf4j-api.version>1.7.30</slf4j-api.version>
+
+        <!-- Versions for provided dependencies -->
+        <assertj.version>3.16.1</assertj.version>
+        <dropwizard.version>2.0.10</dropwizard.version>
+        <dropwizard.metrics.version>4.1.19</dropwizard.metrics.version>
+        <jackson.version>2.10.4</jackson.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
+        <lombok.version>1.18.12</lombok.version>
+
+        <!-- Versions for optional dependencies -->
+
+        <!-- Versions for test dependencies -->
+        <junit.jupiter.version>5.6.2</junit.jupiter.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
+
+        <!-- Versions for plugins -->
+        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-install-plugin.version>3.0.0-M1</maven-install-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
+        <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
+
+        <!-- Build properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+
+        <!--
+        NOTES:
+        1. Exclusions are due to version conflicts (found using Maven Enforcer plugin)
+        2. When there are version conflicts, we exclude that dependency, then add an explicit dependency.
+        3. The only required dependencies at the moment are guava, kiwi, and slf4j-api
+        4. All other third party dependencies have 'provided' scope such that we won't always
+           bring in every single transitive dependency.
+        5. Because most third party dependencies are provided, you will need to add them to your
+           own project depending on which parts of Kiwi Test you're using.
+        -->
+
+        <!-- required dependencies -->
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kiwiproject</groupId>
+            <artifactId>kiwi</artifactId>
+            <version>${kiwi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- optional dependencies -->
+
+        <!-- nothing here yet...move along... -->
+
+        <!-- test dependencies -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <release>11</release>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                                <requireMavenVersion>
+                                    <version>3.3.9</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>${maven-install-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <mavenExecutorId>forked-path</mavenExecutorId>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <arguments>${arguments} -Prelease</arguments>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${maven-site-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar-maven-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Make JavaDoc understand the "new" tags introduced in Java 8 (!) -->
+                            <tags>
+                                <tag>
+                                    <name>apiNote</name>
+                                    <placement>a</placement>
+                                    <head>API Note:</head>
+                                </tag>
+                                <tag>
+                                    <name>implSpec</name>
+                                    <placement>a</placement>
+                                    <head>Implementation Requirements:</head>
+                                </tag>
+                                <tag>
+                                    <name>implNote</name>
+                                    <placement>a</placement>
+                                    <head>Implementation Note:</head>
+                                </tag>
+                            </tags>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
