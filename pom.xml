@@ -72,7 +72,7 @@
         <!-- Versions for provided dependencies -->
         <assertj.version>3.16.1</assertj.version>
         <dropwizard.version>2.0.10</dropwizard.version>
-        <dropwizard.metrics.version>4.1.19</dropwizard.metrics.version>
+        <dropwizard.metrics.version>4.1.9</dropwizard.metrics.version>
         <jackson.version>2.10.4</jackson.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <lombok.version>1.18.12</lombok.version>
@@ -166,6 +166,20 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${dropwizard.metrics.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
+            <version>${dropwizard.metrics.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
