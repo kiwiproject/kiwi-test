@@ -4,4 +4,12 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_kiwi-test&metric=coverage)](https://sonarcloud.io/dashboard?id=kiwiproject_kiwi-test)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-TODO: Write some docs here
+Kiwi Test is a simple library that contains a variety of testing utilities that we have found useful over time in
+various projects.
+
+Almost all the dependencies in the POM have _provided_ scope, so that we don't bring in a ton of required dependencies.
+This downside to this is that you must specifically add any required dependencies to your own POM in order to use a
+specific feature in Kiwi Test.
+
+The only required dependencies are guava, kiwi, and slf4j-api. Note that kiwi also marks most dependencies as
+_provided_ scope, so in some cases you might need to add additional dependencies.  
