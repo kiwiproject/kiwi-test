@@ -74,6 +74,7 @@
         <curator.version>2.13.0</curator.version>
         <dropwizard.version>2.0.10</dropwizard.version>
         <dropwizard.metrics.version>4.1.9</dropwizard.metrics.version>
+        <hibernate.version>5.4.16.Final</hibernate.version>
         <jackson.version>2.10.4</jackson.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <lombok.version>1.18.12</lombok.version>
@@ -84,6 +85,7 @@
         <!-- Versions for test dependencies -->
         <junit.jupiter.version>5.6.2</junit.jupiter.version>
         <logback-classic.version>1.2.3</logback-classic.version>
+        <mockito.version>3.3.3</mockito.version>
 
         <!-- Versions for plugins -->
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
@@ -188,6 +190,11 @@
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
+                <!-- Conflict with version used by hibernate -->
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.apache.zookeeper</groupId>
                     <artifactId>zookeeper</artifactId>
@@ -206,6 +213,13 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -247,6 +261,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
             <scope>provided</scope>
         </dependency>
 
