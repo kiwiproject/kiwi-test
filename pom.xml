@@ -71,6 +71,7 @@
 
         <!-- Versions for provided dependencies -->
         <assertj.version>3.16.1</assertj.version>
+        <byte.buddy.version>1.10.10</byte.buddy.version>
         <curator.version>2.13.0</curator.version>
         <dropwizard.version>2.0.10</dropwizard.version>
         <dropwizard.metrics.version>4.1.9</dropwizard.metrics.version>
@@ -159,6 +160,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--
+            Hibernate and Mockito are locked in a battle for the byte buddy version, so just
+            defining it explicitly here and exexcludingrom hibernate-core and mockito-core
+         -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${byte.buddy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
@@ -220,6 +232,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -269,6 +287,12 @@
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
