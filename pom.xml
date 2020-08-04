@@ -162,7 +162,7 @@
 
         <!--
             Hibernate and Mockito are locked in a battle for the byte buddy version, so just
-            defining it explicitly here and exexcludingrom hibernate-core and mockito-core
+            defining it explicitly here and excluding from hibernate-core and mockito-core
          -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
