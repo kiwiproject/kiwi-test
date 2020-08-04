@@ -1,0 +1,1 @@
+This directory contains sample Maven POM files, used by ServiceNamesTest
