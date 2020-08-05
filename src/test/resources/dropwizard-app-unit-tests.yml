@@ -1,0 +1,10 @@
+---
+tagLine: Making Dropwizard Great Again!
+answer: 42
+
+# Use a simple server that starts on a random port
+server:
+  type: simple
+  connector:
+    type: http
+    port: 0
