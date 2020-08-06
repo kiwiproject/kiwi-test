@@ -71,13 +71,13 @@ class DropwizardMockitoMocksTest {
     }
 
     @Nested
-    class MockDropwizardEnvironment {
+    class MockDropwizard {
 
         private DropwizardMockitoContext context;
 
         @BeforeEach
         void setUp() {
-            context = DropwizardMockitoMocks.mockDropwizardEnvironment();
+            context = DropwizardMockitoMocks.mockDropwizard();
         }
 
         @Test

@@ -65,8 +65,8 @@ public class DropwizardMockitoMocks {
      *
      * @return a context object providing easy access to the mocked Dropwizard application objects
      */
-    public static DropwizardMockitoContext mockDropwizardEnvironment() {
-        return mockDropwizardEnvironment(OBJECT_MAPPER, ValidationTestHelper.getValidator());
+    public static DropwizardMockitoContext mockDropwizard() {
+        return mockDropwizard(OBJECT_MAPPER, ValidationTestHelper.getValidator());
     }
 
     /**
@@ -78,7 +78,7 @@ public class DropwizardMockitoMocks {
      * @param validator the {@link Validator} that the mocked environment should return
      * @return a context object providing easy access to the mocked Dropwizard application objects
      */
-    public static DropwizardMockitoContext mockDropwizardEnvironment(ObjectMapper mapper, Validator validator) {
+    public static DropwizardMockitoContext mockDropwizard(ObjectMapper mapper, Validator validator) {
         var env = mock(Environment.class);
         useObjectMapper(env, mapper);
         useValidator(env, validator);
