@@ -1,0 +1,5 @@
+people:
+  - name: Alice
+    age: 29
+  - name: Bob
+    age: 42

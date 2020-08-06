@@ -1,0 +1,4 @@
+people:
+  - name: Alice
+  - name: Bob
+    age: 142
