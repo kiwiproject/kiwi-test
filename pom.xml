@@ -66,7 +66,7 @@
 
         <!-- Versions for required dependencies -->
         <guava.version>28.2-jre</guava.version>
-        <kiwi.version>0.7.0</kiwi.version>
+        <kiwi.version>0.8.0</kiwi.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
 
         <!-- Versions for provided dependencies -->
@@ -163,13 +163,6 @@
             <groupId>org.kiwiproject</groupId>
             <artifactId>kiwi</artifactId>
             <version>${kiwi.version}</version>
-            <exclusions>
-                <!-- TODO: Revisit this exclusion when kiwi 0.8.0 is released -->
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
