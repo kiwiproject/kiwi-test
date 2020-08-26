@@ -1,0 +1,8 @@
+server:
+  type: simple
+  connector:
+    type: http
+    port: 10000
+
+database:
+  driverClass: org.postgresql.Driver
