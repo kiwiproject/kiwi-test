@@ -14,9 +14,10 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * Multi-purpose extension for {@link Application} testing requiring a postgres database. The extension will spin up an
- * embedded postgres database instance, run the migrations and then configure the {@link DropwizardAppExtension} with the
+ * Multi-purpose extension for {@link Application} testing requiring a PostgreSQL database. The extension will spin up an
+ * embedded PostgreSQL database instance, run the migrations and then configure the {@link DropwizardAppExtension} with the
  * database information.
+ * @implNote The embedded PostgreSQL extension supports both Flyway and Liquibase, but we are assuming migrations are Liquibase.
  * <p>
  * To include this extension in an AppTest then add the following at the top of the class:
  * <p>
@@ -24,10 +25,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * <br>
  * {@code public static PostgresAppTestExtension<AppConfiguration> APP = new PostgresAppTestExtension("migrations.xml", "config.yml", App.class);}
  * <p>
- * The test instance will have access to the application and the postgres instance by calling {@code APP.getApp()} and {@code APP.getPostgres()}
+ * The test instance will have access to the application and the PostgreSQL instance by calling {@code APP.getApp()} and {@code APP.getPostgres()}
  * respectively.
  * <p>
- * For information on how the embedded postgres extension works see: https://github.com/zonkyio/embedded-postgres
+ * For information on how the embedded PostgreSQL extension works see: https://github.com/zonkyio/embedded-postgres
  * <br>
  * For information on how the dropwizard app extension works see: https://www.dropwizard.io/en/latest/manual/testing.html#junit-5
  *
