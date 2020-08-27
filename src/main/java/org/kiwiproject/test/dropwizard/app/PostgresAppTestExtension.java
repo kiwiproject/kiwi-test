@@ -17,7 +17,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * Multi-purpose extension for {@link Application} testing requiring a PostgreSQL database. The extension will spin up an
  * embedded PostgreSQL database instance, run the migrations and then configure the {@link DropwizardAppExtension} with the
  * database information.
- * @implNote The embedded PostgreSQL extension supports both Flyway and Liquibase, but we are assuming migrations are Liquibase.
+ * <p>
+ * Note: The embedded PostgreSQL extension supports both Flyway and Liquibase, but we are assuming migrations are Liquibase.
  * <p>
  * To include this extension in an AppTest then add the following at the top of the class:
  * <p>
