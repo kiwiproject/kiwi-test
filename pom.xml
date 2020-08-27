@@ -77,6 +77,7 @@
         <dropwizard.version>2.0.12</dropwizard.version>
         <dropwizard.metrics.version>4.1.11</dropwizard.metrics.version>
         <dropwizard.modules.dropwizard-jdbi.version>2.0.12</dropwizard.modules.dropwizard-jdbi.version>
+        <embedded-postgres.version>1.2.6</embedded-postgres.version>
         <h2.version>1.4.200</h2.version>
         <hibernate.version>5.4.16.Final</hibernate.version>
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
@@ -85,6 +86,7 @@
         <jackson.version>2.10.5</jackson.version>
         <jersey-test-framework-core.version>2.31</jersey-test-framework-core.version>
         <jsonassert.version>1.5.0</jsonassert.version>
+        <liquibase.version>3.8.9</liquibase.version>
         <lombok.version>1.18.12</lombok.version>
         <zookeeper.version>3.4.14</zookeeper.version>
 
@@ -324,6 +326,23 @@
         </dependency>
 
         <dependency>
+            <groupId>io.zonky.test</groupId>
+            <artifactId>embedded-postgres</artifactId>
+            <version>${embedded-postgres.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
@@ -383,6 +402,23 @@
                 <exclusion>
                     <groupId>jakarta.servlet</groupId>
                     <artifactId>jakarta.servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
