@@ -223,7 +223,7 @@ public class ValidationTestHelper {
                                                   Validator validator,
                                                   Object object,
                                                   String propertyName,
-                                                  Class<?>[] groups) {
+                                                  Class<?>... groups) {
         assertPropertyViolations(softly, validator, object, propertyName, 1, groups);
     }
 
