@@ -61,13 +61,14 @@ public class ParameterizedTestHelper {
      * {@code isActive()} method; the former is the input mutator function which accepts a String, and the latter is
      * the result function which returns a boolean. You can then write a test like:
      * <pre>
-     * void shouldAcceptActiveAsString(SoftAssertions softly) {
-     *     var p = new Person();
-     *     List&lt;String&gt; inputs = inputs("true", "yes", "YES", "false", "no", "NO", "foo", "bar");
-     *     List&lt;Boolean&gt; expected = expectedResults(true, true, true, false, false, false, false, false);
-     *     var testHelper = new ParameterizedTestHelper(softly);
-     *     testHelper.assertStateChangeResult(inputs, expected, p::setActiveFromString, p::isActive);
-     * }
+     * {@literal @Test}
+     *  void shouldAcceptActiveAsString(SoftAssertions softly) {
+     *      var p = new Person();
+     *      List&lt;String&gt; inputs = inputs("true", "yes", "YES", "false", "no", "NO", "foo", "bar");
+     *      List&lt;Boolean&gt; expected = expectedResults(true, true, true, false, false, false, false, false);
+     *      var testHelper = new ParameterizedTestHelper(softly);
+     *      testHelper.assertStateChangeResult(inputs, expected, p::setActiveFromString, p::isActive);
+     *  }
      * </pre>
      * Note the examples use the {@code input} and {@code expectedResults} static factory methods for readability, but
      * you can use anything to create the lists.
@@ -86,7 +87,7 @@ public class ParameterizedTestHelper {
                                                Consumer<T> mutator,
                                                Supplier<R> resultSupplier) {
 
-        checkInputsAndExpected(inputValues, expectedResults);
+        checkInputsAndExpectedResults(inputValues, expectedResults);
         checkArgumentNotNull(mutator);
         checkArgumentNotNull(resultSupplier);
 
@@ -109,11 +110,12 @@ public class ParameterizedTestHelper {
      * Example: Assuming there is a {@code SimpleMath} utility class with a {@code square} function that accepts an
      * integer, a test might look like:
      * <pre>
-     * void shouldCalculateSquares(SoftAssertions softly) {
-     *     var inputs = inputs(1, 2, 3, 4, 5);
-     *     var expected = expectedResults(1, 4, 9, 16, 25);
-     *     new ParameterizedTestHelper(softly).assertExpectedResult(inputs, expected, SimpleMath::square);
-     * }
+     * {@literal @Test}
+     *  void shouldCalculateSquares(SoftAssertions softly) {
+     *      var inputs = inputs(1, 2, 3, 4, 5);
+     *      var expected = expectedResults(1, 4, 9, 16, 25);
+     *      new ParameterizedTestHelper(softly).assertExpectedResult(inputs, expected, SimpleMath::square);
+     *  }
      * </pre>
      * Note the examples use the {@code input} and {@code expectedResults} static factory methods for readability, but
      * you can use anything to create the lists.
@@ -130,7 +132,7 @@ public class ParameterizedTestHelper {
                                             List<R> expectedResults,
                                             Function<T, R> function) {
 
-        checkInputsAndExpected(inputValues, expectedResults);
+        checkInputsAndExpectedResults(inputValues, expectedResults);
         checkArgumentNotNull(function);
 
         indicesOf(inputValues).forEach(index -> {
@@ -142,7 +144,7 @@ public class ParameterizedTestHelper {
         });
     }
 
-    private <T, R> void checkInputsAndExpected(List<T> inputValues, List<R> expectedResults) {
+    private static <T, R> void checkInputsAndExpectedResults(List<T> inputValues, List<R> expectedResults) {
         checkArgumentNotNull(inputValues);
         checkArgumentNotNull(expectedResults);
         checkArgument(inputValues.size() == expectedResults.size(),
