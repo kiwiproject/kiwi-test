@@ -41,7 +41,7 @@ import io.dropwizard.jdbi.args.ZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.kiwiproject.jar.Jars;
+import org.kiwiproject.jar.KiwiJars;
 import org.skife.jdbi.v2.DBI;
 
 import javax.annotation.Nullable;
@@ -79,7 +79,7 @@ public class DropwizardJdbi {
      * @return the detected version of Dropwizard
      */
     public static String detectDropwizardVersion() {
-        var directoryPath = Jars.getDirectoryPath(GuavaOptionalArgumentFactory.class).orElse("");
+        var directoryPath = KiwiJars.getDirectoryPath(GuavaOptionalArgumentFactory.class).orElse("");
         if (isBlank(directoryPath)) {
             return "<Unknown>";
         }
