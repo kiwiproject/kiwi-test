@@ -114,6 +114,7 @@ public class JaxrsExceptionTestHelper {
      * @param response   a JAX-RS {@link OutboundJaxrsResponse} or {@code InboundJaxrsResponse} (not public)
      * @param statusCode the status code expected to be in the {@link ErrorMessage}
      * @param substring  the substring expected to be in {@link ErrorMessage#getMessage()}
+     * @return the {@link ErrorMessage} matching the given status code and substring
      */
     public static ErrorMessage assertContainsError(Response response, int statusCode, String substring) {
         var jaxrsException = toJaxrsException(response);

@@ -32,7 +32,7 @@ public class JaxrsTestHelper {
     /**
      * Creates a Mockito mock {Kink javax.ws.rs.core.UriInfo} object with the specified base path, and which returns
      * a {@link UriBuilder} when the {@link UriInfo#getRequestUriBuilder()} method is called.
-     * <p/>
+     * <p>
      * You are obviously free to record additional expectations as well.
      *
      * @param basePath the base path
@@ -182,6 +182,9 @@ public class JaxrsTestHelper {
      * Asserts that {@code response} is a 201 Created response with the {@code Location} header set to
      * the value of {@code basePath} concatenated with {@code id}.
      *
+     * @param response the response to check
+     * @param basePath the base path, e.g. "/users" (do not add a trailing slash)
+     * @param id       the identifier, e.g. "42" (do not add a leading slash)
      * @throws AssertionError if the response isn't a 201 or if the location header is incorrect
      */
     public static void assertCreatedResponseWithLocation(Response response,
@@ -263,6 +266,7 @@ public class JaxrsTestHelper {
     /**
      * Asserts that {@code response} has a 2xx status code.
      *
+     * @param response the response to check
      * @throws AssertionError if the response isn't a 2xx
      */
     public static void assertSuccessfulResponseFamily(Response response) {
@@ -355,9 +359,11 @@ public class JaxrsTestHelper {
      * Asserts that the response contains an entity using {@link Response#getEntity()} whose class is
      * {@code expectedClass} and which is <i>the same instance as</i> the {@code expectedEntity}.
      *
-     * @param response      the response to check
-     * @param expectedClass the expected entity type
-     * @param <T>           the response entity type
+     * @param response       the response to check
+     * @param expectedClass  the expected entity type
+     * @param expectedEntity the expected entity
+     * @param <T>            the response entity type
+     * @return the same entity assuming the assertion passed
      * @throws AssertionError if the response entity doesn't exist or isn't the expected class/object
      * @see Response#getEntity()
      */
