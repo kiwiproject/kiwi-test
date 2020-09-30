@@ -26,14 +26,19 @@ import java.util.concurrent.TimeUnit;
  * {@link org.junit.jupiter.api.extension.RegisterExtension RegisterExtension}. Example:
  * <pre>
  * {@literal @}RegisterExtension
- * static final CuratorTestingServerExtension ZK_TEST_SERVER = new CuratorTestingServerExtension();
+ *  static final CuratorTestingServerExtension ZK_TEST_SERVER = new CuratorTestingServerExtension();
  * </pre>
+ * The above finds the first open port above 1024 and uses that port for the testing server. You can also
+ * specify a port to start the testing server on, but if that port is not open an exception will be thrown.
  * <p>
  * One important thing to note is that because this uses {@link BeforeAllCallback}, any tests that use
  * {@link org.junit.jupiter.api.Nested Nested} will cause the {@link BeforeAllCallback#beforeAll(ExtensionContext)}
- * method to be executed again. This is why the client state check exists as the first thing in that method, and by
- * skipping initialization if the client is in the STARTED state, we can accommodate using nested classes. I am not
- * sure if this is the "correct" way to do this in Jupiter, but it works and doesn't seem like it will hurt anything.
+ * and {@link AfterAllCallback#afterAll(ExtensionContext)} lifecycle methods to be executed for each nested test
+ * class. This is why the client state checks are the first thing in the beforeAll method. By skipping initialization
+ * if the client is in the STARTED state, we can accommodate using nested classes. We also need to handle when the
+ * state is STOPPED, which will be the case if there is more than one nested test class, and in that case we must
+ * re-initialize the testing server and CuratorFramework. I am not sure if this is the "correct" way to do this in
+ * Jupiter, but it works and doesn't seem like it will hurt anything.
  */
 @Slf4j
 public class CuratorTestingServerExtension implements BeforeAllCallback, AfterAllCallback {
@@ -46,16 +51,55 @@ public class CuratorTestingServerExtension implements BeforeAllCallback, AfterAl
     private static final int SLEEP_BETWEEN_RETRY_MS = 500;
     private static final int MAX_CONNECT_WAIT_TIME_SECONDS = 5;
 
-    private final TestingServer testingServer;
+    private TestingServer testingServer;
 
     @Getter
-    private final CuratorFramework client;
+    private CuratorFramework client;
 
+    /**
+     * Create a new extension that uses the first open port above 1024 that it finds.
+     */
     public CuratorTestingServerExtension() {
-        this(PORT_CHECKER.findFirstOpenPortAbove(1024).orElseThrow(IllegalStateException::new));
+        this(findOpenPortOrThrow());
     }
 
+    /**
+     * Create a new extension that uses the given port.
+     *
+     * @param port the port to use
+     */
     public CuratorTestingServerExtension(int port) {
+        initialize(port);
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        var displayName = context.getDisplayName();
+        LOG.trace("[beforeAll: {}] Initialize testing server.", displayName);
+
+        if (client.getState() == CuratorFrameworkState.STARTED) {
+            LOG.trace("[beforeAll: {}] Skip initialization since client is STARTED. Maybe we are in a @Nested test class?",
+                    displayName);
+            return;
+        } else if (client.getState() == CuratorFrameworkState.STOPPED) {
+            LOG.trace("[beforeAll: {}] Re-initialize since client is STOPPED. There is probably more than one @Nested test class.",
+                    displayName);
+            int newPort = findOpenPortOrThrow();
+            initialize(newPort);
+        }
+
+        LOG.trace("[beforeAll: {}] Starting TestingServer and CuratorFramework client", displayName);
+        testingServer.start();
+        client.start();
+        client.blockUntilConnected(MAX_CONNECT_WAIT_TIME_SECONDS, TimeUnit.SECONDS);
+        LOG.trace("[beforeAll: {}] Testing server with connect string {} started on port {} with temp directory {}; client is connected.",
+                displayName,
+                testingServer.getConnectString(),
+                testingServer.getPort(),
+                testingServer.getTempDirectory());
+    }
+
+    private void initialize(int port) {
         checkArgument(port >= 0 && port <= 0xFFFF, "Invalid port: %s", port);
 
         LOG.trace("Using {} as testing server port", port);
@@ -74,33 +118,21 @@ public class CuratorTestingServerExtension implements BeforeAllCallback, AfterAl
         );
     }
 
-    @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
-        if (client.getState() == CuratorFrameworkState.STARTED) {
-            LOG.trace("Skip initialization since client is started. Maybe we are in a @Nested test class?");
-            return;
-        }
-
-        LOG.trace("Starting TestingServer and CuratorFramework client");
-        testingServer.start();
-        client.start();
-        client.blockUntilConnected(MAX_CONNECT_WAIT_TIME_SECONDS, TimeUnit.SECONDS);
-        LOG.trace("Testing server with connect string {} started on port {} with temp directory {}; client is connected",
-                testingServer.getConnectString(),
-                testingServer.getPort(),
-                testingServer.getTempDirectory());
+    private static int findOpenPortOrThrow() {
+        return PORT_CHECKER.findFirstOpenPortAbove(1024).orElseThrow(IllegalStateException::new);
     }
 
     @Override
     public void afterAll(ExtensionContext context) {
+        var displayName = context.getDisplayName();
         try {
-            LOG.trace("Closing client and test server");
+            LOG.trace("[afterAll: {}] Closing client and test server", displayName);
             client.close();
             testingServer.close();
         } catch (Exception e) {
             throw new CuratorTestingServerException("Error stopping testing server on port " + getPort(), e);
         }
-        LOG.trace("Client and test server closed");
+        LOG.trace("[afterAll: {}] Client and test server closed", displayName);
     }
 
     /**
