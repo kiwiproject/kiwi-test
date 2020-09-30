@@ -15,6 +15,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+/**
+ * This test is intentionally structured with multiple @{@link Nested} test classes to ensure that the
+ * extension functions properly in that situation with regards to the test lifecycle and when
+ * beforeAll/afterAll methods are called for nested test classes vs. the top-level test.
+ */
 @Slf4j
 @DisplayName("CuratorTestingServerExtension")
 class CuratorTestingServerExtensionTest {
@@ -31,39 +36,47 @@ class CuratorTestingServerExtensionTest {
         client = ZK_TEST_SERVER.getClient();
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {-42, -1, 65_536, 65_537, 90_000})
-    void shouldRejectInvalidPorts(int value) {
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> new CuratorTestingServerExtension(value))
-                .withMessage("Invalid port: " + value);
+    @Nested
+    class Validation {
+
+        @ParameterizedTest
+        @ValueSource(ints = {-42, -1, 65_536, 65_537, 90_000})
+        void shouldRejectInvalidPorts(int value) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> new CuratorTestingServerExtension(value))
+                    .withMessage("Invalid port: " + value);
+        }
     }
 
-    @Test
-    void shouldHavePort() {
-        assertThat(ZK_TEST_SERVER.getPort()).isPositive();
-    }
+    @Nested
+    class Properties {
 
-    @Test
-    void shouldHaveConnectionString() {
-        var port = ZK_TEST_SERVER.getPort();
-        assertThat(ZK_TEST_SERVER.getConnectString()).isIn(
-                "localhost:" + port,
-                "127.0.0.1:" + port
-        );
-    }
+        @Test
+        void shouldHavePort() {
+            assertThat(ZK_TEST_SERVER.getPort()).isPositive();
+        }
 
-    @Test
-    void shouldHaveTempDirectory() {
-        assertThat(ZK_TEST_SERVER.getTempDirectory())
-                .isDirectory()
-                .canRead()
-                .canWrite();
-    }
+        @Test
+        void shouldHaveConnectionString() {
+            var port = ZK_TEST_SERVER.getPort();
+            assertThat(ZK_TEST_SERVER.getConnectString()).isIn(
+                    "localhost:" + port,
+                    "127.0.0.1:" + port
+            );
+        }
 
-    @Test
-    void shouldHaveClient() {
-        assertThat(client.getState()).isEqualTo(CuratorFrameworkState.STARTED);
+        @Test
+        void shouldHaveTempDirectory() {
+            assertThat(ZK_TEST_SERVER.getTempDirectory())
+                    .isDirectory()
+                    .canRead()
+                    .canWrite();
+        }
+
+        @Test
+        void shouldHaveClient() {
+            assertThat(client.getState()).isEqualTo(CuratorFrameworkState.STARTED);
+        }
     }
 
     @Nested
