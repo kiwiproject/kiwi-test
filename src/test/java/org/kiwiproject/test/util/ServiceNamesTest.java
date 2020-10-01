@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
@@ -31,25 +32,17 @@ class ServiceNamesTest {
     @Nested
     class FindServiceOrEmulatorNameFromRoot {
 
-        @Test
-        void shouldFindService_InTopLevelPom() {
-            var rootPath = Path.of(basePath, "top-level-service").toString();
+        @ParameterizedTest
+        @CsvSource({
+                "top-level-service, kiwi-test-sample-service",
+                "top-level-emulator, kiwi-test-sample-emulator",
+                "nested-service, kiwi-test-sample-nested-service",
+        })
+        void shouldFindServiceOrEmulator(String path, String expectedName) {
+            var rootPath = Path.of(basePath, path).toString();
+            System.out.println(rootPath);
             var name = ServiceNames.findServiceOrEmulatorNameFromRoot(rootPath);
-            assertThat(name).isEqualTo("kiwi-test-sample-service");
-        }
-
-        @Test
-        void shouldFindEmulator_InTopLevelPom() {
-            var rootPath = Path.of(basePath, "top-level-emulator").toString();
-            var name = ServiceNames.findServiceOrEmulatorNameFromRoot(rootPath);
-            assertThat(name).isEqualTo("kiwi-test-sample-emulator");
-        }
-
-        @Test
-        void shouldFindService_InNestedDirectory() {
-            var rootPath = Path.of(basePath, "nested-service").toString();
-            var name = ServiceNames.findServiceOrEmulatorNameFromRoot(rootPath);
-            assertThat(name).isEqualTo("kiwi-test-sample-nested-service");
+            assertThat(name).isEqualTo(expectedName);
         }
 
         @Test
