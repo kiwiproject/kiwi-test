@@ -120,14 +120,6 @@ public class DropwizardJdbi3Extension implements BeforeEachCallback, AfterEachCa
      */
     @Override
     public void afterEach(ExtensionContext context) {
-        LOG.trace("Tearing down after JDBI test");
-
-        LOG.trace("Rollback transaction");
-        handle.rollback();
-
-        LOG.trace("Close handle");
-        handle.close();
-
-        LOG.trace("Done tearing down after JDBI test");
+        DropwizardJdbi3Helpers.rollbackAndClose(handle, LOG);
     }
 }

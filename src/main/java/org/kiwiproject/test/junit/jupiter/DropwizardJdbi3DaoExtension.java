@@ -146,14 +146,6 @@ public class DropwizardJdbi3DaoExtension<T> implements BeforeEachCallback, After
      */
     @Override
     public void afterEach(ExtensionContext context) {
-        LOG.trace("Tearing down after JDBI DAO test");
-
-        LOG.trace("Rollback transaction");
-        handle.rollback();
-
-        LOG.trace("Close handle");
-        handle.close();
-
-        LOG.trace("Done tearing down after JDBI DAO test");
+        DropwizardJdbi3Helpers.rollbackAndClose(handle, LOG);
     }
 }
