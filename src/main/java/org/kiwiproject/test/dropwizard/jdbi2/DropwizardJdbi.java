@@ -49,7 +49,7 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 /**
- * Dropwizard JDBI utilities for dropwizard-jdbi2 which is JDBI 2 not 3.
+ * Dropwizard JDBI utilities for dropwizard-jdbi which is JDBI 2 not 3.
  * <p>
  * <strong>NOTE:</strong> Please make sure to read the documentation for
  * {@link #registerDefaultDropwizardJdbiFeatures(DBI, String, TimeZone)} whenever the Dropwizard version is updated.
@@ -74,7 +74,7 @@ public class DropwizardJdbi {
 
     /**
      * Detect the Dropwizard version, using {@link GuavaOptionalArgumentFactory} as a "representative" class that
-     * resides in the {@code dropwizard-jdbi2} JAR file.
+     * resides in the {@code dropwizard-jdbi} JAR file.
      *
      * @return the detected version of Dropwizard
      */
