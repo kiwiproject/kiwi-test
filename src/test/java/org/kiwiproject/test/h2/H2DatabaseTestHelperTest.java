@@ -22,6 +22,7 @@ class H2DatabaseTestHelperTest {
 
         assertThat(db.getDirectory()).exists();
         assertThat(db.getDataSource()).isNotNull();
+        assertThat(db.getUrl()).isEqualTo("jdbc:h2:%s/testdb", db.getDirectory().getAbsolutePath());
         assertThatCode(() -> {
             var connection = db.getDataSource().getConnection();
             var metaData = connection.getMetaData();

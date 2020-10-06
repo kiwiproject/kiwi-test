@@ -96,7 +96,7 @@ public class DropwizardJdbi {
      * This is necessary since, unfortunately, the Dropwizard {@link io.dropwizard.jdbi.DBIFactory} does not publicly
      * expose the configuration method. Therefore, this method is copied (with minor modifications) directly from
      * the <em>protected</em> {@code DBIFactory#configure(DBI, PooledDataSourceFactory)} method. The changes are
-     * to accommodate supplying the database drive class and timezone as arguments, whereas in the original configure
+     * to accommodate supplying the database driver class and timezone as arguments, whereas in the original configure
      * method they are obtained in the method.
      * <p>
      * In addition, this method logs a warning if the detected and expected Dropwizard versions do not match.
@@ -104,6 +104,10 @@ public class DropwizardJdbi {
      * @param dbi              the DBI instance to use
      * @param driverClazz      the database driver class
      * @param nullableTimeZone a {@link TimeZone} or null
+     * @implNote The time zone is needed for cases when the database operates in a different time zone then the
+     * application and it doesn't use the SQL type 'TIMESTAMP WITH TIME ZONE'. In such cases information about the
+     * time zone should be  explicitly passed to the JDBC driver. See
+     * {@code io.dropwizard.jdbi.DBIFactory#databaseTimeZone()} which has protected access in DBIFactory.
      */
     public static void registerDefaultDropwizardJdbiFeatures(DBI dbi,
                                                              String driverClazz,
@@ -135,8 +139,7 @@ public class DropwizardJdbi {
         dbi.registerArgumentFactory(new OffsetDateTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new ZonedDateTimeArgumentFactory(timeZone));
 
-        // Should be registered after GuavaOptionalArgumentFactory to be
-        // processed first
+        // Should be registered after GuavaOptionalArgumentFactory to be processed first
         dbi.registerArgumentFactory(new GuavaOptionalJodaTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new GuavaOptionalLocalDateArgumentFactory());
         dbi.registerArgumentFactory(new GuavaOptionalLocalDateTimeArgumentFactory());
@@ -144,8 +147,7 @@ public class DropwizardJdbi {
         dbi.registerArgumentFactory(new GuavaOptionalOffsetTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new GuavaOptionalZonedTimeArgumentFactory(timeZone));
 
-        // Should be registered after OptionalArgumentFactory to be processed
-        // first
+        // Should be registered after OptionalArgumentFactory to be processed first
         dbi.registerArgumentFactory(new OptionalJodaTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new OptionalLocalDateArgumentFactory());
         dbi.registerArgumentFactory(new OptionalLocalDateTimeArgumentFactory());

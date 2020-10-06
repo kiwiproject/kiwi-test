@@ -23,7 +23,10 @@ public class H2DatabaseTestHelper {
 
     /**
      * Build a file-based H2 database in a subdirectory of the JVM temp directory, as given by the
-     * {@code java.io.tmpdir} system property.
+     * {@code java.io.tmpdir} system property. The returned {@link H2FileBasedDatabase} provides the
+     * directory where the file-based database is located, and provides a {@link DataSource} so that
+     * clients can connect. The database is created with one sample table named {@code test_table} having
+     * two columns: {@code first}, a {@code varchar}; and {@code second}, an {@code integer}.
      *
      * @return a {@link H2FileBasedDatabase} that represents the new database
      * @throws IllegalStateException if the database directory could not be created
@@ -33,7 +36,7 @@ public class H2DatabaseTestHelper {
     public static H2FileBasedDatabase buildH2FileBasedDatabase() {
         var dir = newH2DatabaseDirectory();
         var dataSource = buildH2DataSource(dir);
-        return new H2FileBasedDatabase(dir, dataSource);
+        return new H2FileBasedDatabase(dir, getDatabaseUrl(dir), dataSource);
     }
 
     private static File newH2DatabaseDirectory() {
@@ -65,7 +68,7 @@ public class H2DatabaseTestHelper {
 
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     private static DataSource buildH2DatabaseWithTestTable(File h2DatabaseDirectory) {
-        var url = "jdbc:h2:" + h2DatabaseDirectory.getAbsolutePath() + "/testdb";
+        var url = getDatabaseUrl(h2DatabaseDirectory);
         LOG.info("Create test database with URL: {}", url);
 
         var dataSource = new JdbcDataSource();
@@ -75,9 +78,20 @@ public class H2DatabaseTestHelper {
              var ps = conn.prepareStatement("create table test_table (first varchar , second integer)")
         ) {
             ps.execute();
+            LOG.info("Successfully created test_table");
             return dataSource;
         } catch (SQLException e) {
             throw new RuntimeSQLException(e);
         }
+    }
+
+    /**
+     * Return a JDBC URL that can be used to connect to the H2 file-based database in the given directory.
+     *
+     * @param h2DatabaseDirectory the directory where the database resides
+     * @return the JDBC database URL
+     */
+    public static String getDatabaseUrl(File h2DatabaseDirectory) {
+        return "jdbc:h2:" + h2DatabaseDirectory.getAbsolutePath() + "/testdb";
     }
 }
