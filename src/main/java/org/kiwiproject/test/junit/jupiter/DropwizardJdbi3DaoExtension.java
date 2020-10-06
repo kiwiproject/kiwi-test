@@ -134,7 +134,7 @@ public class DropwizardJdbi3DaoExtension<T> implements BeforeEachCallback, After
         LOG.trace("Beginning transaction");
         handle.begin();
 
-        LOG.trace("Done setting up for JDBI DA0 test");
+        LOG.trace("Done setting up for JDBI DAO test");
     }
 
     /**
