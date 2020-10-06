@@ -40,7 +40,7 @@ class DropwizardJdbi2ExtensionTest {
             DropwizardJdbi2Extension.builder()
                     .dataSource(database.getDataSource())
                     .databaseTimeZone(TimeZone.getTimeZone("UTC"))
-                    .slf4jLoggerName("JDBI 2 Extension Test")
+                    .slf4jLoggerName(DropwizardJdbi2ExtensionTest.class.getName())
                     .slfLogLevel(SLF4JLog.Level.INFO)
                     .build();
 

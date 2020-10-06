@@ -57,11 +57,11 @@ public class DropwizardJdbi2Extension implements AfterEachCallback {
      * Exactly one of the following must be supplied:
      * (1) url, username, password, (2) connectionFactory, or (3) dataSource.
      *
-     * @param url               The JDBC URL; paired with username & password (optional, defaults to empty)
-     * @param username          The JDBC username; paired with url & password (optional, defaults to empty)
-     * @param password          The JDBC password; paired with url & username (optional, defaults to empty)
-     * @param connectionFactory The JDBI {@link ConnectionFactory} (optional, defaults to empty)
-     * @param dataSource        The JDBC {@link DataSource}
+     * @param url               The JDBC URL; paired with username & password (optional, defaults to null)
+     * @param username          The JDBC username; paired with url & password (optional, defaults to null)
+     * @param password          The JDBC password; paired with url & username (optional, defaults to null)
+     * @param connectionFactory The JDBI {@link ConnectionFactory} (optional, defaults to null)
+     * @param dataSource        The JDBC {@link DataSource} (optional, defaults to null)
      * @param driverClass       The JDBC driver class, which will be supplied to Dropwizard's
      *                          {@link io.dropwizard.jdbi.args.OptionalArgumentFactory}
      *                          and {@link io dropwizard.jdbi.args.GuavaOptionalArgumentFactory}
