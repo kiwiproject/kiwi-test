@@ -1,42 +1,43 @@
 package org.kiwiproject.test.junit.jupiter;
 
+import static java.util.Objects.isNull;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
-import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi2Helpers.buildDBI;
-import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi2Helpers.configureDBI;
+import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi3Helpers.buildJdbi;
+import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi3Helpers.configureSqlLogger;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.ConnectionFactory;
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.kiwiproject.test.dropwizard.jdbi2.DropwizardJdbi;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.logging.SLF4JLog;
-import org.skife.jdbi.v2.tweak.ConnectionFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.util.TimeZone;
+import java.util.List;
 
 /**
- * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension} to easily test JDBI 2-based DAOs in a Dropwizard
- * app against any database and using transaction rollback to make sure tests never commit to the database. Uses
- * {@link DropwizardJdbi} to register the default set of Dropwizard {@link org.skife.jdbi.v2.tweak.ArgumentFactory},
- * {@link org.skife.jdbi.v2.tweak.ResultColumnMapper}, and {@link org.skife.jdbi.v2.tweak.ContainerFactory} on the
- * {@link DBI} instance used for tests.
+ * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to easily test JDBI 3-based DAOs in
+ * a Dropwizard app against any database and using transaction rollback to make sure tests never commit to the database.
  * <p>
  * You must supply the {@code daoType} and one of three methods for obtaining a database {@link Connection}:
- * (1) a {@link DataSource}, (2) a JDBI 2 {@link ConnectionFactory}, or
+ * (1) a {@link DataSource}, (2) a Dropwizard {@link ConnectionFactory}, or
  * (3) the JDBC URL, username, and password.
  * <p>
  * Before each tests, sets up a transaction. After each test completes, rolls the transaction back.
+ * <p>
+ * Using the builder, you can optionally specify {@link JdbiPlugin} instances to install. Note that this extension
+ * always installs the {@link org.jdbi.v3.sqlobject.SqlObjectPlugin}.
  *
  * @param <T> the DAO type
  */
 @Slf4j
-public class DropwizardJdbi2DaoExtension<T> implements BeforeEachCallback, AfterEachCallback {
+public class DropwizardJdbi3DaoExtension<T> implements BeforeEachCallback, AfterEachCallback {
 
     /**
      * The type of DAO (<em>required</em>)
@@ -45,18 +46,18 @@ public class DropwizardJdbi2DaoExtension<T> implements BeforeEachCallback, After
     private final Class<T> daoType;
 
     /**
-     * The {@link DBI} instance created by this extension. Not intended for you to mess with, but provided
-     * "just in case" there is some good reason to do so.
+     * The {@link Jdbi} instance created by this extension. Not intended for you to mess with, but provided "just in
+     * case" there is some good reason to do so.
      */
     @Getter
-    private final DBI dbi;
+    private final Jdbi jdbi;
 
     /**
      * The {@link Handle} instance created by this extension. Intended to be used when creating sample data required by
      * unit tests. You should generally otherwise not be messing with it.
      */
     @Getter
-    private final Handle handle;
+    private Handle handle;
 
     /**
      * The DAO test subject, attached to the {@link Handle} using {@link Handle#attach(Class)} and executing within
@@ -68,67 +69,79 @@ public class DropwizardJdbi2DaoExtension<T> implements BeforeEachCallback, After
     private T dao;
 
     /**
-     * Exactly one of the following must be supplied to the builder:
+     * The DAO type is always required.
+     * <p>
+     * Exactly one of the following must be supplied:
      * (1) url, username, password, (2) connectionFactory, or (3) dataSource.
+     * <p>
+     * Optionally, you can specify a custom name for the SLF4J Logger as well as {@link JdbiPlugin} instances to
+     * install. The {@link org.jdbi.v3.sqlobject.SqlObjectPlugin} is always installed.
      *
      * @param url               The JDBC URL; paired with username & password (optional, defaults to null)
      * @param username          The JDBC username; paired with url & password (optional, defaults to null)
      * @param password          The JDBC password; paired with url & username (optional, defaults to null)
      * @param connectionFactory The JDBI {@link ConnectionFactory} (optional, defaults to null)
      * @param dataSource        The JDBC {@link DataSource} (optional, defaults to null)
-     * @param driverClass       The JDBC driver class, which will be supplied
-     *                          to Dropwizard's {@link io.dropwizard.jdbi.args.OptionalArgumentFactory}
-     *                          and {@link io.dropwizard.jdbi.args.GuavaOptionalArgumentFactory}
-     *                          (optional, defaults to first driver found using {@link java.sql.DriverManager#getDrivers()})
-     * @param databaseTimeZone  The database time zone. Passed to Guava and Java 8 date/time argument factories
-     *                          (optional, default to empty)
-     * @param slfLogLevel       The SLF4J log level to use for the {@link DBI} instance
-     *                          (optional, defaults to {@link SLF4JLog.Level#TRACE})
-     * @param slf4jLoggerName   The SLF4J {@link org.slf4j.Logger} name (optional, defaults to the FQCN of {@link DBI})
-     * @param daoType           The type of JDBI 2 DAO
-     * @implNote See {@code io.dropwizard.jdbi.DBIFactory#databaseTimeZone()} which has protected access
+     * @param slf4jLoggerName   The SLF4J {@link org.slf4j.Logger} name (optional, defaults to the FQCN of {@link Jdbi}
+     * @param daoType           The type of JDBI 3 DAO
+     * @param plugins           a list containing the JDBI 3 plugins to install
+     *                          (a {@link org.jdbi.v3.sqlobject.SqlObjectPlugin SqlObjectPlugin} is always installed)
+     * @implNote At present the {@link org.jdbi.v3.core.statement.SqlLogger} for the given {@code slf4jLoggerName} logs
+     * at TRACE level only.
      */
     @SuppressWarnings("java:S107") // builder-annotated constructors are an exception to the "too many parameters" rule
     @Builder
-    private DropwizardJdbi2DaoExtension(String url,
+    private DropwizardJdbi3DaoExtension(String url,
                                         String username,
                                         String password,
                                         ConnectionFactory connectionFactory,
                                         DataSource dataSource,
-                                        String driverClass,
-                                        TimeZone databaseTimeZone,
-                                        SLF4JLog.Level slfLogLevel,
                                         String slf4jLoggerName,
-                                        Class<T> daoType) {
+                                        Class<T> daoType,
+                                        @Singular List<JdbiPlugin> plugins) {
 
-        LOG.trace("A new {} is being instantiated", DropwizardJdbi2DaoExtension.class.getSimpleName());
+        LOG.trace("A new {} is being instantiated", DropwizardJdbi3DaoExtension.class.getSimpleName());
+
         this.daoType = requireNotNull(daoType, "Must specify the DAO type");
-        this.dbi = buildDBI(dataSource, connectionFactory, url, username, password);
-        this.handle = configureDBI(dbi, slf4jLoggerName, slfLogLevel, driverClass, databaseTimeZone);
+
+        var nonNullPlugins = isNull(plugins) ? List.<JdbiPlugin>of() : plugins;
+        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins);
+
+        configureSqlLogger(jdbi, slf4jLoggerName);
     }
 
     /**
      * Create a DAO attached to the {@link Handle} and assigns it; it is accessible to tests via {@link #getDao()}.
      *
      * @param context the extension context
+     * @see Jdbi#open()
      * @see Handle#attach(Class)
+     * @see Handle#begin()
      */
     @Override
     public void beforeEach(ExtensionContext context) {
         LOG.trace("Setting up for JDBI DAO test");
 
+        LOG.trace("Opening handle");
+        handle = jdbi.open();
+
+        LOG.trace("Txn isolation level: {}", handle.getTransactionIsolationLevel());
+
         LOG.trace("Attach type {} to handle", daoType);
         dao = handle.attach(daoType);
 
-        LOG.trace("Done setting up for JDBI DAO test");
+        LOG.trace("Beginning transaction");
+        handle.begin();
+
+        LOG.trace("Done setting up for JDBI DA0 test");
     }
 
     /**
-     * Rolls back the transaction on the {@link Handle} and closes the DAO.
+     * Rolls back the transaction on the {@link Handle} and closes it.
      *
      * @param context the extension context
      * @see Handle#rollback()
-     * @see DBI#close(Object)
+     * @see Handle#close()
      */
     @Override
     public void afterEach(ExtensionContext context) {
@@ -137,8 +150,8 @@ public class DropwizardJdbi2DaoExtension<T> implements BeforeEachCallback, After
         LOG.trace("Rollback transaction");
         handle.rollback();
 
-        LOG.trace("Close DAO {}", dao);
-        dbi.close(dao);
+        LOG.trace("Close handle");
+        handle.close();
 
         LOG.trace("Done tearing down after JDBI test");
     }

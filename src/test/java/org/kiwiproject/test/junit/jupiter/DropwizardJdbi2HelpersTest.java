@@ -53,28 +53,26 @@ class DropwizardJdbi2HelpersTest {
         }
 
         @Test
-        void shouldAcceptConnectionFactory() throws SQLException {
+        void shouldAcceptConnectionFactory() {
             var connectionFactory = new DataSourceConnectionFactory(database.getDataSource());
             var dbi = DropwizardJdbi2Helpers.buildDBI(null, connectionFactory, null, null, null);
             assertThat(dbi).isNotNull();
-            assertCanGetConnectionAndExecuteQuery(dbi);
+            assertCanGetExecuteQuery(dbi);
         }
 
         @Test
-        void shouldAcceptJdbcConnectionProperties() throws SQLException {
+        void shouldAcceptJdbcConnectionProperties() {
             var dbi = DropwizardJdbi2Helpers.buildDBI(null, null, database.getUrl(), "", "");
             assertThat(dbi).isNotNull();
-            assertCanGetConnectionAndExecuteQuery(dbi);
+            assertCanGetExecuteQuery(dbi);
         }
 
-        @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
-        private void assertCanGetConnectionAndExecuteQuery(DBI dbi) throws SQLException {
-            try (var connection = dbi.open().getConnection();
-                 var statement = connection.createStatement();
-                 var rs = statement.executeQuery("select count(*) as cnt from test_table")) {
-                rs.next();
-                var cnt = rs.getInt("cnt");
-                assertThat(cnt).isZero();
+        private void assertCanGetExecuteQuery(DBI dbi) {
+            try (var handle = dbi.open()) {
+                var count = handle.createQuery("select count(*) as cnt from test_table")
+                        .mapTo(Integer.class)
+                        .first();
+                assertThat(count).isZero();
             }
         }
     }
