@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.ConnectionFactory;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.jdbi.v3.core.statement.SqlLogger;
@@ -117,5 +118,17 @@ public class DropwizardJdbi3Helpers {
                     lazy(() -> context.getBinding().toString()),
                     ex);
         }
+    }
+
+    static void rollbackAndClose(Handle handle, Logger logger) {
+        logger.trace("Tearing down after JDBI test");
+
+        logger.trace("Rollback transaction");
+        handle.rollback();
+
+        logger.trace("Close handle");
+        handle.close();
+
+        logger.trace("Done tearing down after JDBI test");
     }
 }
