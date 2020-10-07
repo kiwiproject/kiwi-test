@@ -2,6 +2,7 @@ package org.kiwiproject.test.h2;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.io.File;
  */
 @AllArgsConstructor
 @Getter
+@ToString(of = {"directory", "url"})
 public class H2FileBasedDatabase {
     private final File directory;
     private final String url;
