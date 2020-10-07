@@ -69,7 +69,7 @@ public class H2DatabaseTestHelper {
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     private static DataSource buildH2DatabaseWithTestTable(File h2DatabaseDirectory) {
         var url = getDatabaseUrl(h2DatabaseDirectory);
-        LOG.info("Create test database with URL: {}", url);
+        LOG.trace("Create test database with URL: {}", url);
 
         var dataSource = new JdbcDataSource();
         dataSource.setURL(url);
@@ -78,7 +78,7 @@ public class H2DatabaseTestHelper {
              var ps = conn.prepareStatement("create table test_table (first varchar , second integer)")
         ) {
             ps.execute();
-            LOG.info("Successfully created test_table");
+            LOG.trace("Successfully created test_table");
             return dataSource;
         } catch (SQLException e) {
             throw new RuntimeSQLException(e);
