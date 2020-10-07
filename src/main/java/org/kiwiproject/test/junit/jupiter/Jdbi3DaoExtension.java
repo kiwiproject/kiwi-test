@@ -2,8 +2,8 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static java.util.Objects.isNull;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
-import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi3Helpers.buildJdbi;
-import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi3Helpers.configureSqlLogger;
+import static org.kiwiproject.test.junit.jupiter.Jdbi3Helpers.buildJdbi;
+import static org.kiwiproject.test.junit.jupiter.Jdbi3Helpers.configureSqlLogger;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -23,10 +23,10 @@ import java.util.List;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to easily test JDBI 3-based DAOs in
- * a Dropwizard app against any database and using transaction rollback to make sure tests never commit to the database.
+ * against any database and using transaction rollback to make sure tests never commit to the database.
  * <p>
  * You must supply the {@code daoType} and one of three methods for obtaining a database {@link Connection}:
- * (1) a {@link DataSource}, (2) a Dropwizard {@link ConnectionFactory}, or
+ * (1) a {@link DataSource}, (2) a JDBI {@link ConnectionFactory}, or
  * (3) the JDBC URL, username, and password.
  * <p>
  * Before each tests, sets up a transaction. After each test completes, rolls the transaction back.
@@ -37,7 +37,7 @@ import java.util.List;
  * @param <T> the DAO type
  */
 @Slf4j
-public class DropwizardJdbi3DaoExtension<T> implements BeforeEachCallback, AfterEachCallback {
+public class Jdbi3DaoExtension<T> implements BeforeEachCallback, AfterEachCallback {
 
     /**
      * The type of DAO (<em>required</em>)
@@ -91,16 +91,16 @@ public class DropwizardJdbi3DaoExtension<T> implements BeforeEachCallback, After
      */
     @SuppressWarnings("java:S107") // builder-annotated constructors are an exception to the "too many parameters" rule
     @Builder
-    private DropwizardJdbi3DaoExtension(String url,
-                                        String username,
-                                        String password,
-                                        ConnectionFactory connectionFactory,
-                                        DataSource dataSource,
-                                        String slf4jLoggerName,
-                                        Class<T> daoType,
-                                        @Singular List<JdbiPlugin> plugins) {
+    private Jdbi3DaoExtension(String url,
+                              String username,
+                              String password,
+                              ConnectionFactory connectionFactory,
+                              DataSource dataSource,
+                              String slf4jLoggerName,
+                              Class<T> daoType,
+                              @Singular List<JdbiPlugin> plugins) {
 
-        LOG.trace("A new {} is being instantiated", DropwizardJdbi3DaoExtension.class.getSimpleName());
+        LOG.trace("A new {} is being instantiated", Jdbi3DaoExtension.class.getSimpleName());
 
         this.daoType = requireNotNull(daoType, "Must specify the DAO type");
 
@@ -146,6 +146,6 @@ public class DropwizardJdbi3DaoExtension<T> implements BeforeEachCallback, After
      */
     @Override
     public void afterEach(ExtensionContext context) {
-        DropwizardJdbi3Helpers.rollbackAndClose(handle, LOG);
+        Jdbi3Helpers.rollbackAndClose(handle, LOG);
     }
 }

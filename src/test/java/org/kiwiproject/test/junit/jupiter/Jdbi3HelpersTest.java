@@ -25,9 +25,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-@DisplayName("DropwizardJdbi3Helpers")
+@DisplayName("Jdbi3Helpers")
 @Slf4j
-class DropwizardJdbi3HelpersTest {
+class Jdbi3HelpersTest {
 
     private static H2FileBasedDatabase database;
 
@@ -49,20 +49,20 @@ class DropwizardJdbi3HelpersTest {
         @Test
         void shouldThrow_WhenNoArgumentsProvided() {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> DropwizardJdbi3Helpers.buildJdbi(null, null, null, null, null, List.of()));
+                    .isThrownBy(() -> Jdbi3Helpers.buildJdbi(null, null, null, null, null, List.of()));
         }
 
         @Test
         void shouldAcceptConnectionFactory() {
             var connectionFactory = new DataSourceConnectionFactory(database.getDataSource());
-            var jdbi = DropwizardJdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of());
+            var jdbi = Jdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of());
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
         }
 
         @Test
         void shouldAcceptJdbcConnectionProperties() {
-            var jdbi = DropwizardJdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of());
+            var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of());
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
         }
@@ -91,7 +91,7 @@ class DropwizardJdbi3HelpersTest {
 
         @Test
         void shouldUseDefaultLoggerName_WhenGivenBlankLoggerName() {
-            var jdbiSqlLogger = DropwizardJdbi3Helpers.configureSqlLogger(jdbi, "");
+            var jdbiSqlLogger = Jdbi3Helpers.configureSqlLogger(jdbi, "");
             assertThat(jdbiSqlLogger.getLoggerName()).isEqualTo(Jdbi.class.getName());
 
             verify(jdbi).setSqlLogger(jdbiSqlLogger);
@@ -100,7 +100,7 @@ class DropwizardJdbi3HelpersTest {
         @Test
         void shouldUseGivenLoggerName() {
             var loggerName = "My Jdbi Logger";
-            var jdbiSqlLogger = DropwizardJdbi3Helpers.configureSqlLogger(jdbi, loggerName);
+            var jdbiSqlLogger = Jdbi3Helpers.configureSqlLogger(jdbi, loggerName);
             assertThat(jdbiSqlLogger.getLoggerName()).isEqualTo(loggerName);
 
             verify(jdbi).setSqlLogger(jdbiSqlLogger);

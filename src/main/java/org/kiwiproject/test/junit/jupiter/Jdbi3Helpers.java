@@ -29,7 +29,7 @@ import java.util.List;
  */
 @UtilityClass
 @Slf4j
-public class DropwizardJdbi3Helpers {
+public class Jdbi3Helpers {
 
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
@@ -41,7 +41,7 @@ public class DropwizardJdbi3Helpers {
         jdbi.installPlugin(new SqlObjectPlugin());
 
         plugins.stream()
-                .filter(not(DropwizardJdbi3Helpers::isSqlObjectPlugin))
+                .filter(not(Jdbi3Helpers::isSqlObjectPlugin))
                 .forEach(jdbi::installPlugin);
 
         return jdbi;
