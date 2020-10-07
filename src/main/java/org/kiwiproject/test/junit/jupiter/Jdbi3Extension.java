@@ -1,8 +1,8 @@
 package org.kiwiproject.test.junit.jupiter;
 
 import static java.util.Objects.isNull;
-import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi3Helpers.buildJdbi;
-import static org.kiwiproject.test.junit.jupiter.DropwizardJdbi3Helpers.configureSqlLogger;
+import static org.kiwiproject.test.junit.jupiter.Jdbi3Helpers.buildJdbi;
+import static org.kiwiproject.test.junit.jupiter.Jdbi3Helpers.configureSqlLogger;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -22,11 +22,11 @@ import java.util.List;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to easily test JDBI 3 DAOs using the
- * "Fluent API" (as opposed to the SQL Objects API) in a Dropwizard app against any database and using transaction
- * rollback to make sure tests never commit to the database.
+ * "Fluent API" (as opposed to the SQL Objects API) against any database and using transaction rollback to make sure
+ * tests never commit to the database.
  * <p>
  * You must supply one of three methods for obtaining a database {@link Connection}:
- * (1) a {@link DataSource}, (2) a Dropwizard {@link ConnectionFactory}, or
+ * (1) a {@link DataSource}, (2) a JDBI {@link ConnectionFactory}, or
  * (3) the JDBC URL, username, and password.
  * <p>
  * Before each tests, sets up a transaction. After each test completes, rolls the transaction back.
@@ -36,7 +36,7 @@ import java.util.List;
  * provided by this extension.</strong>
  */
 @Slf4j
-public class DropwizardJdbi3Extension implements BeforeEachCallback, AfterEachCallback {
+public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
 
     /**
      * The {@link Jdbi} instance created by this extension. You can pass this to DAOs that use {@link Jdbi} directly
@@ -73,15 +73,15 @@ public class DropwizardJdbi3Extension implements BeforeEachCallback, AfterEachCa
      */
     @SuppressWarnings("java:S107") // builder-annotated constructors are an exception to the "too many parameters" rule
     @Builder
-    private DropwizardJdbi3Extension(String url,
-                                     String username,
-                                     String password,
-                                     ConnectionFactory connectionFactory,
-                                     DataSource dataSource,
-                                     String slf4jLoggerName,
-                                     @Singular List<JdbiPlugin> plugins) {
+    private Jdbi3Extension(String url,
+                           String username,
+                           String password,
+                           ConnectionFactory connectionFactory,
+                           DataSource dataSource,
+                           String slf4jLoggerName,
+                           @Singular List<JdbiPlugin> plugins) {
 
-        LOG.trace("A new {} is being instantiated", DropwizardJdbi3Extension.class.getSimpleName());
+        LOG.trace("A new {} is being instantiated", Jdbi3Extension.class.getSimpleName());
 
         var nonNullPlugins = isNull(plugins) ? List.<JdbiPlugin>of() : plugins;
         this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins);
@@ -120,6 +120,6 @@ public class DropwizardJdbi3Extension implements BeforeEachCallback, AfterEachCa
      */
     @Override
     public void afterEach(ExtensionContext context) {
-        DropwizardJdbi3Helpers.rollbackAndClose(handle, LOG);
+        Jdbi3Helpers.rollbackAndClose(handle, LOG);
     }
 }

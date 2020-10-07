@@ -9,6 +9,8 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,19 +29,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@DisplayName("DropwizardJdbi3Extension")
+@DisplayName("Jdbi3DaoExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Slf4j
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
-class DropwizardJdbi3ExtensionTest {
+class Jdbi3DaoExtensionTest {
 
     private static H2FileBasedDatabase database;
 
     @RegisterExtension
-    final DropwizardJdbi3Extension jdbi3Extension =
-            DropwizardJdbi3Extension.builder()
+    final Jdbi3DaoExtension<TestTableDao> jdbi3DaoExtension =
+            Jdbi3DaoExtension.<TestTableDao>builder()
+                    .daoType(TestTableDao.class)
                     .dataSource(database.getDataSource())
-                    .slf4jLoggerName(DropwizardJdbi3ExtensionTest.class.getName())
+                    .slf4jLoggerName(Jdbi3DaoExtensionTest.class.getName())
                     .plugin(new H2DatabasePlugin())
                     .build();
 
@@ -54,8 +57,8 @@ class DropwizardJdbi3ExtensionTest {
     @BeforeEach
     void setUp(TestInfo testInfo) {
         LOG.trace("Executing test: {}", testInfo.getDisplayName());
-        handle = jdbi3Extension.getHandle();
-        dao = new TestTableDao();
+        handle = jdbi3DaoExtension.getHandle();
+        dao = jdbi3DaoExtension.getDao();
     }
 
     @AfterAll
@@ -73,7 +76,7 @@ class DropwizardJdbi3ExtensionTest {
     @Test
     @Order(2)
     void findAllValues_ShouldNotSeeAnyDataBeforeTestDataInserted() {
-        var values = dao.findAll(handle);
+        var values = dao.findAll();
         assertThat(values).isEmpty();
     }
 
@@ -84,22 +87,24 @@ class DropwizardJdbi3ExtensionTest {
         handle.execute("insert into test_table values ('Scott', 44)");
         handle.execute("insert into test_table values ('Han', 45)");
         handle.execute("insert into test_table values ('Tony', 50)");
-        var values = dao.findAll(handle);
+        var values = dao.findAll();
         assertThat(values).hasSize(4);
     }
 
     @Test
     @Order(4)
     void findAllValues_ShouldNotSeeAnyDataFromPreviousTest() {
-        var values = dao.findAll(handle);
+        var values = dao.findAll();
         assertThat(values).isEmpty();
     }
 
     @Test
     @Order(5)
     void shouldSetProperties() {
-        assertThat(jdbi3Extension.getJdbi()).isNotNull();
-        assertThat(jdbi3Extension.getHandle()).isNotNull();
+        assertThat(jdbi3DaoExtension.getDaoType()).isEqualTo(TestTableDao.class);
+        assertThat(jdbi3DaoExtension.getJdbi()).isNotNull();
+        assertThat(jdbi3DaoExtension.getHandle()).isNotNull();
+        assertThat(jdbi3DaoExtension.getDao()).isNotNull();
     }
 
     @Value
@@ -108,24 +113,17 @@ class DropwizardJdbi3ExtensionTest {
         int second;
     }
 
-    private static class TestTableValueMapper implements RowMapper<TestTableValue> {
+    // Must be public for JDBI to instantiate
+    public static class TestTableValueMapper implements RowMapper<TestTableValue> {
         @Override
         public TestTableValue map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new TestTableValue(rs.getString("first"),
-                    rs.getInt("second"));
+            return new TestTableValue(rs.getString("first"), rs.getInt("second"));
         }
     }
 
-    private static class TestTableDao {
-
-        /**
-         * @implNote We need the same exact {@link Handle} to be used in the tests to ensure we get the same
-         * SQL {@code Connection}, otherwise you run into transaction isolation issues.
-         */
-        List<TestTableValue> findAll(Handle handle) {
-            return handle.createQuery("select * from test_table")
-                    .map(new TestTableValueMapper())
-                    .list();
-        }
+    @RegisterRowMapper(TestTableValueMapper.class)
+    private interface TestTableDao {
+        @SqlQuery("select * from test_table")
+        List<TestTableValue> findAll();
     }
 }
