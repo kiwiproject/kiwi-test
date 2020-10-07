@@ -5,15 +5,12 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.kiwiproject.test.h2.H2DatabaseTestHelper;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
 import org.kiwiproject.test.junit.jupiter.params.provider.BlankStringArgumentsProvider;
 import org.skife.jdbi.v2.DBI;
@@ -21,27 +18,13 @@ import org.skife.jdbi.v2.logging.SLF4JLog;
 import org.skife.jdbi.v2.tweak.ConnectionFactory;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 @DisplayName("DropwizardJdbi2Helpers")
+@ExtendWith(H2FileBasedDatabaseExtension.class)
 @Slf4j
 class DropwizardJdbi2HelpersTest {
-
-    private static H2FileBasedDatabase database;
-
-    @BeforeAll
-    static void beforeAll() {
-        LOG.trace("Create H2 file-based database");
-        database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException {
-        LOG.trace("Deleting H2 database directory: {}", database.getDirectory());
-        FileUtils.deleteDirectory(database.getDirectory());
-    }
 
     @Nested
     class BuildDBI {
@@ -53,7 +36,7 @@ class DropwizardJdbi2HelpersTest {
         }
 
         @Test
-        void shouldAcceptConnectionFactory() {
+        void shouldAcceptConnectionFactory(@H2Database H2FileBasedDatabase database) {
             var connectionFactory = new DataSourceConnectionFactory(database.getDataSource());
             var dbi = DropwizardJdbi2Helpers.buildDBI(null, connectionFactory, null, null, null);
             assertThat(dbi).isNotNull();
@@ -61,7 +44,7 @@ class DropwizardJdbi2HelpersTest {
         }
 
         @Test
-        void shouldAcceptJdbcConnectionProperties() {
+        void shouldAcceptJdbcConnectionProperties(@H2Database H2FileBasedDatabase database) {
             var dbi = DropwizardJdbi2Helpers.buildDBI(null, null, database.getUrl(), "", "");
             assertThat(dbi).isNotNull();
             assertCanGetExecuteQuery(dbi);

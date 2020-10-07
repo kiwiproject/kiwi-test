@@ -4,9 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -15,14 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.kiwiproject.test.h2.H2DatabaseTestHelper;
-import org.kiwiproject.test.h2.H2FileBasedDatabase;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.logging.SLF4JLog;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -33,12 +27,13 @@ import java.util.TimeZone;
 @Slf4j
 class DropwizardJdbi2ExtensionTest {
 
-    private static H2FileBasedDatabase database;
+    @RegisterExtension
+    static final H2FileBasedDatabaseExtension databaseExtension = new H2FileBasedDatabaseExtension();
 
     @RegisterExtension
     final DropwizardJdbi2Extension jdbi2Extension =
             DropwizardJdbi2Extension.builder()
-                    .dataSource(database.getDataSource())
+                    .dataSource(databaseExtension.getDataSource())
                     .databaseTimeZone(TimeZone.getTimeZone("UTC"))
                     .slf4jLoggerName(DropwizardJdbi2ExtensionTest.class.getName())
                     .slfLogLevel(SLF4JLog.Level.INFO)
@@ -47,22 +42,11 @@ class DropwizardJdbi2ExtensionTest {
     private Handle handle;
     private TestTableDao dao;
 
-    @BeforeAll
-    static void beforeAll() {
-        database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
-    }
-
     @BeforeEach
     void setUp(TestInfo testInfo) {
         LOG.trace("Executing test: {}", testInfo.getDisplayName());
         handle = jdbi2Extension.getHandle();
         dao = new TestTableDao();
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException {
-        LOG.trace("Deleting H2 database directory: {}", database.getDirectory());
-        FileUtils.deleteDirectory(database.getDirectory());
     }
 
     @Test

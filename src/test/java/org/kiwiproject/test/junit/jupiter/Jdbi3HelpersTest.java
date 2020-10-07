@@ -7,41 +7,24 @@ import static org.mockito.Mockito.verify;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.kiwiproject.test.h2.H2DatabaseTestHelper;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 @DisplayName("Jdbi3Helpers")
+@ExtendWith(H2FileBasedDatabaseExtension.class)
 @Slf4j
 class Jdbi3HelpersTest {
-
-    private static H2FileBasedDatabase database;
-
-    @BeforeAll
-    static void beforeAll() {
-        LOG.trace("Create H2 file-based database");
-        database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException {
-        LOG.trace("Deleting H2 database directory: {}", database.getDirectory());
-        FileUtils.deleteDirectory(database.getDirectory());
-    }
 
     @Nested
     class BuildJdbi {
@@ -53,7 +36,7 @@ class Jdbi3HelpersTest {
         }
 
         @Test
-        void shouldAcceptConnectionFactory() {
+        void shouldAcceptConnectionFactory(@H2Database H2FileBasedDatabase database) {
             var connectionFactory = new DataSourceConnectionFactory(database.getDataSource());
             var jdbi = Jdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of());
             assertThat(jdbi).isNotNull();
@@ -61,7 +44,7 @@ class Jdbi3HelpersTest {
         }
 
         @Test
-        void shouldAcceptJdbcConnectionProperties() {
+        void shouldAcceptJdbcConnectionProperties(@H2Database H2FileBasedDatabase database) {
             var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of());
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
