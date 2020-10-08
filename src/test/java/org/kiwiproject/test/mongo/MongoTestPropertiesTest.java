@@ -172,4 +172,18 @@ class MongoTestPropertiesTest {
                     .matches(ENDS_WITH_TIMESTAMP_PATTERN);
         }
     }
+
+    @Test
+    void shouldSupportMultipleHostNames() {
+        var properties = MongoTestProperties.builder()
+                .hostName(" mongo1.test, mongo2.test ")
+                .port(27_017)
+                .serviceName("test-service")
+                .serviceHost("svc-host-1")
+                .build();
+
+        assertThat(properties.getUri())
+                .startsWith("mongodb://mongo1.test:27017,mongo2.test:27017/test-service_unit_test_svc-host-1_")
+                .matches(Pattern.compile(".*_[0-9]{13,}\\?replicaSet=rs0$"));
+    }
 }

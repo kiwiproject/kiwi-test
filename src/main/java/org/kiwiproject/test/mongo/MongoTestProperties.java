@@ -1,6 +1,6 @@
 package org.kiwiproject.test.mongo;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.stream.Collectors.joining;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
@@ -10,7 +10,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import lombok.Builder;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 import org.kiwiproject.net.KiwiUrls;
 
 /**
@@ -35,7 +34,6 @@ import org.kiwiproject.net.KiwiUrls;
  * in their entirety would cause the generated test name to exceed the Mongo name length limit, then various techniques
  * to shorten the name are tried until the name is 63 characters or less.
  */
-@Slf4j
 @Value
 public class MongoTestProperties {
 
@@ -109,10 +107,9 @@ public class MongoTestProperties {
             dbName = f(DB_SHORT_NAME_TEMPLATE, serviceName.substring(0, 46), now);
         }
 
-        checkState(!nameExceedsMongoLength(dbName),
-                "DB name must be less than 64 characters in length, but was: [%s] '%s'", dbName.length(), dbName);
-
-        LOG.trace("Test DB name for serviceName {} and serviceHost {} is: {}", serviceName, serviceHost, dbName);
+        verify(!nameExceedsMongoLength(dbName),
+                "Unexpected error: DB name must be less than 64 characters in length, but was: [%s] '%s'",
+                dbName.length(), dbName);
 
         return dbName;
     }
