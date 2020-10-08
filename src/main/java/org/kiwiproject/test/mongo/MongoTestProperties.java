@@ -2,6 +2,8 @@ package org.kiwiproject.test.mongo;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.StringUtils.containsAny;
+import static org.apache.commons.lang3.StringUtils.replaceChars;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
 
@@ -52,6 +54,12 @@ public class MongoTestProperties {
     private static final String DEFAULT_DB_NAME_TEMPLATE = "{}" + UNIT_TEST_ID + "{}_{}";
     private static final String DB_NAME_TEMPLATE = "{}" + UNIT_TEST_ID + "{}";
     private static final String DB_SHORT_NAME_TEMPLATE = "{}" + UNIT_TEST_ID_SHORT + "{}";
+
+    // Invalid characters for MongoDB database names (union of invalid characters for Windows and Linux/Unix)
+    // Linux/Unix invalid characters: /\. "$
+    // Windows invalid characters:    /\. "$*<>:|?
+    // See https://docs.mongodb.com/manual/reference/limits/#naming-restrictions
+    private static final String INVALID_DB_NAME_CHARS = "/\\. \"$*<>:|?";
 
     String hostName;
     int port;
@@ -107,11 +115,27 @@ public class MongoTestProperties {
             dbName = f(DB_SHORT_NAME_TEMPLATE, serviceName.substring(0, 46), now);
         }
 
-        verify(!nameExceedsMongoLength(dbName),
-                "Unexpected error: DB name must be less than 64 characters in length, but was: [%s] '%s'",
-                dbName.length(), dbName);
+        dbName = replaceInvalidDatabaseNameCharactersIfPresent(dbName);
+
+        verifyDatabaseNameLength(dbName);
 
         return dbName;
+    }
+
+    private static String replaceInvalidDatabaseNameCharactersIfPresent(String dbName) {
+        if (containsAny(dbName, INVALID_DB_NAME_CHARS)) {
+            // Replace any invalid character with an underscore
+            return replaceChars(dbName, INVALID_DB_NAME_CHARS, "____________");
+        }
+
+        return dbName;
+    }
+
+    @VisibleForTesting
+    static void verifyDatabaseNameLength(String dbName) {
+        verify(!nameExceedsMongoLength(dbName),
+                "Unexpected error: DB name must be less than 64 characters in length, but was %s: %s",
+                dbName.length(), dbName);
     }
 
     private static boolean nameExceedsMongoLength(String dbName) {

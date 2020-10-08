@@ -1,9 +1,12 @@
 package org.kiwiproject.test.mongo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.kiwiproject.test.mongo.MongoTestProperties.unitTestDatabaseName;
 import static org.kiwiproject.test.mongo.MongoTestPropertiesTest.DatabaseName.assertDatabaseName;
 
+import com.google.common.base.VerifyException;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.regex.Pattern;
 
@@ -71,8 +76,7 @@ class MongoTestPropertiesTest {
 
         @Test
         void shouldNotIncludeServiceHost_andShouldUseShortId_givenFortyCharacterServiceName() {
-            assertDatabaseName(unitTestDatabaseName(FORTY_CHAR_SERVICE_NAME,
-                    FOURTEEN_CHAR_HOST_NAME))
+            assertDatabaseName(unitTestDatabaseName(FORTY_CHAR_SERVICE_NAME, FOURTEEN_CHAR_HOST_NAME))
                     .matchesPattern(FORTY_CHAR_SERVICE_NAME + "_ut_")
                     .withExpectedSize(57);
         }
@@ -93,10 +97,24 @@ class MongoTestPropertiesTest {
 
         @Test
         void shouldNotIncludeServiceHost_andShouldTrimServiceName_andShouldUseShortId_givenSixtyCharacterServiceName() {
-            assertDatabaseName(unitTestDatabaseName(SIXTY_CHAR_SERVICE_NAME,
-                    FOURTEEN_CHAR_HOST_NAME))
+            assertDatabaseName(unitTestDatabaseName(SIXTY_CHAR_SERVICE_NAME, FOURTEEN_CHAR_HOST_NAME))
                     .matchesPattern(SIXTY_CHAR_SERVICE_NAME.substring(0, 46) + "_ut_")
                     .withExpectedSize(63);
+        }
+
+        @ParameterizedTest
+        @ValueSource(chars = {'/', '\\', '.', ' ', '"', '$', '*', '<', '>', ':', '|', '?'})
+        void shouldReplaceInvalidCharacters(char badChar) {
+            var serviceName = "test" + badChar + "service";
+            assertDatabaseName(unitTestDatabaseName(serviceName, "host1"))
+                    .matchesPattern("test_service_unit_test_host1_");
+        }
+
+        @Test
+        void shouldReplaceMultipleInvalidCharacters() {
+            var serviceName = "a/custom\\test.svc with\"bad$c*h<a>r:a|ct?ers";
+            assertDatabaseName(unitTestDatabaseName(serviceName, "host42"))
+                    .matchesPattern("a_custom_test_svc_with_bad_c_h_a_r_a_ct_ers_ut_");
         }
     }
 
@@ -137,7 +155,7 @@ class MongoTestPropertiesTest {
             hostName = "mongo-1.acme.com";
             port = 27_017;
             serviceName = "test-service";
-            serviceHost = "service-host-1.acme.com";
+            serviceHost = "service-host-1";
         }
 
         @Test
@@ -165,10 +183,10 @@ class MongoTestPropertiesTest {
             softly.assertThat(properties.getServiceName()).isEqualTo(serviceName);
             softly.assertThat(properties.getServiceHost()).isEqualTo(serviceHost);
             softly.assertThat(properties.getDatabaseName())
-                    .startsWith("test-service_unit_test_service-host-1.acme.com_")
+                    .startsWith("test-service_unit_test_service-host-1_")
                     .matches(ENDS_WITH_TIMESTAMP_PATTERN);
             softly.assertThat(properties.getUri())
-                    .startsWith("mongodb://mongo-1.acme.com:27017/test-service_unit_test_service-host-1.acme.com_")
+                    .startsWith("mongodb://mongo-1.acme.com:27017/test-service_unit_test_service-host-1_")
                     .matches(ENDS_WITH_TIMESTAMP_PATTERN);
         }
     }
@@ -185,5 +203,35 @@ class MongoTestPropertiesTest {
         assertThat(properties.getUri())
                 .startsWith("mongodb://mongo1.test:27017,mongo2.test:27017/test-service_unit_test_svc-host-1_")
                 .matches(Pattern.compile(".*_[0-9]{13,}\\?replicaSet=rs0$"));
+    }
+
+    @Nested
+    class VerifyDatabaseName {
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "1234567890",
+                "12345678901234567890",
+                "1234567890123456789012345678901234567890",
+                "123456789012345678901234567890123456789012345678901234567890",
+                "123456789012345678901234567890123456789012345678901234567890123"  // 63 characters
+        })
+        void shouldNotThrow_givenValidDatabaseName(String databaseName) {
+            assertThatCode(() -> MongoTestProperties.verifyDatabaseNameLength(databaseName))
+                    .doesNotThrowAnyException();
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "1234567890123456789012345678901234567890123456789012345678901234",                 // 64 characters
+                "1234567890123456789012345678901234567890123456789012345678901234567890",           // 70 characters
+                "12345678901234567890123456789012345678901234567890123456789012345678901234567890"  // 80 characters
+        })
+        void shouldThrow_VerifyException_givenInvalidDatabaseName(String databaseName) {
+            assertThatThrownBy(() -> MongoTestProperties.verifyDatabaseNameLength(databaseName))
+                    .isExactlyInstanceOf(VerifyException.class)
+                    .hasMessage("Unexpected error: DB name must be less than 64 characters in length, but was %d: %s",
+                            databaseName.length(), databaseName);
+        }
     }
 }
