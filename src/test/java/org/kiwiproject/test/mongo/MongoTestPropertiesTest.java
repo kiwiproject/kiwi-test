@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kiwiproject.test.mongo.MongoTestProperties.HostDomainBehavior;
 
 import java.util.regex.Pattern;
 
@@ -34,7 +36,7 @@ class MongoTestPropertiesTest {
     private static final String FORTY_SIX_CHAR_SERVICE_NAME = "1234567890123456789012345678901234567890123456";
     private static final String FORTY_SEVEN_CHAR_SERVICE_NAME = "12345678901234567890123456789012345678901234567";
     private static final String SIXTY_CHAR_SERVICE_NAME = "123456789012345678901234567890123456789012345678901234567890";
-    public static final Pattern ENDS_WITH_TIMESTAMP_PATTERN = Pattern.compile(".*_[0-9]{13,}$");
+    private static final Pattern ENDS_WITH_TIMESTAMP_PATTERN = Pattern.compile(".*_[0-9]{13,}$");
 
     @Nested
     class UnitTestDatabaseName {
@@ -149,24 +151,49 @@ class MongoTestPropertiesTest {
         private int port;
         private String serviceName;
         private String serviceHost;
+        private String serviceHostMinusDomain;
 
         @BeforeEach
         void setUp() {
             hostName = "mongo-1.acme.com";
             port = 27_017;
             serviceName = "test-service";
-            serviceHost = "service-host-1";
+            serviceHost = "service-host-1.acme.com";
+            serviceHostMinusDomain = "service-host-1";
+        }
+
+        @ParameterizedTest
+        @EnumSource(HostDomainBehavior.class)
+        void shouldUseConstructor(HostDomainBehavior hostDomainBehavior, SoftAssertions softly) {
+            var properties = new MongoTestProperties(hostName, hostDomainBehavior, port, serviceName, serviceHost);
+
+            assertProperties(softly, properties, hostDomainBehavior);
+        }
+
+        @ParameterizedTest
+        @EnumSource(HostDomainBehavior.class)
+        void shouldUseBuilder(HostDomainBehavior hostDomainBehavior, SoftAssertions softly) {
+            var properties = MongoTestProperties.builder()
+                    .hostName(hostName)
+                    .hostDomainBehavior(hostDomainBehavior)
+                    .port(port)
+                    .serviceName(serviceName)
+                    .serviceHost(serviceHost)
+                    .build();
+
+            assertProperties(softly, properties, hostDomainBehavior);
         }
 
         @Test
-        void shouldSupportConstructor(SoftAssertions softly) {
-            var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost);
+        void shouldDefaultToStrippingHostDomain_WhenUsingConstructor(SoftAssertions softly) {
+            var properties = new MongoTestProperties(hostName, null, port, serviceName, serviceHost);
 
-            assertProperties(softly, properties);
+            assertProperties(softly, properties, HostDomainBehavior.STRIP);
         }
 
         @Test
-        void shouldSupportBuilder(SoftAssertions softly) {
+        void shouldDefaultToStrippingHostDomain_WhenUsingBuilder(SoftAssertions softly) {
+            // hostDomainBehavior is not specified; it should use the default
             var properties = MongoTestProperties.builder()
                     .hostName(hostName)
                     .port(port)
@@ -174,19 +201,28 @@ class MongoTestPropertiesTest {
                     .serviceHost(serviceHost)
                     .build();
 
-            assertProperties(softly, properties);
+            assertProperties(softly, properties, HostDomainBehavior.STRIP);
         }
 
-        private void assertProperties(SoftAssertions softly, MongoTestProperties properties) {
+        private void assertProperties(SoftAssertions softly,
+                                      MongoTestProperties properties,
+                                      HostDomainBehavior hostDomainBehavior) {
+
             softly.assertThat(properties.getHostName()).isEqualTo(hostName);
+            softly.assertThat(properties.getHostDomainBehavior()).isEqualTo(hostDomainBehavior);
             softly.assertThat(properties.getPort()).isEqualTo(port);
             softly.assertThat(properties.getServiceName()).isEqualTo(serviceName);
-            softly.assertThat(properties.getServiceHost()).isEqualTo(serviceHost);
+
+            var keepDomain = hostDomainBehavior == HostDomainBehavior.KEEP;
+            var expectedServiceHost = keepDomain ? serviceHost : serviceHostMinusDomain;
+            var expectedDbNamePrefix = keepDomain ? "test-service_unit_test_service-host-1_acme_com_" : "test-service_unit_test_service-host-1_";
+
+            softly.assertThat(properties.getServiceHost()).isEqualTo(expectedServiceHost);
             softly.assertThat(properties.getDatabaseName())
-                    .startsWith("test-service_unit_test_service-host-1_")
+                    .startsWith(expectedDbNamePrefix)
                     .matches(ENDS_WITH_TIMESTAMP_PATTERN);
             softly.assertThat(properties.getUri())
-                    .startsWith("mongodb://mongo-1.acme.com:27017/test-service_unit_test_service-host-1_")
+                    .startsWith("mongodb://mongo-1.acme.com:27017/" + expectedDbNamePrefix)
                     .matches(ENDS_WITH_TIMESTAMP_PATTERN);
         }
     }

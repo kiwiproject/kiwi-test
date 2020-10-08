@@ -1,6 +1,7 @@
 package org.kiwiproject.test.mongo;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.replaceChars;
@@ -13,6 +14,8 @@ import com.mongodb.MongoClientURI;
 import lombok.Builder;
 import lombok.Value;
 import org.kiwiproject.net.KiwiUrls;
+
+import javax.annotation.Nullable;
 
 /**
  * Simple value class that contains properties related to connecting to Mongo in the context of a service that uses
@@ -62,6 +65,7 @@ public class MongoTestProperties {
     private static final String INVALID_DB_NAME_CHARS = "/\\. \"$*<>:|?";
 
     String hostName;
+    HostDomainBehavior hostDomainBehavior;
     int port;
     String serviceName;
     String serviceHost;
@@ -69,21 +73,53 @@ public class MongoTestProperties {
     String uri;
 
     /**
-     * Constructs a new instance. Also consider using the fluent builder.
+     * Should the domain be kept or stripped in service host names?
+     */
+    public enum HostDomainBehavior {
+        /**
+         * Keep the domain name, e.g. {@code service1.acme.com} stays as-is.
+         */
+        KEEP,
+
+        /**
+         * Strip the domain name, e.g. {@code service1.acme.com} and {@code service1.test} both become {@code service1}
+         */
+        STRIP
+    }
+
+    /**
+     * Constructs a new instance.
+     * <p>
+     * Use the fluent builder as an alternative to this constructor.
      *
-     * @param hostName    the host where MongoDB is located
-     * @param port        the port that MongoDB is listening on
-     * @param serviceName the name of the service/application being tested
-     * @param serviceHost the host of the service/application being tested
+     * @param hostName           the host where MongoDB is located
+     * @param hostDomainBehavior how to handle domains in the given {@code hostName}
+     *                           (defaults to {@link HostDomainBehavior#STRIP STRIP} if this argument is {@code null})
+     * @param port               the port that MongoDB is listening on
+     * @param serviceName        the name of the service/application being tested
+     * @param serviceHost        the host of the service/application being tested
      */
     @Builder
-    public MongoTestProperties(String hostName, int port, String serviceName, String serviceHost) {
+    public MongoTestProperties(String hostName,
+                               @Nullable HostDomainBehavior hostDomainBehavior,
+                               int port,
+                               String serviceName,
+                               String serviceHost) {
         this.hostName = hostName;
+        this.hostDomainBehavior = isNull(hostDomainBehavior) ? HostDomainBehavior.STRIP : hostDomainBehavior;
         this.port = port;
         this.serviceName = serviceName;
-        this.serviceHost = serviceHost;
+        this.serviceHost = serviceHost(serviceHost, hostDomainBehavior);
         this.databaseName = unitTestDatabaseName(serviceName, serviceHost);
         this.uri = mongoUri(hostName, port, databaseName);
+    }
+
+    private static String serviceHost(String serviceHost, HostDomainBehavior hostDomainBehavior) {
+        if (hostDomainBehavior == HostDomainBehavior.KEEP) {
+            return serviceHost;
+        }
+
+        return KiwiUrls.extractSubDomainNameFrom(serviceHost).orElseThrow();
     }
 
     @VisibleForTesting
