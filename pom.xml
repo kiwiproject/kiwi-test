@@ -49,6 +49,7 @@
         <jersey-test-framework-core.version>2.31</jersey-test-framework-core.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <liquibase.version>3.8.9</liquibase.version>
+        <mongo-java-driver.version>3.10.1</mongo-java-driver.version>
         <zookeeper.version>3.4.14</zookeeper.version>
 
         <!-- Versions for optional dependencies -->
@@ -378,6 +379,13 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
             <version>${dropwizard.metrics.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${mongo-java-driver.version}</version>
             <scope>provided</scope>
         </dependency>
 
