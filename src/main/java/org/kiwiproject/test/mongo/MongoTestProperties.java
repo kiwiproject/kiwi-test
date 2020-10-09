@@ -28,8 +28,9 @@ import javax.annotation.Nullable;
  * current timestamp is also included in the generated test database names to provide additional uniqueness in addition
  * to the service/application name and host.
  * <p>
- * Intended to be used in conjunction with (TODO - add link reference to MongoDbExtension) though there is no reason it cannot be
- * used standalone to generate database names for test purposes as well as the MongoDB client URI.
+ * Intended to be used in conjunction with {@link org.kiwiproject.test.junit.jupiter.MongoDbExtension} though there is
+ * no reason it cannot be used standalone to generate database names for test purposes as well as the MongoDB
+ * client URI.
  * <p>
  * Per MongoDB <a href="https://docs.mongodb.com/manual/reference/limits/#naming-restrictions">Naming Restrictions</a>,
  * "Database names cannot be empty and must have fewer than 64 characters". Thus the maximum length of database names

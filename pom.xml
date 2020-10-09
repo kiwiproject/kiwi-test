@@ -50,6 +50,7 @@
         <jsonassert.version>1.5.0</jsonassert.version>
         <liquibase.version>3.8.9</liquibase.version>
         <mongo-java-driver.version>3.10.1</mongo-java-driver.version>
+        <mongo-java-server.version>1.36.0</mongo-java-server.version>
         <zookeeper.version>3.4.14</zookeeper.version>
 
         <!-- Versions for optional dependencies -->
@@ -458,7 +459,12 @@
 
         <!-- test dependencies -->
 
-        <!-- nothing here yet...move along... -->
+        <dependency>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>${mongo-java-server.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
