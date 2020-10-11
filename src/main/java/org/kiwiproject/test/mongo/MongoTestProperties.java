@@ -110,10 +110,9 @@ public class MongoTestProperties {
         this.hostName = hostName;
         this.port = port;
         this.serviceName = serviceName;
-        var nonNullServiceHostBehavior =
-                isNull(serviceHostDomain) ? ServiceHostDomain.STRIP : serviceHostDomain;
-        this.serviceHostDomain = nonNullServiceHostBehavior;
-        var normalizedServiceHost = serviceHost(serviceHost, nonNullServiceHostBehavior);
+        var nonNullServiceHostDomain = isNull(serviceHostDomain) ? ServiceHostDomain.STRIP : serviceHostDomain;
+        this.serviceHostDomain = nonNullServiceHostDomain;
+        var normalizedServiceHost = serviceHost(serviceHost, nonNullServiceHostDomain);
         this.serviceHost = normalizedServiceHost;
         this.databaseName = unitTestDatabaseName(serviceName, normalizedServiceHost);
         this.uri = mongoUri(hostName, port, databaseName);

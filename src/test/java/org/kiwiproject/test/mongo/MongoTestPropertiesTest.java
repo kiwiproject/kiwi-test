@@ -194,7 +194,7 @@ class MongoTestPropertiesTest {
 
         @Test
         void shouldDefaultToStrippingHostDomain_WhenUsingBuilder(SoftAssertions softly) {
-            // hostDomainBehavior is not specified; it should use the default
+            // serviceHostDomain is not specified; it should use the default
             var properties = MongoTestProperties.builder()
                     .hostName(hostName)
                     .port(port)
