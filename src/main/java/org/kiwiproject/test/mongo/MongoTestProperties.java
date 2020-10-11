@@ -1,10 +1,12 @@
 package org.kiwiproject.test.mongo;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.replaceChars;
+import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotBlank;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
@@ -220,16 +222,18 @@ public class MongoTestProperties {
     }
 
     /**
-     * Static utility to get the database name without the timestamp.
+     * Static utility to get the database name without the timestamp. Performs minimal error checking on the
+     * database name. Expects the timestamp to be immediately after the last underscore.
      * <p>
      * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
      * returns {@code test-service_unit_test_host1}.
      *
      * @param databaseName the database name
      * @return the database name without the timestamp
+     * @throws IllegalArgumentException if the databaseName is blank or does not have any underscores
      */
     public static String databaseNameWithoutTimestamp(String databaseName) {
-        var lastUnderscoreIndex = databaseName.lastIndexOf('_');
+        int lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
         return databaseName.substring(0, lastUnderscoreIndex);
     }
 
@@ -246,13 +250,27 @@ public class MongoTestProperties {
     }
 
     /**
-     * Static utility to extract the database timestamp from the given database name.
+     * Static utility to extract the database timestamp from the given database name. Performs minimal error checking
+     * on the database name. Expects the timestamp to be immediately after the last underscore.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code 1602375491864}.
      *
      * @param databaseName the database name
      * @return the timestamp
+     * @throws IllegalArgumentException if the databaseName is blank or does not have any underscores
+     * @throws NumberFormatException    if the extracted "timestamp" cannot be parsed into a {@code long}
      */
     public static long extractDatabaseTimestamp(String databaseName) {
-        var lastUnderscoreIndex = databaseName.lastIndexOf('_');
+        int lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
         return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
+    }
+
+    private static int getLastUnderscoreIndex(String databaseName) {
+        checkArgumentNotBlank(databaseName, "databaseName cannot be blank");
+        checkArgument(!databaseName.endsWith("_"), "databaseName cannot end with an underscore");
+        var lastUnderscoreIndex = databaseName.lastIndexOf('_');
+        checkArgument(lastUnderscoreIndex > -1, "databaseName does not have correct format");
+        return lastUnderscoreIndex;
     }
 }

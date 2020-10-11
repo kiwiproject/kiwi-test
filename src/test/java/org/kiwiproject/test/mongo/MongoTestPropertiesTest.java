@@ -2,6 +2,7 @@ package org.kiwiproject.test.mongo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.kiwiproject.test.mongo.MongoTestProperties.unitTestDatabaseName;
 import static org.kiwiproject.test.mongo.MongoTestPropertiesTest.DatabaseName.assertDatabaseName;
@@ -15,9 +16,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kiwiproject.test.junit.jupiter.params.provider.BlankStringArgumentsProvider;
 import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
 
 import java.util.regex.Pattern;
@@ -304,6 +307,44 @@ class MongoTestPropertiesTest {
     }
 
     @Nested
+    class DatabaseNameWithoutTimestamp {
+
+        @ParameterizedTest
+        @ArgumentsSource(BlankStringArgumentsProvider.class)
+        void shouldThrow_GivenBlankArgument(String blankValue) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MongoTestProperties.databaseNameWithoutTimestamp(blankValue));
+        }
+
+        @Test
+        void shouldThrow_GivenDatabaseNameEndingWithUnderscore() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MongoTestProperties.databaseNameWithoutTimestamp("test-service_unit_test_host1_"));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "test-service",
+                "1602387022156"
+        })
+        void shouldThrow_GivenDatabaseName_HavingIllegalTimestamp(String databaseName) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MongoTestProperties.databaseNameWithoutTimestamp(databaseName));
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "test-service_unit_test_host1_1602375491864, test-service_unit_test_host1",
+                "test-service_unit_test_host1_acme_com_1602388746851, test-service_unit_test_host1_acme_com",
+                "other-service_unit_test_host42_1602388759595, other-service_unit_test_host42"
+        })
+        void shouldStripTimestamp(String databaseName, String expectedName) {
+            assertThat(MongoTestProperties.databaseNameWithoutTimestamp(databaseName))
+                    .isEqualTo(expectedName);
+        }
+    }
+
+    @Nested
     class GetDatabaseTimestamp {
 
         @ParameterizedTest
@@ -332,6 +373,45 @@ class MongoTestPropertiesTest {
             var timestamp = Long.parseLong(databaseName.substring(index + 1));
 
             assertThat(testProperties.getDatabaseTimestamp()).isEqualTo(timestamp);
+        }
+    }
+
+    @Nested
+    class ExtractDatabaseTimestamp {
+
+        @ParameterizedTest
+        @ArgumentsSource(BlankStringArgumentsProvider.class)
+        void shouldThrow_GivenBlankArgument(String blankValue) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(blankValue));
+        }
+
+        @Test
+        void shouldThrow_GivenDatabaseNameEndingWithUnderscore() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp("test-service_unit_test_host1_"));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "test-service_unit_test_host1_foo",
+                "test-service_unit_test_host1_1602375491864w",
+                "test-service_unit_test_host1_#$%#$"
+        })
+        void shouldThrow_GivenNonNumericTimestamp(String databaseName) {
+            assertThatThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(databaseName))
+                    .isExactlyInstanceOf(NumberFormatException.class);
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "test-service_unit_test_host1_1602375491864, 1602375491864",
+                "test-service_unit_test_host1_acme_com_1602388114381, 1602388114381",
+                "other-service_unit_test_host42_1602388130968, 1602388130968"
+        })
+        void shouldExtractTimestamp(String databaseName, long expectedTimestamp) {
+            assertThat(MongoTestProperties.extractDatabaseTimestamp(databaseName))
+                    .isEqualTo(expectedTimestamp);
         }
     }
 }
