@@ -3,9 +3,6 @@ package org.kiwiproject.test.junit.jupiter;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
-import static org.kiwiproject.base.KiwiStrings.f;
-import static org.kiwiproject.test.mongo.MongoTestProperties.UNIT_TEST_ID;
-import static org.kiwiproject.test.mongo.MongoTestProperties.UNIT_TEST_ID_SHORT;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.mongodb.MongoClient;
@@ -168,7 +165,8 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
                 CLEANUP_TIME_PERIOD_AMOUNT, CLEANUP_TIME_PERIOD_UNIT);
 
         var keepThresholdMillis = Instant.now().minus(CLEANUP_TIME_PERIOD_AMOUNT, CLEANUP_TIME_PERIOD_UNIT).toEpochMilli();
-        var databasesToDrop = newArrayList(mongo.listDatabaseNames().iterator())
+        var databaseNames = mongo.listDatabaseNames().iterator();
+        var databasesToDrop = newArrayList(databaseNames)
                 .stream()
                 .filter(name -> isUnitTestDatabaseForThisService(name, props))
                 .filter(name -> databaseIsOlderThanThreshold(name, keepThresholdMillis))
@@ -179,16 +177,14 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     @VisibleForTesting
-    static boolean isUnitTestDatabaseForThisService(String name, MongoTestProperties props) {
-        // TODO This does NOT work if the service name is truncated!
-        //  Need to change behavior to see if it matches the database name minus the timestamp
-        return name.startsWith(f("{}{}", props.getServiceName(), UNIT_TEST_ID))
-                || name.startsWith(f("{}{}", props.getServiceName(), UNIT_TEST_ID_SHORT));
+    static boolean isUnitTestDatabaseForThisService(String databaseName, MongoTestProperties props) {
+        return MongoTestProperties.databaseNameWithoutTimestamp(databaseName)
+                .equals(props.getDatabaseNameWithoutTimestamp());
     }
 
     @VisibleForTesting
-    static boolean databaseIsOlderThanThreshold(String name, long keepThresholdMillis) {
-        var databaseCreatedAtMillis = MongoTestProperties.extractDatabaseTimestamp(name);
+    static boolean databaseIsOlderThanThreshold(String databaseName, long keepThresholdMillis) {
+        var databaseCreatedAtMillis = MongoTestProperties.extractDatabaseTimestamp(databaseName);
         return databaseCreatedAtMillis <= keepThresholdMillis;
     }
 
