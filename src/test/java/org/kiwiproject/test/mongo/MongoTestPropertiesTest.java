@@ -18,7 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.kiwiproject.test.mongo.MongoTestProperties.HostDomainBehavior;
+import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
 
 import java.util.regex.Pattern;
 
@@ -164,32 +164,32 @@ class MongoTestPropertiesTest {
         }
 
         @ParameterizedTest
-        @EnumSource(HostDomainBehavior.class)
-        void shouldUseConstructor(HostDomainBehavior hostDomainBehavior, SoftAssertions softly) {
-            var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost, hostDomainBehavior);
+        @EnumSource(ServiceHostDomain.class)
+        void shouldUseConstructor(ServiceHostDomain serviceHostDomain, SoftAssertions softly) {
+            var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost, serviceHostDomain);
 
-            assertProperties(softly, properties, hostDomainBehavior);
+            assertProperties(softly, properties, serviceHostDomain);
         }
 
         @ParameterizedTest
-        @EnumSource(HostDomainBehavior.class)
-        void shouldUseBuilder(HostDomainBehavior hostDomainBehavior, SoftAssertions softly) {
+        @EnumSource(ServiceHostDomain.class)
+        void shouldUseBuilder(ServiceHostDomain serviceHostDomain, SoftAssertions softly) {
             var properties = MongoTestProperties.builder()
                     .hostName(hostName)
                     .port(port)
                     .serviceName(serviceName)
                     .serviceHost(serviceHost)
-                    .serviceHostDomainBehavior(hostDomainBehavior)
+                    .serviceHostDomain(serviceHostDomain)
                     .build();
 
-            assertProperties(softly, properties, hostDomainBehavior);
+            assertProperties(softly, properties, serviceHostDomain);
         }
 
         @Test
         void shouldDefaultToStrippingHostDomain_WhenUsingConstructor(SoftAssertions softly) {
             var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost, null);
 
-            assertProperties(softly, properties, HostDomainBehavior.STRIP);
+            assertProperties(softly, properties, ServiceHostDomain.STRIP);
         }
 
         @Test
@@ -202,19 +202,19 @@ class MongoTestPropertiesTest {
                     .serviceHost(serviceHost)
                     .build();
 
-            assertProperties(softly, properties, HostDomainBehavior.STRIP);
+            assertProperties(softly, properties, ServiceHostDomain.STRIP);
         }
 
         private void assertProperties(SoftAssertions softly,
                                       MongoTestProperties properties,
-                                      HostDomainBehavior serviceHostDomainBehavior) {
+                                      ServiceHostDomain serviceHostDomain) {
 
             softly.assertThat(properties.getHostName()).isEqualTo(hostName);
             softly.assertThat(properties.getPort()).isEqualTo(port);
             softly.assertThat(properties.getServiceName()).isEqualTo(serviceName);
-            softly.assertThat(properties.getServiceHostDomainBehavior()).isEqualTo(serviceHostDomainBehavior);
+            softly.assertThat(properties.getServiceHostDomain()).isEqualTo(serviceHostDomain);
 
-            var keepDomain = serviceHostDomainBehavior == HostDomainBehavior.KEEP;
+            var keepDomain = serviceHostDomain == ServiceHostDomain.KEEP;
             var expectedServiceHost = keepDomain ? serviceHost : serviceHostMinusDomain;
             var expectedDbNamePrefix = keepDomain ?
                     "test-service_unit_test_service-host-1_acme_com_" : "test-service_unit_test_service-host-1_";
@@ -287,7 +287,7 @@ class MongoTestPropertiesTest {
         })
         void shouldStripLastUnderscoreAndTimestamp(String serviceName,
                                                    String serviceHost,
-                                                   HostDomainBehavior serviceHostDomainBehavior,
+                                                   ServiceHostDomain serviceHostDomain,
                                                    String expectedDatabaseNameWithoutTimestamp) {
 
             var testProperties = MongoTestProperties.builder()
@@ -295,7 +295,7 @@ class MongoTestPropertiesTest {
                     .port(27_017)
                     .serviceName(serviceName)
                     .serviceHost(serviceHost)
-                    .serviceHostDomainBehavior(serviceHostDomainBehavior)
+                    .serviceHostDomain(serviceHostDomain)
                     .build();
 
             assertThat(testProperties.getDatabaseNameWithoutTimestamp())
@@ -314,14 +314,14 @@ class MongoTestPropertiesTest {
         })
         void shouldExtractTimestamp(String serviceName,
                                     String serviceHost,
-                                    HostDomainBehavior serviceHostDomainBehavior) {
+                                    ServiceHostDomain serviceHostDomain) {
 
             var testProperties = MongoTestProperties.builder()
                     .hostName("localhost")
                     .port(27_017)
                     .serviceName(serviceName)
                     .serviceHost(serviceHost)
-                    .serviceHostDomainBehavior(serviceHostDomainBehavior)
+                    .serviceHostDomain(serviceHostDomain)
                     .build();
 
             // Yes, yes, the following basically does the same thing the getDatabaseTimestamp() method does,

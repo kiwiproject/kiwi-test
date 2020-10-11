@@ -70,14 +70,14 @@ public class MongoTestProperties {
     int port;
     String serviceName;
     String serviceHost;
-    HostDomainBehavior serviceHostDomainBehavior;
+    ServiceHostDomain serviceHostDomain;
     String databaseName;
     String uri;
 
     /**
      * Should the domain be kept or stripped in service host names?
      */
-    public enum HostDomainBehavior {
+    public enum ServiceHostDomain {
         /**
          * Keep the domain name, e.g. {@code service1.acme.com} stays as-is.
          */
@@ -94,36 +94,35 @@ public class MongoTestProperties {
      * <p>
      * Use the fluent builder as an alternative to this constructor.
      *
-     * @param hostName                  the host where MongoDB is located
-     * @param port                      the port that MongoDB is listening on
-     * @param serviceName               the name of the service/application being tested
-     * @param serviceHost               the host of the service/application being tested
-     * @param serviceHostDomainBehavior how to handle domains in the given {@code serviceHost}
-     *                                  (defaults to {@link HostDomainBehavior#STRIP STRIP} if this
-     *                                  argument is {@code null})
+     * @param hostName          the host where MongoDB is located
+     * @param port              the port that MongoDB is listening on
+     * @param serviceName       the name of the service/application being tested
+     * @param serviceHost       the host of the service/application being tested
+     * @param serviceHostDomain how to handle domains in the given {@code serviceHost}
+     *                          (defaults to {@link ServiceHostDomain#STRIP STRIP} if this argument is {@code null})
      */
     @Builder
     public MongoTestProperties(String hostName,
                                int port,
                                String serviceName,
                                String serviceHost,
-                               @Nullable HostDomainBehavior serviceHostDomainBehavior) {
+                               @Nullable ServiceHostDomain serviceHostDomain) {
         this.hostName = hostName;
         this.port = port;
         this.serviceName = serviceName;
         var nonNullServiceHostBehavior =
-                isNull(serviceHostDomainBehavior) ? HostDomainBehavior.STRIP : serviceHostDomainBehavior;
-        this.serviceHostDomainBehavior = nonNullServiceHostBehavior;
+                isNull(serviceHostDomain) ? ServiceHostDomain.STRIP : serviceHostDomain;
+        this.serviceHostDomain = nonNullServiceHostBehavior;
         var normalizedServiceHost = serviceHost(serviceHost, nonNullServiceHostBehavior);
         this.serviceHost = normalizedServiceHost;
         this.databaseName = unitTestDatabaseName(serviceName, normalizedServiceHost);
         this.uri = mongoUri(hostName, port, databaseName);
     }
 
-    private static String serviceHost(String serviceHost, HostDomainBehavior hostDomainBehavior) {
-        checkArgumentNotNull(hostDomainBehavior);
+    private static String serviceHost(String serviceHost, ServiceHostDomain serviceHostDomain) {
+        checkArgumentNotNull(serviceHostDomain);
 
-        if (hostDomainBehavior == HostDomainBehavior.KEEP) {
+        if (serviceHostDomain == ServiceHostDomain.KEEP) {
             return serviceHost;
         }
 
