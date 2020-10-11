@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.replaceChars;
+import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
 
@@ -66,10 +67,10 @@ public class MongoTestProperties {
     private static final String INVALID_DB_NAME_CHARS = "/\\. \"$*<>:|?";
 
     String hostName;
-    HostDomainBehavior hostDomainBehavior;
     int port;
     String serviceName;
     String serviceHost;
+    HostDomainBehavior serviceHostDomainBehavior;
     String databaseName;
     String uri;
 
@@ -93,29 +94,35 @@ public class MongoTestProperties {
      * <p>
      * Use the fluent builder as an alternative to this constructor.
      *
-     * @param hostName           the host where MongoDB is located
-     * @param hostDomainBehavior how to handle domains in the given {@code hostName}
-     *                           (defaults to {@link HostDomainBehavior#STRIP STRIP} if this argument is {@code null})
-     * @param port               the port that MongoDB is listening on
-     * @param serviceName        the name of the service/application being tested
-     * @param serviceHost        the host of the service/application being tested
+     * @param hostName                  the host where MongoDB is located
+     * @param port                      the port that MongoDB is listening on
+     * @param serviceName               the name of the service/application being tested
+     * @param serviceHost               the host of the service/application being tested
+     * @param serviceHostDomainBehavior how to handle domains in the given {@code serviceHost}
+     *                                  (defaults to {@link HostDomainBehavior#STRIP STRIP} if this
+     *                                  argument is {@code null})
      */
     @Builder
     public MongoTestProperties(String hostName,
-                               @Nullable HostDomainBehavior hostDomainBehavior,
                                int port,
                                String serviceName,
-                               String serviceHost) {
+                               String serviceHost,
+                               @Nullable HostDomainBehavior serviceHostDomainBehavior) {
         this.hostName = hostName;
-        this.hostDomainBehavior = isNull(hostDomainBehavior) ? HostDomainBehavior.STRIP : hostDomainBehavior;
         this.port = port;
         this.serviceName = serviceName;
-        this.serviceHost = serviceHost(serviceHost, hostDomainBehavior);
-        this.databaseName = unitTestDatabaseName(serviceName, serviceHost);
+        var nonNullServiceHostBehavior =
+                isNull(serviceHostDomainBehavior) ? HostDomainBehavior.STRIP : serviceHostDomainBehavior;
+        this.serviceHostDomainBehavior = nonNullServiceHostBehavior;
+        var normalizedServiceHost = serviceHost(serviceHost, nonNullServiceHostBehavior);
+        this.serviceHost = normalizedServiceHost;
+        this.databaseName = unitTestDatabaseName(serviceName, normalizedServiceHost);
         this.uri = mongoUri(hostName, port, databaseName);
     }
 
     private static String serviceHost(String serviceHost, HostDomainBehavior hostDomainBehavior) {
+        checkArgumentNotNull(hostDomainBehavior);
+
         if (hostDomainBehavior == HostDomainBehavior.KEEP) {
             return serviceHost;
         }
@@ -200,5 +207,54 @@ public class MongoTestProperties {
     public MongoClient newMongoClient() {
         var mongoClientURI = new MongoClientURI(uri);
         return new MongoClient(mongoClientURI);
+    }
+
+    /**
+     * Get the database name without the trailing underscore plus timestamp.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code test-service_unit_test_host1}.
+     *
+     * @return the database name without the timestamp
+     */
+    public String getDatabaseNameWithoutTimestamp() {
+        return databaseNameWithoutTimestamp(databaseName);
+    }
+
+    /**
+     * Static utility to get the database name without the timestamp.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code test-service_unit_test_host1}.
+     *
+     * @param databaseName the database name
+     * @return the database name without the timestamp
+     */
+    public static String databaseNameWithoutTimestamp(String databaseName) {
+        var lastUnderscoreIndex = databaseName.lastIndexOf('_');
+        return databaseName.substring(0, lastUnderscoreIndex);
+    }
+
+    /**
+     * Get the database timestamp.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code 1602375491864}.
+     *
+     * @return the timestamp
+     */
+    public long getDatabaseTimestamp() {
+        return extractDatabaseTimestamp(databaseName);
+    }
+
+    /**
+     * Static utility to extract the database timestamp from the given database name.
+     *
+     * @param databaseName the database name
+     * @return the timestamp
+     */
+    public static long extractDatabaseTimestamp(String databaseName) {
+        var lastUnderscoreIndex = databaseName.lastIndexOf('_');
+        return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
     }
 }

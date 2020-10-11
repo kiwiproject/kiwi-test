@@ -26,6 +26,9 @@ import java.util.function.Consumer;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to use in Mongo unit/integration tests.
+ * This extension must be registered at the class level since it implements {@link AfterAllCallback}, i.e. the field
+ * should be declared as {@code static}.
+ * <p>
  * This extension by default drops the test Mongo database after <em>all</em> tests have run but clears records from
  * collections after <em>each</em> test runs. The extension also by default cleans up (i.e. deletes) any test databases
  * older than 10 minutes when it runs.
@@ -43,14 +46,14 @@ import java.util.function.Consumer;
  * private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
  *
  * {@literal @}RegisterExtension
- *  final MongoDbExtension mongoDbExtension = new MongoDbExtension(MONGO_TEST_PROPERTIES);
+ *  static final MongoDbExtension mongoDbExtension = new MongoDbExtension(MONGO_TEST_PROPERTIES);
  * </pre>
  * Or using a builder:
  * <pre>
  * private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
  *
  * {@literal @}RegisterExtension
- *  final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
+ *  static final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
  *     .props(MONGO TEST PROPERTIES)
  *     .dropTime(DropTime.BEFORE)
  *     .skipCleanup(true)
@@ -59,10 +62,6 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, AfterAllCallback {
-
-    // TODO Docs on public and overridden methods and constructors...
-
-    // TODO Add top-level documentation saying that this extension needs to be registered at the class level (i.e. static)
 
     private static final long CLEANUP_TIME_PERIOD_AMOUNT = 10L;
     private static final ChronoUnit CLEANUP_TIME_PERIOD_UNIT = ChronoUnit.MINUTES;
@@ -105,14 +104,41 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
         REMOVE_RECORDS, REMOVE_COLLECTION
     }
 
+    /**
+     * Create a new extension with the given {@link MongoTestProperties}. The default drop and cleanup options are
+     * used. Cleanup of collections is never skipped.
+     * <p>
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipCleanup} option.
+     *
+     * @param props the Mongo properties to use
+     */
     public MongoDbExtension(MongoTestProperties props) {
         this(props, DropTime.AFTER_ALL);
     }
 
+    /**
+     * Create a new extension with the given {@link MongoTestProperties} and {@link DropTime}. The default cleanup
+     * option is used. Cleanup of collections is never skipped.
+     * <p>
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipCleanup} option.
+     *
+     * @param props    the Mongo properties to use
+     * @param dropTime when should the test database be dropped?
+     */
     public MongoDbExtension(MongoTestProperties props, DropTime dropTime) {
         this(props, dropTime, CleanupOption.REMOVE_RECORDS, false);
     }
 
+    /**
+     * Create a new extension with the given {@link MongoTestProperties}, {@link DropTime}, and {@link CleanupOption}.
+     * Cleanup of collections is never skipped.
+     * <p>
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipCleanup} option.
+     *
+     * @param props         the Mongo properties to use
+     * @param dropTime      when should the test database be dropped?
+     * @param cleanupOption after each test, should collections be deleted or only the records in the collections?
+     */
     public MongoDbExtension(MongoTestProperties props, DropTime dropTime, CleanupOption cleanupOption) {
         this(props, dropTime, cleanupOption, false);
     }
@@ -154,14 +180,15 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
 
     @VisibleForTesting
     static boolean isUnitTestDatabaseForThisService(String name, MongoTestProperties props) {
+        // TODO This does NOT work if the service name is truncated!
+        //  Need to change behavior to see if it matches the database name minus the timestamp
         return name.startsWith(f("{}{}", props.getServiceName(), UNIT_TEST_ID))
                 || name.startsWith(f("{}{}", props.getServiceName(), UNIT_TEST_ID_SHORT));
     }
 
     @VisibleForTesting
     static boolean databaseIsOlderThanThreshold(String name, long keepThresholdMillis) {
-        var lastUnderscoreIndex = name.lastIndexOf('_');
-        var databaseCreatedAtMillis = Long.parseLong(name.substring(lastUnderscoreIndex + 1));
+        var databaseCreatedAtMillis = MongoTestProperties.extractDatabaseTimestamp(name);
         return databaseCreatedAtMillis <= keepThresholdMillis;
     }
 

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.mongo.MongoTestProperties.HostDomainBehavior;
@@ -165,7 +166,7 @@ class MongoTestPropertiesTest {
         @ParameterizedTest
         @EnumSource(HostDomainBehavior.class)
         void shouldUseConstructor(HostDomainBehavior hostDomainBehavior, SoftAssertions softly) {
-            var properties = new MongoTestProperties(hostName, hostDomainBehavior, port, serviceName, serviceHost);
+            var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost, hostDomainBehavior);
 
             assertProperties(softly, properties, hostDomainBehavior);
         }
@@ -175,10 +176,10 @@ class MongoTestPropertiesTest {
         void shouldUseBuilder(HostDomainBehavior hostDomainBehavior, SoftAssertions softly) {
             var properties = MongoTestProperties.builder()
                     .hostName(hostName)
-                    .hostDomainBehavior(hostDomainBehavior)
                     .port(port)
                     .serviceName(serviceName)
                     .serviceHost(serviceHost)
+                    .serviceHostDomainBehavior(hostDomainBehavior)
                     .build();
 
             assertProperties(softly, properties, hostDomainBehavior);
@@ -186,7 +187,7 @@ class MongoTestPropertiesTest {
 
         @Test
         void shouldDefaultToStrippingHostDomain_WhenUsingConstructor(SoftAssertions softly) {
-            var properties = new MongoTestProperties(hostName, null, port, serviceName, serviceHost);
+            var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost, null);
 
             assertProperties(softly, properties, HostDomainBehavior.STRIP);
         }
@@ -206,16 +207,17 @@ class MongoTestPropertiesTest {
 
         private void assertProperties(SoftAssertions softly,
                                       MongoTestProperties properties,
-                                      HostDomainBehavior hostDomainBehavior) {
+                                      HostDomainBehavior serviceHostDomainBehavior) {
 
             softly.assertThat(properties.getHostName()).isEqualTo(hostName);
-            softly.assertThat(properties.getHostDomainBehavior()).isEqualTo(hostDomainBehavior);
             softly.assertThat(properties.getPort()).isEqualTo(port);
             softly.assertThat(properties.getServiceName()).isEqualTo(serviceName);
+            softly.assertThat(properties.getServiceHostDomainBehavior()).isEqualTo(serviceHostDomainBehavior);
 
-            var keepDomain = hostDomainBehavior == HostDomainBehavior.KEEP;
+            var keepDomain = serviceHostDomainBehavior == HostDomainBehavior.KEEP;
             var expectedServiceHost = keepDomain ? serviceHost : serviceHostMinusDomain;
-            var expectedDbNamePrefix = keepDomain ? "test-service_unit_test_service-host-1_acme_com_" : "test-service_unit_test_service-host-1_";
+            var expectedDbNamePrefix = keepDomain ?
+                    "test-service_unit_test_service-host-1_acme_com_" : "test-service_unit_test_service-host-1_";
 
             softly.assertThat(properties.getServiceHost()).isEqualTo(expectedServiceHost);
             softly.assertThat(properties.getDatabaseName())
@@ -268,6 +270,68 @@ class MongoTestPropertiesTest {
                     .isExactlyInstanceOf(VerifyException.class)
                     .hasMessage("Unexpected error: DB name must be less than 64 characters in length, but was %d: %s",
                             databaseName.length(), databaseName);
+        }
+    }
+
+    @Nested
+    class GetDatabaseNameWithoutTimestamp {
+
+        @ParameterizedTest
+        @CsvSource({
+                "test-service, host1.acme.com, STRIP, test-service_unit_test_host1",
+                "test-service, host1.acme.com, KEEP, test-service_unit_test_host1_acme_com",
+                "this-is-a-service, host1.acme.com, STRIP, this-is-a-service_unit_test_host1",
+                "this-is-a-service, host1.acme.com, KEEP, this-is-a-service_unit_test_host1_acme_com",
+                "1234567890123456789012345678901234567890123456, host1.acme.com, STRIP, 1234567890123456789012345678901234567890123456_ut",
+                "1234567890123456789012345678901234567890123456, host1.acme.com, KEEP, 1234567890123456789012345678901234567890123456_ut"
+        })
+        void shouldStripLastUnderscoreAndTimestamp(String serviceName,
+                                                   String serviceHost,
+                                                   HostDomainBehavior serviceHostDomainBehavior,
+                                                   String expectedDatabaseNameWithoutTimestamp) {
+
+            var testProperties = MongoTestProperties.builder()
+                    .hostName("localhost")
+                    .port(27_017)
+                    .serviceName(serviceName)
+                    .serviceHost(serviceHost)
+                    .serviceHostDomainBehavior(serviceHostDomainBehavior)
+                    .build();
+
+            assertThat(testProperties.getDatabaseNameWithoutTimestamp())
+                    .isEqualTo(expectedDatabaseNameWithoutTimestamp);
+        }
+    }
+
+    @Nested
+    class GetDatabaseTimestamp {
+
+        @ParameterizedTest
+        @CsvSource({
+                "test-service, host1.acme.com, STRIP",
+                "test-service, host1.acme.com, KEEP",
+                "this-is-a-service, host1.acme.com, STRIP",
+        })
+        void shouldExtractTimestamp(String serviceName,
+                                    String serviceHost,
+                                    HostDomainBehavior serviceHostDomainBehavior) {
+
+            var testProperties = MongoTestProperties.builder()
+                    .hostName("localhost")
+                    .port(27_017)
+                    .serviceName(serviceName)
+                    .serviceHost(serviceHost)
+                    .serviceHostDomainBehavior(serviceHostDomainBehavior)
+                    .build();
+
+            // Yes, yes, the following basically does the same thing the getDatabaseTimestamp() method does,
+            // but by having the test and the method with separate code, if the implementation is ever changed
+            // incorrectly, then this test should fail, thereby catching the error before it gets committed.
+            var databaseName = testProperties.getDatabaseName();
+            var index = databaseName.lastIndexOf('_');
+            var timestamp = Long.parseLong(databaseName.substring(index + 1));
+
+            assertThat(testProperties.getDatabaseTimestamp()).isEqualTo(timestamp);
         }
     }
 }

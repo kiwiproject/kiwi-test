@@ -1,5 +1,6 @@
 package org.kiwiproject.test.junit.jupiter;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.buildMongoTestProperties;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.startInMemoryMongoServer;
 
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 
 @DisplayName("MongoDbExtension: Construction")
@@ -51,7 +54,21 @@ class MongoDbExtensionTest {
     @Nested
     class DatabaseIsOlderThanThreshold {
 
-        // TODO...
+        @ParameterizedTest
+        @CsvSource({
+                "1602375491862, test-service_unit_test_host1_1602375491864, false",  // db created before threshold
+                "1602375491863, test-service_unit_test_host1_1602375491864, false",  // db created before threshold
+                "1602375491864, test-service_unit_test_host1_1602375491864, true",   // db created at threshold
+                "1602375491865, test-service_unit_test_host1_1602375491864, true",   // db created after threshold
+                "1602375491866, test-service_unit_test_host1_1602375491864, true",   // db created after threshold
+        })
+        void shouldCompareDatabaseTimestampToKeepThreshold(long keepThresholdMillis,
+                                                           String databaseName,
+                                                           boolean expectedOlderThan) {
+
+            assertThat(MongoDbExtension.databaseIsOlderThanThreshold(databaseName, keepThresholdMillis))
+                    .isEqualTo(expectedOlderThan);
+        }
     }
 
     @Nested
