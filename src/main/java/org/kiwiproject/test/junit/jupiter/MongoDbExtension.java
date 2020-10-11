@@ -40,14 +40,14 @@ import java.util.function.Consumer;
  * <p>
  * For example using a constructor:
  * <pre>
- * private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
+ *  private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
  *
  * {@literal @}RegisterExtension
  *  static final MongoDbExtension mongoDbExtension = new MongoDbExtension(MONGO_TEST_PROPERTIES);
  * </pre>
  * Or using a builder:
  * <pre>
- * private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
+ *  private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
  *
  * {@literal @}RegisterExtension
  *  static final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
