@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
 
-@DisplayName("MongoDbExtension: Construction")
+@DisplayName("MongoDbExtension")
 @ExtendWith(SoftAssertionsExtension.class)
 class MongoDbExtensionTest {
 
