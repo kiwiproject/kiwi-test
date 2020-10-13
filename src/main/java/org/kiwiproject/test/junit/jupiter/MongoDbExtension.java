@@ -3,6 +3,7 @@ package org.kiwiproject.test.junit.jupiter;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
+import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.mongodb.MongoClient;
@@ -148,7 +149,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
         this.dropTime = isNull(dropTime) ? DropTime.AFTER_ALL : dropTime;
         this.cleanupOption = isNull(cleanupOption) ? CleanupOption.REMOVE_RECORDS : cleanupOption;
         this.skipCleanup = skipCleanup;
-        this.props = props;
+        this.props = requireNotNull(props);
         this.mongo = props.newMongoClient();
         this.databaseName = props.getDatabaseName();
         this.mongoUri = props.getUri();
