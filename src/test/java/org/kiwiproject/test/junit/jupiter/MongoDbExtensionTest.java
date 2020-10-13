@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.buildMongoTestProperties;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.startInMemoryMongoServer;
 
+import com.mongodb.MongoClient;
 import de.bwaldvogel.mongo.MongoServer;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
+import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
+
+import java.util.concurrent.TimeUnit;
 
 @DisplayName("MongoDbExtension")
 @ExtendWith(SoftAssertionsExtension.class)
@@ -46,6 +50,66 @@ class MongoDbExtensionTest {
         softly.assertThat(extension.getMongo()).isNotNull();
         softly.assertThat(extension.getMongoUri()).isNotBlank();
         softly.assertThat(extension.getDatabaseName()).isNotBlank();
+    }
+
+    @Nested
+    class Constructor {
+
+        @Test
+        void shouldCreateWithTestProperties(SoftAssertions softly) {
+            var extension = new MongoDbExtension(testProperties);
+
+            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
+            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
+            softly.assertThat(extension.isSkipCleanup()).isFalse();
+        }
+
+        @Test
+        void shouldCreateWithTestPropertiesAndDropTime(SoftAssertions softly) {
+            var extension = new MongoDbExtension(testProperties, MongoDbExtension.DropTime.AFTER_EACH);
+
+            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_EACH);
+            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
+            softly.assertThat(extension.isSkipCleanup()).isFalse();
+        }
+
+        @Test
+        void shouldCreateWithTestPropertiesAndDropTimeAndCleanupOption(SoftAssertions softly) {
+            var extension = new MongoDbExtension(testProperties, MongoDbExtension.DropTime.AFTER_EACH, MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
+
+            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_EACH);
+            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
+            softly.assertThat(extension.isSkipCleanup()).isFalse();
+        }
+    }
+
+    @Nested
+    class Builder {
+
+        @Test
+        void shouldCreateWithDefaults(SoftAssertions softly) {
+            var extension = MongoDbExtension.builder()
+                    .props(testProperties)
+                    .build();
+
+            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
+            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
+            softly.assertThat(extension.isSkipCleanup()).isFalse();
+        }
+
+        @Test
+        void shouldCreateWithExplicitOptions(SoftAssertions softly) {
+            var extension = MongoDbExtension.builder()
+                    .props(testProperties)
+                    .dropTime(MongoDbExtension.DropTime.BEFORE_EACH)
+                    .cleanupOption(MongoDbExtension.CleanupOption.REMOVE_COLLECTION)
+                    .skipCleanup(true)
+                    .build();
+
+            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.BEFORE_EACH);
+            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
+            softly.assertThat(extension.isSkipCleanup()).isTrue();
+        }
     }
 
     @Nested
@@ -116,62 +180,58 @@ class MongoDbExtensionTest {
     }
 
     @Nested
-    class Constructor {
+    class WhenDatabasesFromPriorTestRunsExist {
 
-        @Test
-        void shouldCreateWithTestProperties(SoftAssertions softly) {
-            var extension = new MongoDbExtension(testProperties);
+        private MongoClient mongoClient;
+        private String expiredDatabaseName1;
+        private String expiredDatabaseName2;
+        private String notExpiredDatabaseName1;
+        private String notExpiredDatabaseName2;
 
-            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
-            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
+        @BeforeEach
+        void setUp() {
+            mongoClient = testProperties.newMongoClient();
+
+            expiredDatabaseName1 = createDatabaseTimestampedMinutesBefore(testProperties, 11);
+            expiredDatabaseName2 = createDatabaseTimestampedMinutesBefore(testProperties, 10);
+            notExpiredDatabaseName1 = createDatabaseTimestampedMinutesBefore(testProperties, 9);
+            notExpiredDatabaseName2 = createDatabaseTimestampedMinutesBefore(testProperties, 1);
+        }
+
+        private String createDatabaseTimestampedMinutesBefore(MongoTestProperties testProperties, int minutesToSubtract) {
+            var databaseName = databaseNameTimestampedMinutesBefore(testProperties, minutesToSubtract);
+            var database = mongoClient.getDatabase(databaseName);
+            database.getCollection("test_collection").insertOne(new Document());
+            return databaseName;
+        }
+
+        private String databaseNameTimestampedMinutesBefore(MongoTestProperties testProperties, int minutesToSubtract) {
+            var baseDatabaseName = testProperties.getDatabaseNameWithoutTimestamp();
+            var originalTimestamp = testProperties.getDatabaseTimestamp();
+            var newTimestamp = originalTimestamp - TimeUnit.MINUTES.toMillis(minutesToSubtract);
+            return baseDatabaseName + "_" + newTimestamp;
         }
 
         @Test
-        void shouldCreateWithTestPropertiesAndDropTime(SoftAssertions softly) {
-            var extension = new MongoDbExtension(testProperties, MongoDbExtension.DropTime.AFTER_EACH);
+        void shouldCleanupDatabasesOlderThanThreshold() {
+            new MongoDbExtension(testProperties);
+            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
 
-            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_EACH);
-            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
+            assertThat(databaseNames)
+                    .contains(notExpiredDatabaseName1, notExpiredDatabaseName2)
+                    .doesNotContain(expiredDatabaseName1, expiredDatabaseName2);
         }
 
         @Test
-        void shouldCreateWithTestPropertiesAndDropTimeAndCleanupOption(SoftAssertions softly) {
-            var extension = new MongoDbExtension(testProperties, MongoDbExtension.DropTime.AFTER_EACH, MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
-
-            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_EACH);
-            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
-        }
-    }
-
-    @Nested
-    class Builder {
-
-        @Test
-        void shouldCreateWithDefaults(SoftAssertions softly) {
-            var extension = MongoDbExtension.builder()
+        void shouldNotCleanupOldDatabases_WhenSkipCleanupOptionIsTrue() {
+            MongoDbExtension.builder()
                     .props(testProperties)
-                    .build();
-
-            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
-            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
-        }
-
-        @Test
-        void shouldCreateWithExplicitOptions(SoftAssertions softly) {
-            var extension = MongoDbExtension.builder()
-                    .props(testProperties)
-                    .dropTime(MongoDbExtension.DropTime.BEFORE_EACH)
-                    .cleanupOption(MongoDbExtension.CleanupOption.REMOVE_COLLECTION)
                     .skipCleanup(true)
                     .build();
 
-            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.BEFORE_EACH);
-            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
-            softly.assertThat(extension.isSkipCleanup()).isTrue();
+            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            assertThat(databaseNames).contains(
+                    notExpiredDatabaseName1, notExpiredDatabaseName2, expiredDatabaseName1, expiredDatabaseName2);
         }
     }
 }
