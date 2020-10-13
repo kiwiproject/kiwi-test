@@ -36,8 +36,9 @@ import java.util.function.Consumer;
  * <p>
  * You can control when the database is dropped using the {@link DropTime} argument. You can control whether collections
  * are dropped after each test or whether only the collection records are deleted using {@link CleanupOption}. You can
- * also tell the extension to skip cleanup of old test databases. You can instantiate this extension using one of the
- * constructors or using the provided builder.
+ * also tell the extension to skip cleanup of old test databases using the {@code skipDatabaseCleanup} (only available
+ * via the builder). Finally, you can instantiate this extension using one of the constructors or using the provided
+ * builder.
  * <p>
  * Note also that if using an in-memory Mongo server (e.g.
  * <a href="https://mvnrepository.com/artifact/de.bwaldvogel/mongo-java-server">mongo-java-server</a>), then the
@@ -61,7 +62,7 @@ import java.util.function.Consumer;
  *  static final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
  *     .props(MONGO TEST PROPERTIES)
  *     .dropTime(DropTime.BEFORE)
- *     .skipCleanup(true)
+ *     .skipDatabaseCleanup(true)
  *     .build();
  * </pre>
  */
@@ -79,7 +80,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     private final CleanupOption cleanupOption;
 
     @Getter
-    private final boolean skipCleanup;
+    private final boolean skipDatabaseCleanup;
 
     @Getter
     private final MongoTestProperties props;
@@ -123,7 +124,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
      * Create a new extension with the given {@link MongoTestProperties}. The default drop and cleanup options are
      * used. Cleanup of collections is never skipped.
      * <p>
-     * Alternatively, use the fluent builder, which also permits changing the {@code skipCleanup} option.
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} option.
      *
      * @param props the Mongo properties to use
      */
@@ -135,7 +136,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
      * Create a new extension with the given {@link MongoTestProperties} and {@link DropTime}. The default cleanup
      * option is used. Cleanup of collections is never skipped.
      * <p>
-     * Alternatively, use the fluent builder, which also permits changing the {@code skipCleanup} option.
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} option.
      *
      * @param props    the Mongo properties to use
      * @param dropTime when should the test database be dropped?
@@ -148,7 +149,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
      * Create a new extension with the given {@link MongoTestProperties}, {@link DropTime}, and {@link CleanupOption}.
      * Cleanup of collections is never skipped.
      * <p>
-     * Alternatively, use the fluent builder, which also permits changing the {@code skipCleanup} option.
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} option.
      *
      * @param props         the Mongo properties to use
      * @param dropTime      when should the test database be dropped?
@@ -162,10 +163,10 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     private MongoDbExtension(MongoTestProperties props,
                              DropTime dropTime,
                              CleanupOption cleanupOption,
-                             boolean skipCleanup) {
+                             boolean skipDatabaseCleanup) {
         this.dropTime = isNull(dropTime) ? DropTime.AFTER_ALL : dropTime;
         this.cleanupOption = isNull(cleanupOption) ? CleanupOption.REMOVE_RECORDS : cleanupOption;
-        this.skipCleanup = skipCleanup;
+        this.skipDatabaseCleanup = skipDatabaseCleanup;
         this.props = requireNotNull(props);
         this.mongo = props.newMongoClient();
         this.databaseName = props.getDatabaseName();
@@ -174,7 +175,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     private void cleanupDatabasesFromPriorTestRunsIfNecessary() {
-        if (skipCleanup) {
+        if (skipDatabaseCleanup) {
             LOG.warn("Skipping cleanup of previous test databases");
             return;
         }

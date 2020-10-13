@@ -46,7 +46,7 @@ class MongoDbExtensionDropAfterEachTest {
     static final MongoDbExtension MONGO_DB_EXTENSION = MongoDbExtension.builder()
             .props(TEST_PROPERTIES)
             .dropTime(MongoDbExtension.DropTime.AFTER_EACH)
-            .skipCleanup(true)
+            .skipDatabaseCleanup(true)
             .build();
 
     @BeforeEach

@@ -63,7 +63,7 @@ class MongoDbExtensionNeverCleanupTest {
             .props(TEST_PROPERTIES)
             .dropTime(MongoDbExtension.DropTime.AFTER_ALL)  // ensure collection cleanup method is called in @AfterEach
             .cleanupOption(MongoDbExtension.CleanupOption.REMOVE_NEVER)
-            .skipCleanup(true)
+            .skipDatabaseCleanup(true)
             .build();
 
     @BeforeEach

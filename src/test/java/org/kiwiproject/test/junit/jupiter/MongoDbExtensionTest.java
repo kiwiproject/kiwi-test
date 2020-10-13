@@ -61,7 +61,7 @@ class MongoDbExtensionTest {
 
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
+            softly.assertThat(extension.isSkipDatabaseCleanup()).isFalse();
         }
 
         @Test
@@ -70,7 +70,7 @@ class MongoDbExtensionTest {
 
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_EACH);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
+            softly.assertThat(extension.isSkipDatabaseCleanup()).isFalse();
         }
 
         @Test
@@ -79,7 +79,7 @@ class MongoDbExtensionTest {
 
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_EACH);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
+            softly.assertThat(extension.isSkipDatabaseCleanup()).isFalse();
         }
     }
 
@@ -94,7 +94,7 @@ class MongoDbExtensionTest {
 
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
-            softly.assertThat(extension.isSkipCleanup()).isFalse();
+            softly.assertThat(extension.isSkipDatabaseCleanup()).isFalse();
         }
 
         @Test
@@ -103,12 +103,12 @@ class MongoDbExtensionTest {
                     .props(testProperties)
                     .dropTime(MongoDbExtension.DropTime.BEFORE_EACH)
                     .cleanupOption(MongoDbExtension.CleanupOption.REMOVE_COLLECTION)
-                    .skipCleanup(true)
+                    .skipDatabaseCleanup(true)
                     .build();
 
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.BEFORE_EACH);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
-            softly.assertThat(extension.isSkipCleanup()).isTrue();
+            softly.assertThat(extension.isSkipDatabaseCleanup()).isTrue();
         }
     }
 
@@ -223,10 +223,10 @@ class MongoDbExtensionTest {
         }
 
         @Test
-        void shouldNotCleanupOldDatabases_WhenSkipCleanupOptionIsTrue() {
+        void shouldNotCleanupOldDatabases_WhenSkipDatabaseCleanupOptionIsTrue() {
             MongoDbExtension.builder()
                     .props(testProperties)
-                    .skipCleanup(true)
+                    .skipDatabaseCleanup(true)
                     .build();
 
             var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
