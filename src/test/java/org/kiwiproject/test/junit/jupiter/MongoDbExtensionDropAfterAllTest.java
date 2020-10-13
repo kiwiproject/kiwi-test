@@ -2,9 +2,9 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertInsertSomething;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertInsertSomethingElse;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoDataInCollections;
+import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoDocumentsAndInsertFirstDocument;
+import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoDocumentsAndInsertSecondDocument;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoTestDatabaseExists;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertTestDatabaseExists;
 import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.buildMongoTestProperties;
@@ -82,12 +82,12 @@ class MongoDbExtensionDropAfterAllTest {
     @Test
     @Order(2)
     void shouldInsertSomething() {
-        assertInsertSomething(client, TEST_PROPERTIES);
+        assertNoDocumentsAndInsertFirstDocument(client, TEST_PROPERTIES);
     }
 
     @Test
     @Order(3)
     void shouldInsertSomethingElse() {
-        assertInsertSomethingElse(client, TEST_PROPERTIES);
+        assertNoDocumentsAndInsertSecondDocument(client, TEST_PROPERTIES);
     }
 }

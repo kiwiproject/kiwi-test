@@ -39,6 +39,13 @@ import java.util.function.Consumer;
  * also tell the extension to skip cleanup of old test databases. You can instantiate this extension using one of the
  * constructors or using the provided builder.
  * <p>
+ * Note also that if using an in-memory Mongo server (e.g.
+ * <a href="https://mvnrepository.com/artifact/de.bwaldvogel/mongo-java-server">mongo-java-server</a>), then the
+ * {@link DropTime} and {@link CleanupOption} only make sense during the execution of a single test class. For example
+ * given a {@code SomethingUsingMongoTest} class containing a bunch of individual tests, these options can still be
+ * used, but once JUnit has executed all the tests in the class, obviously the database and collections are destroyed
+ * when the in-memory server shuts down.
+ * <p>
  * For example using a constructor:
  * <pre>
  *  private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
@@ -89,17 +96,27 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     /**
      * When to drop the test databases. The extension default is {@link #AFTER_ALL}, which means the database is only
      * dropped after all tests have run.
+     * <p>
+     * The {@link #NEVER} option can be used in conjunction with {@link CleanupOption#REMOVE_NEVER} if you are
+     * debugging a problematic test and you want to inspect the database after specific tests execute, or if you
+     * are managing the database manually before, during, and/or after test execution.
      */
     public enum DropTime {
-        BEFORE_EACH, AFTER_EACH, AFTER_ALL
+        BEFORE_EACH, AFTER_EACH, AFTER_ALL, NEVER
     }
 
     /**
      * How to handle records after each individual test. The extension default is {@link #REMOVE_RECORDS}, which will
      * delete the records in existing collections in the test database, but not delete the collections themselves.
+     * <p>
+     * The {@link #REMOVE_NEVER} option can be used if your test requires a specific order, e.g. an
+     * end-to-end integration test across multiple components that uses @{@link org.junit.jupiter.api.Order Order}
+     * to specify the order in which tests execute and which needs to retain data between tests. It can also be used
+     * in conjunction with {@link DropTime#NEVER} to debug problematic tests, so that the database state can be
+     * inspected after a single test or multiple tests have executed.
      */
     public enum CleanupOption {
-        REMOVE_RECORDS, REMOVE_COLLECTION
+        REMOVE_RECORDS, REMOVE_COLLECTION, REMOVE_NEVER
     }
 
     /**
@@ -228,6 +245,11 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     private void clearCollections(String databaseName, CleanupOption option) {
+        if (option == CleanupOption.REMOVE_NEVER) {
+            LOG.debug("Skipping collection cleanup (REMOVE_NEVER)");
+            return;
+        }
+
         LOG.debug("Clearing all collections for database: {}", databaseName);
         var mongoDatabase = mongo.getDatabase(databaseName);
 
