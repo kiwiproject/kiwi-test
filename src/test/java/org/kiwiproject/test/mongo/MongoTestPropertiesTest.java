@@ -167,6 +167,27 @@ class MongoTestPropertiesTest {
         }
 
         @ParameterizedTest
+        @CsvSource({
+                " , 8080, test-service , svc-host-1",
+                " '' , 8080, test-service , svc-host-1",
+                " mongo-host, -1, test-service, svc-host-1 ",
+                " mongo-host, 65536, test-service, svc-host-1 ",
+                " mongo-host, 8080,  , svc-host-1",
+                " mongo-host, 8080, '' , svc-host-1",
+                " mongo-host, 8080, test-service, ",
+                " mongo-host, 8080, test-service, '' ",
+        })
+        void shouldNotAllowNullsOrBlanks(String hostName, int port, String serviceName, String serviceHost) {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> MongoTestProperties.builder()
+                            .hostName(hostName)
+                            .port(port)
+                            .serviceName(serviceName)
+                            .serviceHost(serviceHost)
+                            .build());
+        }
+
+        @ParameterizedTest
         @EnumSource(ServiceHostDomain.class)
         void shouldUseConstructor(ServiceHostDomain serviceHostDomain, SoftAssertions softly) {
             var properties = new MongoTestProperties(hostName, port, serviceName, serviceHost, serviceHostDomain);

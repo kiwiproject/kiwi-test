@@ -8,6 +8,7 @@ import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.replaceChars;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotBlank;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
+import static org.kiwiproject.base.KiwiPreconditions.requireNotBlank;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
 
@@ -109,15 +110,24 @@ public class MongoTestProperties {
                                String serviceName,
                                String serviceHost,
                                @Nullable ServiceHostDomain serviceHostDomain) {
-        this.hostName = hostName;
-        this.port = port;
-        this.serviceName = serviceName;
+
+        this.hostName = requireNotBlank(hostName);
+        this.port = requireValidPort(port);
+        this.serviceName = requireNotBlank(serviceName);
+
         var nonNullServiceHostDomain = isNull(serviceHostDomain) ? ServiceHostDomain.STRIP : serviceHostDomain;
         this.serviceHostDomain = nonNullServiceHostDomain;
-        var normalizedServiceHost = serviceHost(serviceHost, nonNullServiceHostDomain);
+
+        var normalizedServiceHost = serviceHost(requireNotBlank(serviceHost), nonNullServiceHostDomain);
         this.serviceHost = normalizedServiceHost;
+
         this.databaseName = unitTestDatabaseName(serviceName, normalizedServiceHost);
         this.uri = mongoUri(hostName, port, databaseName);
+    }
+
+    private static int requireValidPort(int port) {
+        checkArgument(port >= 0 && port <= 65_535, "invalid port: must be in range [0, 65535]");
+        return port;
     }
 
     private static String serviceHost(String serviceHost, ServiceHostDomain serviceHostDomain) {
