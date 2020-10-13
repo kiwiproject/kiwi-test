@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.function.Consumer;
@@ -65,32 +66,72 @@ import java.util.function.Consumer;
  *     .skipDatabaseCleanup(true)
  *     .build();
  * </pre>
+ * Using a builder with all options to never drop test databases during test execution and only
+ * cleanup old test databases that are older than 60 minutes:
+ * <pre>
+ *  private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
+ *
+ * {@literal @}RegisterExtension
+ *  static final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
+ *     .props(MONGO TEST PROPERTIES)
+ *     .dropTime(DropTime.NEVER)
+ *     .cleanupOption(CleanupOption.NEVER)
+ *     .skipDatabaseCleanup(false)
+ *     .databaseCleanupThreshold(Duration.ofMinutes(60))
+ *     .build();
+ * </pre>
  */
 @Slf4j
 public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, AfterAllCallback {
 
-    private static final long CLEANUP_TIME_PERIOD_AMOUNT = 10L;
-    private static final ChronoUnit CLEANUP_TIME_PERIOD_UNIT = ChronoUnit.MINUTES;
+    private static final Duration DEFAULT_CLEANUP_THRESHOLD = Duration.of(10L, ChronoUnit.MINUTES);
     private static final String SYSTEM_INDEXES_COLLECTION_NAME = "system.indexes";
 
+    /**
+     * When to drop test databases.
+     */
     @Getter
     private final DropTime dropTime;
 
+    /**
+     * How to cleanup collections in test databases.
+     */
     @Getter
     private final CleanupOption cleanupOption;
 
+    /**
+     * Should test databases from previous test executions be deleted?
+     */
     @Getter
     private final boolean skipDatabaseCleanup;
 
+    /**
+     * How old can a test database be before it will be automatically cleaned up (deleted)?
+     */
+    @Getter
+    private final Duration databaseCleanupThreshold;
+
+    /**
+     * The connection properties for the MongoDB server to be used for test databases.
+     */
     @Getter
     private final MongoTestProperties props;
 
+    /**
+     * A {@link MongoClient} that can be used in tests.
+     */
     @Getter
     private final MongoClient mongo;
 
+    /**
+     * The URI of the test database.
+     */
     @Getter
     private final String mongoUri;
 
+    /**
+     * The test database name.
+     */
     @Getter
     private final String databaseName;
 
@@ -124,7 +165,8 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
      * Create a new extension with the given {@link MongoTestProperties}. The default drop and cleanup options are
      * used. Cleanup of collections is never skipped.
      * <p>
-     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} option.
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} and
+     * {@code databaseCleanupThreshold} options.
      *
      * @param props the Mongo properties to use
      */
@@ -136,41 +178,48 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
      * Create a new extension with the given {@link MongoTestProperties} and {@link DropTime}. The default cleanup
      * option is used. Cleanup of collections is never skipped.
      * <p>
-     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} option.
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} and
+     * {@code databaseCleanupThreshold} options.
      *
      * @param props    the Mongo properties to use
      * @param dropTime when should the test database be dropped?
      */
     public MongoDbExtension(MongoTestProperties props, DropTime dropTime) {
-        this(props, dropTime, CleanupOption.REMOVE_RECORDS, false);
+        this(props, dropTime, CleanupOption.REMOVE_RECORDS, false, DEFAULT_CLEANUP_THRESHOLD);
     }
 
     /**
      * Create a new extension with the given {@link MongoTestProperties}, {@link DropTime}, and {@link CleanupOption}.
      * Cleanup of collections is never skipped.
      * <p>
-     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} option.
+     * Alternatively, use the fluent builder, which also permits changing the {@code skipDatabaseCleanup} and
+     * {@code databaseCleanupThreshold} options.
      *
      * @param props         the Mongo properties to use
      * @param dropTime      when should the test database be dropped?
      * @param cleanupOption after each test, should collections be deleted or only the records in the collections?
      */
     public MongoDbExtension(MongoTestProperties props, DropTime dropTime, CleanupOption cleanupOption) {
-        this(props, dropTime, cleanupOption, false);
+        this(props, dropTime, cleanupOption, false, DEFAULT_CLEANUP_THRESHOLD);
     }
 
     @Builder
     private MongoDbExtension(MongoTestProperties props,
                              DropTime dropTime,
                              CleanupOption cleanupOption,
-                             boolean skipDatabaseCleanup) {
+                             boolean skipDatabaseCleanup,
+                             Duration databaseCleanupThreshold) {
+
+        this.props = requireNotNull(props);
         this.dropTime = isNull(dropTime) ? DropTime.AFTER_ALL : dropTime;
         this.cleanupOption = isNull(cleanupOption) ? CleanupOption.REMOVE_RECORDS : cleanupOption;
         this.skipDatabaseCleanup = skipDatabaseCleanup;
-        this.props = requireNotNull(props);
+        this.databaseCleanupThreshold =
+                isNull(databaseCleanupThreshold) ? DEFAULT_CLEANUP_THRESHOLD : databaseCleanupThreshold;
         this.mongo = props.newMongoClient();
         this.databaseName = props.getDatabaseName();
         this.mongoUri = props.getUri();
+
         cleanupDatabasesFromPriorTestRunsIfNecessary();
     }
 
@@ -180,10 +229,10 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
             return;
         }
 
-        LOG.debug("Clean up databases from prior test runs that are older than {} {}",
-                CLEANUP_TIME_PERIOD_AMOUNT, CLEANUP_TIME_PERIOD_UNIT);
+        LOG.debug("Clean up databases from prior test runs that are older than {} ({} minutes)",
+                databaseCleanupThreshold, databaseCleanupThreshold.toMinutes());
 
-        var keepThresholdMillis = Instant.now().minus(CLEANUP_TIME_PERIOD_AMOUNT, CLEANUP_TIME_PERIOD_UNIT).toEpochMilli();
+        var keepThresholdMillis = Instant.now().minus(databaseCleanupThreshold).toEpochMilli();
         var databaseNames = mongo.listDatabaseNames().iterator();
         var databasesToDrop = newArrayList(databaseNames)
                 .stream()

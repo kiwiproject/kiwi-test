@@ -22,6 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @DisplayName("MongoDbExtension")
@@ -95,6 +96,7 @@ class MongoDbExtensionTest {
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.AFTER_ALL);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_RECORDS);
             softly.assertThat(extension.isSkipDatabaseCleanup()).isFalse();
+            softly.assertThat(extension.getDatabaseCleanupThreshold()).hasMinutes(10);
         }
 
         @Test
@@ -109,6 +111,21 @@ class MongoDbExtensionTest {
             softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.BEFORE_EACH);
             softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_COLLECTION);
             softly.assertThat(extension.isSkipDatabaseCleanup()).isTrue();
+        }
+
+        @Test
+        void shouldCreateWithExplicitDatabaseCleanupThreshold(SoftAssertions softly) {
+            var extension = MongoDbExtension.builder()
+                    .props(testProperties)
+                    .dropTime(MongoDbExtension.DropTime.NEVER)
+                    .cleanupOption(MongoDbExtension.CleanupOption.REMOVE_NEVER)
+                    .databaseCleanupThreshold(Duration.ofMinutes(30))
+                    .build();
+
+            softly.assertThat(extension.getDropTime()).isEqualTo(MongoDbExtension.DropTime.NEVER);
+            softly.assertThat(extension.getCleanupOption()).isEqualTo(MongoDbExtension.CleanupOption.REMOVE_NEVER);
+            softly.assertThat(extension.isSkipDatabaseCleanup()).isFalse();
+            softly.assertThat(extension.getDatabaseCleanupThreshold()).hasMinutes(30);
         }
     }
 
@@ -220,6 +237,29 @@ class MongoDbExtensionTest {
             assertThat(databaseNames)
                     .contains(notExpiredDatabaseName1, notExpiredDatabaseName2)
                     .doesNotContain(expiredDatabaseName1, expiredDatabaseName2);
+        }
+
+        @Test
+        void shouldCleanupOldDatabases_WhenMakeDefaultCleanupThreshold_BeforeAllDatabases() {
+            MongoDbExtension.builder()
+                    .props(testProperties)
+                    .databaseCleanupThreshold(Duration.ofSeconds(45))
+                    .build();
+
+            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            assertThat(databaseNames).isEmpty();
+        }
+
+        @Test
+        void shouldNotCleanupOldDatabases_WhenMakeDefaultCleanupThreshold_AfterAllDatabases() {
+            MongoDbExtension.builder()
+                    .props(testProperties)
+                    .databaseCleanupThreshold(Duration.ofMinutes(45))
+                    .build();
+
+            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            assertThat(databaseNames).contains(
+                    notExpiredDatabaseName1, notExpiredDatabaseName2, expiredDatabaseName1, expiredDatabaseName2);
         }
 
         @Test
