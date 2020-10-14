@@ -1,10 +1,14 @@
 package org.kiwiproject.test.mongo;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.replaceChars;
+import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotBlank;
+import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
+import static org.kiwiproject.base.KiwiPreconditions.requireNotBlank;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
 
@@ -28,8 +32,9 @@ import javax.annotation.Nullable;
  * current timestamp is also included in the generated test database names to provide additional uniqueness in addition
  * to the service/application name and host.
  * <p>
- * Intended to be used in conjunction with (TODO - add link reference to MongoDbExtension) though there is no reason it cannot be
- * used standalone to generate database names for test purposes as well as the MongoDB client URI.
+ * Intended to be used in conjunction with {@link org.kiwiproject.test.junit.jupiter.MongoDbExtension} though there is
+ * no reason it cannot be used standalone to generate database names for test purposes as well as the MongoDB
+ * client URI.
  * <p>
  * Per MongoDB <a href="https://docs.mongodb.com/manual/reference/limits/#naming-restrictions">Naming Restrictions</a>,
  * "Database names cannot be empty and must have fewer than 64 characters". Thus the maximum length of database names
@@ -65,17 +70,17 @@ public class MongoTestProperties {
     private static final String INVALID_DB_NAME_CHARS = "/\\. \"$*<>:|?";
 
     String hostName;
-    HostDomainBehavior hostDomainBehavior;
     int port;
     String serviceName;
     String serviceHost;
+    ServiceHostDomain serviceHostDomain;
     String databaseName;
     String uri;
 
     /**
      * Should the domain be kept or stripped in service host names?
      */
-    public enum HostDomainBehavior {
+    public enum ServiceHostDomain {
         /**
          * Keep the domain name, e.g. {@code service1.acme.com} stays as-is.
          */
@@ -92,30 +97,43 @@ public class MongoTestProperties {
      * <p>
      * Use the fluent builder as an alternative to this constructor.
      *
-     * @param hostName           the host where MongoDB is located
-     * @param hostDomainBehavior how to handle domains in the given {@code hostName}
-     *                           (defaults to {@link HostDomainBehavior#STRIP STRIP} if this argument is {@code null})
-     * @param port               the port that MongoDB is listening on
-     * @param serviceName        the name of the service/application being tested
-     * @param serviceHost        the host of the service/application being tested
+     * @param hostName          the host where MongoDB is located
+     * @param port              the port that MongoDB is listening on
+     * @param serviceName       the name of the service/application being tested
+     * @param serviceHost       the host of the service/application being tested
+     * @param serviceHostDomain how to handle domains in the given {@code serviceHost}
+     *                          (defaults to {@link ServiceHostDomain#STRIP STRIP} if this argument is {@code null})
      */
     @Builder
     public MongoTestProperties(String hostName,
-                               @Nullable HostDomainBehavior hostDomainBehavior,
                                int port,
                                String serviceName,
-                               String serviceHost) {
-        this.hostName = hostName;
-        this.hostDomainBehavior = isNull(hostDomainBehavior) ? HostDomainBehavior.STRIP : hostDomainBehavior;
-        this.port = port;
-        this.serviceName = serviceName;
-        this.serviceHost = serviceHost(serviceHost, hostDomainBehavior);
-        this.databaseName = unitTestDatabaseName(serviceName, serviceHost);
+                               String serviceHost,
+                               @Nullable ServiceHostDomain serviceHostDomain) {
+
+        this.hostName = requireNotBlank(hostName);
+        this.port = requireValidPort(port);
+        this.serviceName = requireNotBlank(serviceName);
+
+        var nonNullServiceHostDomain = isNull(serviceHostDomain) ? ServiceHostDomain.STRIP : serviceHostDomain;
+        this.serviceHostDomain = nonNullServiceHostDomain;
+
+        var normalizedServiceHost = serviceHost(requireNotBlank(serviceHost), nonNullServiceHostDomain);
+        this.serviceHost = normalizedServiceHost;
+
+        this.databaseName = unitTestDatabaseName(serviceName, normalizedServiceHost);
         this.uri = mongoUri(hostName, port, databaseName);
     }
 
-    private static String serviceHost(String serviceHost, HostDomainBehavior hostDomainBehavior) {
-        if (hostDomainBehavior == HostDomainBehavior.KEEP) {
+    private static int requireValidPort(int port) {
+        checkArgument(port >= 0 && port <= 65_535, "invalid port: must be in range [0, 65535]");
+        return port;
+    }
+
+    private static String serviceHost(String serviceHost, ServiceHostDomain serviceHostDomain) {
+        checkArgumentNotNull(serviceHostDomain);
+
+        if (serviceHostDomain == ServiceHostDomain.KEEP) {
             return serviceHost;
         }
 
@@ -199,5 +217,70 @@ public class MongoTestProperties {
     public MongoClient newMongoClient() {
         var mongoClientURI = new MongoClientURI(uri);
         return new MongoClient(mongoClientURI);
+    }
+
+    /**
+     * Get the database name without the trailing underscore plus timestamp.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code test-service_unit_test_host1}.
+     *
+     * @return the database name without the timestamp
+     */
+    public String getDatabaseNameWithoutTimestamp() {
+        return databaseNameWithoutTimestamp(databaseName);
+    }
+
+    /**
+     * Static utility to get the database name without the timestamp. Performs minimal error checking on the
+     * database name. Expects the timestamp to be immediately after the last underscore.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code test-service_unit_test_host1}.
+     *
+     * @param databaseName the database name
+     * @return the database name without the timestamp
+     * @throws IllegalArgumentException if the databaseName is blank or does not have any underscores
+     */
+    public static String databaseNameWithoutTimestamp(String databaseName) {
+        int lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
+        return databaseName.substring(0, lastUnderscoreIndex);
+    }
+
+    /**
+     * Get the database timestamp.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code 1602375491864}.
+     *
+     * @return the timestamp
+     */
+    public long getDatabaseTimestamp() {
+        return extractDatabaseTimestamp(databaseName);
+    }
+
+    /**
+     * Static utility to extract the database timestamp from the given database name. Performs minimal error checking
+     * on the database name. Expects the timestamp to be immediately after the last underscore.
+     * <p>
+     * Example: If the database name is {@code test-service_unit_test_host1_1602375491864}, then this method
+     * returns {@code 1602375491864}.
+     *
+     * @param databaseName the database name
+     * @return the timestamp
+     * @throws IllegalArgumentException if the databaseName is blank or does not have any underscores
+     * @throws NumberFormatException    if the extracted "timestamp" cannot be parsed into a {@code long}
+     */
+    public static long extractDatabaseTimestamp(String databaseName) {
+        int lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
+        return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
+    }
+
+    private static int getLastUnderscoreIndex(String databaseName) {
+        checkArgumentNotBlank(databaseName, "databaseName cannot be blank");
+        checkArgument(!databaseName.endsWith("_"), "databaseName cannot end with an underscore");
+        var lastUnderscoreIndex = databaseName.lastIndexOf('_');
+        checkArgument(lastUnderscoreIndex > -1, "databaseName does not have correct format");
+        return lastUnderscoreIndex;
     }
 }
