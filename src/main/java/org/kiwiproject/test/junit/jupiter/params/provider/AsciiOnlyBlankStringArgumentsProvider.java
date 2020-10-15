@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  * {@link org.junit.jupiter.params.ParameterizedTest ParameterizedTest}. This will generate a {@code null} String
  * argument, an empty String argument, a String with multiple spaces, and a String with whitespace characters.
  * <p>
- * <strong></b>However</strong>, unlike {@link BlankStringArgumentsProvider}, this will only use characters that fall
+ * <strong>However</strong>, unlike {@link BlankStringArgumentsProvider}, this will only use characters that fall
  * in the ASCII character set. Unless it is absolutely necessary to test against ASCII only whitespace (for example, to
  * validate using the Bean Validation API's {@link javax.validation.constraints.NotBlank NotBlank} annotation), it is
  * recommended you use {@link BlankStringArgumentsProvider} instead.

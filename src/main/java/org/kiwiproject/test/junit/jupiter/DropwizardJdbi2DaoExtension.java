@@ -108,7 +108,7 @@ public class DropwizardJdbi2DaoExtension<T> implements BeforeEachCallback, After
     }
 
     /**
-     * Create a DAO attached to the {@link Handle} and assigns it; it is accessible to tests via {@link #getDao()}.
+     * Create a DAO attached to the {@link Handle} and assigns it; it is accessible to tests via {@code getDao()}.
      *
      * @param context the extension context
      * @see Handle#attach(Class)

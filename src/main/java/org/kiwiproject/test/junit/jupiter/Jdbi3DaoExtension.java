@@ -111,7 +111,7 @@ public class Jdbi3DaoExtension<T> implements BeforeEachCallback, AfterEachCallba
     }
 
     /**
-     * Create a DAO attached to the {@link Handle} and assigns it; it is accessible to tests via {@link #getDao()}.
+     * Create a DAO attached to the {@link Handle} and assigns it; it is accessible to tests via {@code getDao()}.
      * Begins a transaction.
      *
      * @param context the extension context
