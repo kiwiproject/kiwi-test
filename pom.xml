@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -33,10 +34,10 @@
 
         <!-- Versions for provided dependencies -->
         <byte.buddy.version>1.10.10</byte.buddy.version>
-        <commons-text.version>1.8</commons-text.version>
+        <commons-text.version>1.9</commons-text.version>
         <curator.version>2.13.0</curator.version>
-        <dropwizard.version>2.0.12</dropwizard.version>
-        <dropwizard.metrics.version>4.1.11</dropwizard.metrics.version>
+        <dropwizard.version>2.0.13</dropwizard.version>
+        <dropwizard.metrics.version>4.1.12.1</dropwizard.metrics.version>
         <dropwizard.modules.dropwizard-jdbi.version>2.0.12</dropwizard.modules.dropwizard-jdbi.version>
         <embedded-postgres.version>1.2.6</embedded-postgres.version>
         <h2.version>1.4.200</h2.version>
@@ -48,6 +49,7 @@
         <jersey-test-framework-core.version>2.31</jersey-test-framework-core.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <liquibase.version>3.8.9</liquibase.version>
+        <metrics-jdbi3.version>4.1.12.1</metrics-jdbi3.version>
         <mongo-java-driver.version>3.10.1</mongo-java-driver.version>
         <mongo-java-server.version>1.36.0</mongo-java-server.version>
         <zookeeper.version>3.4.14</zookeeper.version>
@@ -192,7 +194,30 @@
             <version>${dropwizard.modules.dropwizard-jdbi.version}</version>
             <scope>provided</scope>
             <exclusions>
-                <!-- TODO temporary... -->
+                <exclusion>
+                    <groupId>io.dropwizard</groupId>
+                    <artifactId>dropwizard-configuration</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard</groupId>
+                    <artifactId>dropwizard-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard</groupId>
+                    <artifactId>dropwizard-db</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard</groupId>
+                    <artifactId>dropwizard-jersey</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard</groupId>
+                    <artifactId>dropwizard-lifecycle</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard</groupId>
+                    <artifactId>dropwizard-util</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
@@ -205,6 +230,18 @@
                     <groupId>org.javassist</groupId>
                     <artifactId>javassist</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard.metrics</groupId>
+                    <artifactId>metrics-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.dropwizard.metrics</groupId>
+                    <artifactId>metrics-healthchecks</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -214,11 +251,6 @@
             <version>${dropwizard.version}</version>
             <scope>provided</scope>
             <exclusions>
-                <!-- TODO temporary... -->
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.hibernate.validator</groupId>
                     <artifactId>hibernate-validator</artifactId>
@@ -259,6 +291,19 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jdbi3</artifactId>
+            <version>${metrics-jdbi3.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jdbi</groupId>
+                    <artifactId>jdbi3-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
