@@ -16,22 +16,22 @@ import java.sql.SQLException;
 class H2FileBasedDatabaseExtensionRegisterTest {
 
     @RegisterExtension
-    static H2FileBasedDatabaseExtension databaseExtension = new H2FileBasedDatabaseExtension();
+    static final H2FileBasedDatabaseExtension DATABASE_EXTENSION = new H2FileBasedDatabaseExtension();
 
     @RegisterExtension
-    final H2DatabaseTestExtension testExtension = new H2DatabaseTestExtension(databaseExtension.getDatabase());
+    final H2DatabaseTestExtension testExtension = new H2DatabaseTestExtension(DATABASE_EXTENSION.getDatabase());
 
     @Test
     void shouldMakeDatabaseAvailableToTests() {
-        assertThat(databaseExtension.getDatabase()).isNotNull();
-        assertThat(databaseExtension.getUrl()).isNotBlank();
-        assertThat(databaseExtension.getDirectory()).isNotNull();
-        assertThat(databaseExtension.getDataSource()).isNotNull();
+        assertThat(DATABASE_EXTENSION.getDatabase()).isNotNull();
+        assertThat(DATABASE_EXTENSION.getUrl()).isNotBlank();
+        assertThat(DATABASE_EXTENSION.getDirectory()).isNotNull();
+        assertThat(DATABASE_EXTENSION.getDataSource()).isNotNull();
     }
 
     @Test
     void shouldSupplyDatabaseToTestExtension() {
-        assertThat(testExtension.getDatabase()).isSameAs(databaseExtension.getDatabase());
+        assertThat(testExtension.getDatabase()).isSameAs(DATABASE_EXTENSION.getDatabase());
     }
 
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
