@@ -96,6 +96,6 @@ class PostgresAppTestExtensionConfigOverridesTest {
         assertThat(configuration.getSdkVersionOverride()).isEqualTo("1.0.0-SNAPSHOT");
         assertThat(configuration.getRegistryType()).isEqualTo("NOOP");
         assertThat(configuration.getRegistryUrls()).isEqualTo("http://localhost:8761/eureka");
-        assertThat(configuration.getRegistryType()).isEqualTo("test-service");
+        assertThat(configuration.getServiceName()).isEqualTo("test-service");
     }
 }
