@@ -39,13 +39,13 @@ import org.kiwiproject.test.h2.H2FileBasedDatabase;
  * class MySecondTest {
  *
  *    {@literal @}RegisterExtension
- *     static H2FileBasedDatabaseExtension databaseExtension = new H2FileBasedDatabaseExtension();
+ *     static final H2FileBasedDatabaseExtension DATABASE_EXTENSION = new H2FileBasedDatabaseExtension();
  *
  *    {@literal @}RegisterExtension
  *     final DaoExtension&lt;PersonDao&gt; jdbi3DaoExtension =
  *             DaoExtension.&lt;PersonDao&gt;builder()
  *                     .daoType(PersonDao.class)
- *                     .dataSource(databaseExtension.getDataSource())  // supply the DataSource here
+ *                     .dataSource(DATABASE_EXTENSION.getDataSource())  // supply the DataSource here
  *                     .plugin(new H2DatabasePlugin())
  *                     .build();
  * }
