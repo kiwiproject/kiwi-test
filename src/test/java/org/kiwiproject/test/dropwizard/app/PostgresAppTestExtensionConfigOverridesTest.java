@@ -8,6 +8,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.testing.ConfigOverride;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.AfterAll;
@@ -19,21 +20,15 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * @implNote Due to several known issues in the zonkyio / embedded-postgres library on macOS Catalina,
- * we are enabling this only on Linux at present. See issues
- * <a href="https://github.com/zonkyio/embedded-postgres/issues/32">32</a>,
- * <a href="https://github.com/zonkyio/embedded-postgres/issues/40">40</a> for more details.
- * Also, issue <a href="https://github.com/zonkyio/embedded-postgres/issues/11">11</a> is related and
- * <a href="https://github.com/zonkyio/embedded-postgres/issues/11#issuecomment-533468269">this comment</a>
- * explains how to "fix" by exporting {@code LC_CTYPE} and {@code LC_ALL} environment variables if you want
- * to run this test on macOS.
+ * @implNote See the implementation note in {@link PostgresAppTestExtensionTest}.
  */
-@DisplayName("PostgresAppTestExtension")
+@DisplayName("PostgresAppTestExtension: ConfigOverrides")
 @EnabledOnOs(OS.LINUX)
-class PostgresAppTestExtensionTest {
+class PostgresAppTestExtensionConfigOverridesTest {
 
     @Getter
     @Setter
@@ -42,6 +37,17 @@ class PostgresAppTestExtensionTest {
         @NotNull
         @JsonProperty("database")
         private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+
+        private String sdkVersionOverride;
+
+        @NotBlank
+        private String registryType = "DEFAULT";
+
+        @NotBlank
+        private String registryUrls = "http://eureka-server:8761/eureka";
+
+        @NotBlank
+        private String serviceName = "some-service";
     }
 
     public static class App extends Application<Config> {
@@ -54,7 +60,11 @@ class PostgresAppTestExtensionTest {
     private static final PostgresAppTestExtension<Config> EXTENSION = new PostgresAppTestExtension<>(
             "PostgresAppTestExtensionTest/test-migrations.xml",
             "PostgresAppTestExtensionTest/test-config.yml",
-            App.class);
+            App.class,
+            ConfigOverride.config("sdkVersionOverride", "1.0.0-SNAPSHOT"),
+            ConfigOverride.config("registryType", "NOOP"),
+            ConfigOverride.config("registryUrls", "http://localhost:8761/eureka"),
+            ConfigOverride.config("serviceName", "test-service"));
 
     private static ExtensionContext mockContext;
 
@@ -71,9 +81,21 @@ class PostgresAppTestExtensionTest {
 
     @Test
     void shouldStartPostgresAndApp() {
-        assertThat(EXTENSION.getApp()).isNotNull();
-        assertThat(EXTENSION.getApp().getTestSupport().getEnvironment()).isNotNull();
-        assertThat(EXTENSION.getPostgres()).isNotNull();
-        assertThat(EXTENSION.getPostgres().getTestDatabase()).isNotNull();
+        var appExtension = EXTENSION.getApp();
+        assertThat(appExtension).isNotNull();
+        assertThat(appExtension.getTestSupport().getEnvironment()).isNotNull();
+
+        var preparedDbExtension = EXTENSION.getPostgres();
+        assertThat(preparedDbExtension).isNotNull();
+        assertThat(preparedDbExtension.getTestDatabase()).isNotNull();
+    }
+
+    @Test
+    void shouldSetConfigOverrideValues() {
+        var configuration = EXTENSION.getApp().getConfiguration();
+        assertThat(configuration.getSdkVersionOverride()).isEqualTo("1.0.0-SNAPSHOT");
+        assertThat(configuration.getRegistryType()).isEqualTo("NOOP");
+        assertThat(configuration.getRegistryUrls()).isEqualTo("http://localhost:8761/eureka");
+        assertThat(configuration.getServiceName()).isEqualTo("test-service");
     }
 }

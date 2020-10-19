@@ -9,6 +9,7 @@ import io.zonky.test.db.postgres.embedded.LiquibasePreparer;
 import io.zonky.test.db.postgres.junit5.EmbeddedPostgresExtension;
 import io.zonky.test.db.postgres.junit5.PreparedDbExtension;
 import lombok.Getter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -22,12 +23,27 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * <p>
  * To include this extension in an AppTest then add the following at the top of the class:
  * <p>
- * {@code @RegisterExtension}
- * <br>
- * {@code public static PostgresAppTestExtension<AppConfiguration> APP = new PostgresAppTestExtension("migrations.xml", "config.yml", App.class);}
+ * <pre>
+ * {@literal @}RegisterExtension
+ *  public static PostgresAppTestExtension&lt;AppConfiguration&gt; POSTGRES_APP =
+ *      new PostgresAppTestExtension("migrations.xml", "config.yml", App.class);
+ * </pre>
  * <p>
- * The test instance will have access to the application and the PostgreSQL instance by calling {@code APP.getApp()} and {@code APP.getPostgres()}
- * respectively.
+ * The test instance will have access to the application and the PostgreSQL instance by calling
+ * {@code POSTGRES_APP.getApp()} and {@code POSTGRES_APP.getPostgres()} respectively.
+ * <p>
+ * You can also provide one or more {@link ConfigOverride} values to the extension:
+ * <pre>
+ * {@literal @}RegisterExtension
+ *  public static PostgresAppTestExtension<AppConfiguration> POSTGRES_APP =
+ *      new PostgresAppTestExtension("migrations.xml", "config.yml", App.class,
+ *          ConfigOverride.config("someValue", "42"),
+ *          ConfigOverride.config("aLazyValue", () -> calculateTheLazyValue()));
+ * </pre>
+ * <p>
+ * WARNING: When using this extension you should <strong>not</strong> register {@code DropwizardExtensionsSupport} or
+ * the embedded Postgres extension since this extension programmatically registers both of them. Doing so will almost
+ * certainly result in unexpected behavior such as {@code NullPointerException}s being thrown.
  * <p>
  * For information on how the embedded PostgreSQL extension works see: https://github.com/zonkyio/embedded-postgres
  * <br>
@@ -41,14 +57,34 @@ public class PostgresAppTestExtension<T extends Configuration> implements Before
     private final PreparedDbExtension postgres;
     private final DropwizardAppExtension<T> app;
 
-    public PostgresAppTestExtension(String migrationClasspathLocation, String configFileName, Class<? extends Application<T>> appClass) {
-        postgres = EmbeddedPostgresExtension.preparedDatabase(LiquibasePreparer.forClasspathLocation(migrationClasspathLocation));
-        app = new DropwizardAppExtension<>(appClass,
+    /**
+     * Create a new instance.
+     *
+     * @param migrationClasspathLocation the classpath location of the Liquibase migrations file to use
+     * @param configFileName             the name of the classpath resource to use as the application configuration file
+     * @param appClass                   the Dropwizard application class
+     * @param configOverrides            optional configuration override values
+     */
+    public PostgresAppTestExtension(String migrationClasspathLocation,
+                                    String configFileName,
+                                    Class<? extends Application<T>> appClass,
+                                    ConfigOverride... configOverrides) {
+
+        var liquibasePreparer = LiquibasePreparer.forClasspathLocation(migrationClasspathLocation);
+        postgres = EmbeddedPostgresExtension.preparedDatabase(liquibasePreparer);
+
+        var userConfigOverride = ConfigOverride.config("database.user", () -> postgres.getConnectionInfo().getUser());
+        var urlConfigOverride = ConfigOverride.config("database.url",
+                () -> "jdbc:postgresql://localhost:" + postgres.getConnectionInfo().getPort()
+                        + "/" + postgres.getConnectionInfo().getDbName());
+
+        var postgresConfigOverrides = new ConfigOverride[]{userConfigOverride, urlConfigOverride};
+        var combinedConfigOverrides = ArrayUtils.addAll(postgresConfigOverrides, configOverrides);
+
+        app = new DropwizardAppExtension<>(
+                appClass,
                 ResourceHelpers.resourceFilePath(configFileName),
-                ConfigOverride.config("database.user", () -> postgres.getConnectionInfo().getUser()),
-                ConfigOverride.config("database.url",
-                        () -> "jdbc:postgresql://localhost:" + postgres.getConnectionInfo().getPort()
-                                + "/" + postgres.getConnectionInfo().getDbName()));
+                combinedConfigOverrides);
     }
 
     @Override
