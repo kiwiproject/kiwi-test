@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.h2.H2DatabasePlugin;
+import org.jdbi.v3.core.spi.JdbiPlugin;
+import org.jdbi.v3.postgres.PostgresPlugin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,6 +28,59 @@ import java.util.List;
 @ExtendWith(H2FileBasedDatabaseExtension.class)
 @Slf4j
 class Jdbi3HelpersTest {
+
+    @Nested
+    class DatabaseTypeEnum {
+
+        @Test
+        void shouldGetH2PluginInstance() {
+            var pluginOptional = Jdbi3Helpers.DatabaseType.pluginFromDatabaseUrl("jdbc:h2:/tmp/h2-test-db-12345/testdb");
+            assertThat(pluginOptional).containsInstanceOf(H2DatabasePlugin.class);
+        }
+
+        @Test
+        void shouldGetPostgresPluginInstance() {
+            var pluginOptional = Jdbi3Helpers.DatabaseType.pluginFromDatabaseUrl("jdbc:postgresql://localhost:5432/testdb");
+            assertThat(pluginOptional).containsInstanceOf(PostgresPlugin.class);
+        }
+
+        @Test
+        void shouldReturnEmptyOptionalForUnsupportedDatabase() {
+            assertThat(Jdbi3Helpers.DatabaseType.pluginFromDatabaseUrl("jdbc:mysql://localhost:33060/sakila"))
+                    .isEmpty();
+        }
+    }
+
+    @Nested
+    class GetPluginInstance {
+
+        @Test
+        void shouldReturnOptionalContainingPlugin_WhenClassIsAvailable() {
+            assertThat(Jdbi3Helpers.getPluginInstance(PostgresPlugin.class.getName()))
+                    .containsInstanceOf(PostgresPlugin.class);
+
+            assertThat(Jdbi3Helpers.getPluginInstance(H2DatabasePlugin.class.getName()))
+                    .containsInstanceOf(H2DatabasePlugin.class);
+        }
+
+        @Test
+        void shouldReturnEmptyOptional_WhenClassISNotAvailable() {
+            assertThat(Jdbi3Helpers.getPluginInstance("org.jdbi.v3.mysql.MysqlPlugin"))
+                    .isEmpty();
+        }
+
+        @Test
+        void shouldReturnEmptyOptional_WhenErrorInstantiatingPluginClass() {
+            assertThat(Jdbi3Helpers.getPluginInstance(MisbehavingDatabasePlugin.class.getName()))
+                    .isEmpty();
+        }
+    }
+
+    public static class MisbehavingDatabasePlugin extends JdbiPlugin.Singleton {
+        public MisbehavingDatabasePlugin() {
+            throw new IllegalStateException("I cannot be created");
+        }
+    }
 
     @Nested
     class BuildJdbi {
