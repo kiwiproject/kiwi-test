@@ -61,7 +61,7 @@ import java.util.function.Consumer;
  *
  * {@literal @}RegisterExtension
  *  static final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
- *     .props(MONGO TEST PROPERTIES)
+ *     .props(MONGO_TEST_PROPERTIES)
  *     .dropTime(DropTime.BEFORE)
  *     .skipDatabaseCleanup(true)
  *     .build();
@@ -73,7 +73,7 @@ import java.util.function.Consumer;
  *
  * {@literal @}RegisterExtension
  *  static final MongoDbExtension mongoDbExtension = MongoDbExtension.builder()
- *     .props(MONGO TEST PROPERTIES)
+ *     .props(MONGO_TEST_PROPERTIES)
  *     .dropTime(DropTime.NEVER)
  *     .cleanupOption(CleanupOption.NEVER)
  *     .skipDatabaseCleanup(false)
