@@ -3,6 +3,7 @@ package org.kiwiproject.test.junit.jupiter;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Objects.nonNull;
 import static java.util.function.Predicate.not;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.kiwiproject.logging.LazyLogParameterSupplier.lazy;
 
@@ -10,9 +11,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.jdbi.v3.core.statement.SqlLogger;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -23,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Shared code for use by the JDBI 3 extension classes.
@@ -30,6 +34,87 @@ import java.util.List;
 @UtilityClass
 @Slf4j
 class Jdbi3Helpers {
+
+    /**
+     * Currently supports only Postgres and H2.
+     */
+    enum DatabaseType {
+
+        H2(H2DatabasePlugin.class.getName()),
+
+        POSTGRES("org.jdbi.v3.postgres.PostgresPlugin");
+
+        @Getter
+        private final String pluginClassName;
+
+        DatabaseType(String pluginClassName) {
+            this.pluginClassName = pluginClassName;
+        }
+
+        /**
+         * Given a JDBC database URL, attempt to find and instantiate a plugin.
+         * <p>
+         * Currently supports only H2 and Postgres.
+         *
+         * @param databaseUrl the JDBC database URL
+         * @return an Optional with a plugin instance or an empty Optional
+         */
+        static Optional<JdbiPlugin> pluginFromDatabaseUrl(String databaseUrl) {
+            return databaseTypeFromDatabaseUrl(databaseUrl)
+                    .flatMap(databaseType -> getPluginInstance(databaseType.getPluginClassName()));
+        }
+
+        /**
+         * Determine the database type from the given JDBC database URL.
+         * <p>
+         * Currently supports only H2 and Postgres.
+         *
+         * @param databaseUrl the JDBC database URL
+         * @return an Optional containing the database type if found, otherwise an empty Optional
+         */
+        static Optional<DatabaseType> databaseTypeFromDatabaseUrl(String databaseUrl) {
+            if (databaseUrl.startsWith("jdbc:postgresql:")) {
+                return Optional.of(POSTGRES);
+            } else if (databaseUrl.startsWith("jdbc:h2:")) {
+                return Optional.of(H2);
+            }
+
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Get a plugin instance for the given class name.
+     *
+     * @param pluginClassName the plugin class name
+     * @return an Optional containing a plugin instance, or empty Optional if plugin class not available or an error
+     * occurs. If an error occurs, that fact is logged at WARN level.
+     */
+    static Optional<JdbiPlugin> getPluginInstance(String pluginClassName) {
+        var result = isPluginAvailable(pluginClassName);
+
+        if (isTrue(result.getLeft())) {
+            try {
+                var pluginClass = result.getRight();
+                var pluginInstance = (JdbiPlugin) pluginClass.getDeclaredConstructor().newInstance();
+                return Optional.of(pluginInstance);
+            } catch (Exception e) {
+                LOG.warn("Error instantiating plugin for class: {}", pluginClassName);
+                return Optional.empty();
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static Pair<Boolean, Class<?>> isPluginAvailable(String pluginClassName) {
+        try {
+            var pluginClass = Class.forName(pluginClassName);
+            return Pair.of(true, pluginClass);
+        } catch (ClassNotFoundException e) {
+            return Pair.of(false, null);
+        }
+    }
 
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
@@ -40,11 +125,30 @@ class Jdbi3Helpers {
 
         jdbi.installPlugin(new SqlObjectPlugin());
 
+        findDatabasePlugin(jdbi).ifPresent(plugin -> {
+            LOG.trace("Installing database plugin {}", plugin.getClass().getName());
+            jdbi.installPlugin(plugin);
+        });
+
         plugins.stream()
                 .filter(not(Jdbi3Helpers::isSqlObjectPlugin))
                 .forEach(jdbi::installPlugin);
 
         return jdbi;
+    }
+
+    private static Optional<JdbiPlugin> findDatabasePlugin(Jdbi jdbi) {
+        try {
+            return jdbi.withHandle(handle -> {
+                var connection = handle.getConnection();
+                var metaData = connection.getMetaData();
+                var databaseUrl = metaData.getURL();
+                return DatabaseType.pluginFromDatabaseUrl(databaseUrl);
+            });
+        } catch (SQLException e) {
+            LOG.warn("Error finding database plugin", e);
+            return Optional.empty();
+        }
     }
 
     private static boolean isSqlObjectPlugin(JdbiPlugin jdbiPlugin) {
