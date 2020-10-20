@@ -64,7 +64,7 @@ class Jdbi3HelpersTest {
         }
 
         @Test
-        void shouldReturnEmptyOptional_WhenClassISNotAvailable() {
+        void shouldReturnEmptyOptional_WhenClassIsNotAvailable() {
             assertThat(Jdbi3Helpers.getPluginInstance("org.jdbi.v3.mysql.MysqlPlugin"))
                     .isEmpty();
         }
