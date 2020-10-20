@@ -29,7 +29,7 @@ import java.util.List;
  */
 @UtilityClass
 @Slf4j
-public class Jdbi3Helpers {
+class Jdbi3Helpers {
 
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
