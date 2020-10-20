@@ -30,16 +30,15 @@ import java.util.List;
 class Jdbi3DaoExtensionTest {
 
     @RegisterExtension
-    static final H2FileBasedDatabaseExtension databaseExtension = new H2FileBasedDatabaseExtension();
+    static final H2FileBasedDatabaseExtension DATABASE_EXTENSION = new H2FileBasedDatabaseExtension();
 
     @RegisterExtension
-    final Jdbi3DaoExtension<TestTableDao> jdbi3DaoExtension =
-            Jdbi3DaoExtension.<TestTableDao>builder()
-                    .daoType(TestTableDao.class)
-                    .dataSource(databaseExtension.getDataSource())
-                    .slf4jLoggerName(Jdbi3DaoExtensionTest.class.getName())
-                    .plugin(new H2DatabasePlugin())
-                    .build();
+    final Jdbi3DaoExtension<TestTableDao> jdbi3DaoExtension = Jdbi3DaoExtension.<TestTableDao>builder()
+            .daoType(TestTableDao.class)
+            .dataSource(DATABASE_EXTENSION.getDataSource())
+            .slf4jLoggerName(Jdbi3DaoExtensionTest.class.getName())
+            .plugin(new H2DatabasePlugin())
+            .build();
 
     private Handle handle;
     private TestTableDao dao;

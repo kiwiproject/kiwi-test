@@ -28,15 +28,14 @@ import java.util.List;
 class Jdbi3ExtensionTest {
 
     @RegisterExtension
-    static final H2FileBasedDatabaseExtension databaseExtension = new H2FileBasedDatabaseExtension();
+    static final H2FileBasedDatabaseExtension DATABASE_EXTENSION = new H2FileBasedDatabaseExtension();
 
     @RegisterExtension
-    final Jdbi3Extension jdbi3Extension =
-            Jdbi3Extension.builder()
-                    .dataSource(databaseExtension.getDataSource())
-                    .slf4jLoggerName(Jdbi3ExtensionTest.class.getName())
-                    .plugin(new H2DatabasePlugin())
-                    .build();
+    final Jdbi3Extension jdbi3Extension = Jdbi3Extension.builder()
+            .dataSource(DATABASE_EXTENSION.getDataSource())
+            .slf4jLoggerName(Jdbi3ExtensionTest.class.getName())
+            .plugin(new H2DatabasePlugin())
+            .build();
 
     private Handle handle;
     private TestTableDao dao;
