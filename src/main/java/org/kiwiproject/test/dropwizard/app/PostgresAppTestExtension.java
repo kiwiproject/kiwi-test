@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * Note: The embedded PostgreSQL extension supports both Flyway and Liquibase, but we are assuming migrations are Liquibase.
  * <p>
  * To include this extension in an AppTest then add the following at the top of the class:
- * <p>
  * <pre>
  * {@literal @}RegisterExtension
  *  public static PostgresAppTestExtension&lt;AppConfiguration&gt; POSTGRES_APP =
@@ -35,10 +34,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * You can also provide one or more {@link ConfigOverride} values to the extension:
  * <pre>
  * {@literal @}RegisterExtension
- *  public static PostgresAppTestExtension<AppConfiguration> POSTGRES_APP =
+ *  public static PostgresAppTestExtension&lt;AppConfiguration&gt; POSTGRES_APP =
  *      new PostgresAppTestExtension("migrations.xml", "config.yml", App.class,
  *          ConfigOverride.config("someValue", "42"),
- *          ConfigOverride.config("aLazyValue", () -> calculateTheLazyValue()));
+ *          ConfigOverride.config("aLazyValue", () -&gt; calculateTheLazyValue()));
  * </pre>
  * <p>
  * WARNING: When using this extension you should <strong>not</strong> register {@code DropwizardExtensionsSupport} or
