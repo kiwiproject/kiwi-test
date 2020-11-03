@@ -15,6 +15,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.test.jdbi.Jdbi3GeneratedKeys;
 
@@ -24,6 +26,7 @@ import java.sql.SQLException;
 @DisplayName("PostgresLiquibaseTestExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
+@EnabledOnOs(OS.LINUX)
 class PostgresLiquibaseTestExtensionTest {
 
     @RegisterExtension
