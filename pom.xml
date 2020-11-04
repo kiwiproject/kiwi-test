@@ -35,7 +35,7 @@
         <byte.buddy.version>1.10.10</byte.buddy.version>
         <commons-text.version>1.9</commons-text.version>
         <curator.version>2.13.0</curator.version>
-        <dropwizard.version>2.0.14</dropwizard.version>
+        <dropwizard.version>2.0.15</dropwizard.version>
         <dropwizard.metrics.version>4.1.14</dropwizard.metrics.version>
         <dropwizard.modules.dropwizard-jdbi.version>2.0.12</dropwizard.modules.dropwizard-jdbi.version>
         <embedded-postgres.version>1.2.6</embedded-postgres.version>
@@ -50,6 +50,7 @@
         <jsonassert.version>1.5.0</jsonassert.version>
         <liquibase.version>3.8.9</liquibase.version>
         <metrics-jdbi3.version>4.1.14</metrics-jdbi3.version>
+        <metrics-jetty9.version>4.1.14</metrics-jetty9.version>
         <mongo-java-driver.version>3.10.1</mongo-java-driver.version>
         <zookeeper.version>3.4.14</zookeeper.version>
 
@@ -421,6 +422,19 @@
             <artifactId>metrics-healthchecks</artifactId>
             <version>${dropwizard.metrics.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jetty9</artifactId>
+            <version>${metrics-jetty9.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
