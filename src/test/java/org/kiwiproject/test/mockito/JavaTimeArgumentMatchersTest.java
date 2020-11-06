@@ -28,12 +28,12 @@ class JavaTimeArgumentMatchersTest {
     @Nested
     class IsNearInstant {
 
-        private Util util;
+        private Timekeeper timekeeper;
 
         @BeforeEach
         void setUp() {
-            util = mock(Util.class);
-            when(util.announce(any(Instant.class))).thenReturn("The time is now 2020-11-06T02:12:26.890880Z");
+            timekeeper = mock(Timekeeper.class);
+            when(timekeeper.announce(any(Instant.class))).thenReturn("The time is now 2020-11-06T02:12:26.890880Z");
         }
 
         @Test
@@ -68,7 +68,7 @@ class JavaTimeArgumentMatchersTest {
             void shouldSucceed_WhenWithinExpectedTime_PlusOrMinusSlack(long millis) {
                 var anInstant = callAnnounce(millis);
 
-                assertThatCode(() -> verify(util).announce(argThat(isNear(anInstant))))
+                assertThatCode(() -> verify(timekeeper).announce(argThat(isNear(anInstant))))
                         .doesNotThrowAnyException();
             }
 
@@ -77,7 +77,7 @@ class JavaTimeArgumentMatchersTest {
             void shouldFail_WhenOutsideExpectedTime_PlusOrMinusSlack(long millis) {
                 var anInstant = callAnnounce(millis);
 
-                assertThatThrownBy(() -> verify(util).announce(argThat(isNear(anInstant))))
+                assertThatThrownBy(() -> verify(timekeeper).announce(argThat(isNear(anInstant))))
                         .isInstanceOf(AssertionError.class);
             }
         }
@@ -102,7 +102,7 @@ class JavaTimeArgumentMatchersTest {
                 var anInstant = callAnnounce(millis);
 
                 var slack = Duration.ofMillis(slackMillis);
-                assertThatCode(() -> verify(util).announce(argThat(isNear(anInstant, slack))))
+                assertThatCode(() -> verify(timekeeper).announce(argThat(isNear(anInstant, slack))))
                         .doesNotThrowAnyException();
             }
 
@@ -120,19 +120,20 @@ class JavaTimeArgumentMatchersTest {
                 var anInstant = callAnnounce(millis);
 
                 var slack = Duration.ofMillis(slackMillis);
-                assertThatThrownBy(() -> verify(util).announce(argThat(isNear(anInstant, slack))))
+                assertThatThrownBy(() -> verify(timekeeper).announce(argThat(isNear(anInstant, slack))))
                         .isInstanceOf(AssertionError.class);
             }
         }
 
+        // Call util.announce with the argument as (now + millisToAdd)
         private Instant callAnnounce(long millisToAdd) {
             var anInstant = Instant.now();
-            util.announce(anInstant.plusMillis(millisToAdd));
+            timekeeper.announce(anInstant.plusMillis(millisToAdd));
             return anInstant;
         }
     }
 
-    static class Util {
+    static class Timekeeper {
 
         String announce(Instant anInstant) {
             return "The time is now " + anInstant.toString();
