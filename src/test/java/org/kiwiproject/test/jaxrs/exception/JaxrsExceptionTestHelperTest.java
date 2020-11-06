@@ -43,8 +43,10 @@ class JaxrsExceptionTestHelperTest {
 
             var jaxrsException = JaxrsExceptionTestHelper.toJaxrsException(response);
 
-            assertThat(jaxrsException).isEqualToComparingOnlyGivenFields(originalException,
-                    "statusCode", "message", "errors", "otherData");
+            assertThat(jaxrsException.getStatusCode()).isEqualTo(originalException.getStatusCode());
+            assertThat(jaxrsException.getErrors()).isEqualTo(originalException.getErrors());
+            assertThat(jaxrsException.getOtherData()).isEqualTo(originalException.getOtherData());
+            assertThat(jaxrsException.getRollUpStatus()).isEqualTo(originalException.getRollUpStatus());
         }
 
         @Test
