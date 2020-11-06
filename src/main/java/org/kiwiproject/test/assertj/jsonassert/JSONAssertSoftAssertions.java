@@ -32,6 +32,7 @@ public class JSONAssertSoftAssertions {
      *
      * @param softAssertions the soft assertions to use
      */
+    @SuppressWarnings("deprecation")  // we know that we are referencing a deprecated class in the docs
     public JSONAssertSoftAssertions(AbstractSoftAssertions softAssertions) {
         this.softAssertions = softAssertions;
     }
