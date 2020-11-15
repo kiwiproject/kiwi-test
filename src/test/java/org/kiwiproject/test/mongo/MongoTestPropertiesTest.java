@@ -298,6 +298,38 @@ class MongoTestPropertiesTest {
     }
 
     @Nested
+    class LooksLikeTestDatabaseName {
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "test-service_unit_test_localhost_1605412659693",
+                "test-service_unit_test_host1_1605412593043",
+                "this-is-a-service_unit_test_host1_acme_com_1605412633625",
+                "another_service___with_a_really_very_long_name_ut_1605412775385",
+        })
+        void shouldBeTrue_WhenIsUnitTestDatabaseName(String databaseName) {
+            assertThat(MongoTestProperties.looksLikeTestDatabaseName(databaseName)).isTrue();
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "admin",
+                "local",
+                "test",
+                "customer_database",
+                "customer_unit_test_",
+                "customer_unit_test_notDigits",
+                "customer_ut_",
+                "customer_ut_notDigits",
+                "database_with_timestamp_1605412571082",
+                "_1605414136687"
+        })
+        void shouldBeFalse_WhenIsUnitTestDatabaseName(String databaseName) {
+            assertThat(MongoTestProperties.looksLikeTestDatabaseName(databaseName)).isFalse();
+        }
+    }
+
+    @Nested
     class GetDatabaseNameWithoutTimestamp {
 
         @ParameterizedTest
