@@ -161,18 +161,36 @@ class MongoDbExtensionTest {
 
         @ParameterizedTest
         @ValueSource(strings = {
-                "test-service_unit_test_host1",
-                "another-service_unit_test_localhost",
-                "yet-another-service_unit_test_localhost"
+                "test-service_unit_test_host1_1605410622974",
+                "another-service_unit_test_localhost_1605410631247",
+                "yet-another-service_unit_test_localhost_1605410638221"
         })
         void shouldBeFalse_WhenDatabaseName_DoesNotContainTestDatabaseNameWithoutTimestamp(String databaseName) {
+            verifyTestPropertiesDatabaseName();
+
+            assertThat(MongoDbExtension.isUnitTestDatabaseForThisService(databaseName, testProperties))
+                    .isFalse();
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "admin",
+                "local",
+                "test",
+                "customer_database"
+        })
+        void shouldBeFalse_WhenDatabaseName_IsNotInOurExpectedFormat(String databaseName) {
+            verifyTestPropertiesDatabaseName();
+
+            assertThat(MongoDbExtension.isUnitTestDatabaseForThisService(databaseName, testProperties))
+                    .isFalse();
+        }
+
+        private void verifyTestPropertiesDatabaseName() {
             var testPropsDbName = testProperties.getDatabaseNameWithoutTimestamp();
             verify(testPropsDbName.equals("test-service_unit_test_localhost"),
                     "Expected testProperties database name (w/o timestamp) to be: test-service_unit_test_localhost but was: %s",
                     testPropsDbName);
-
-            assertThat(MongoDbExtension.isUnitTestDatabaseForThisService(databaseName, testProperties))
-                    .isFalse();
         }
     }
 
@@ -200,6 +218,9 @@ class MongoDbExtensionTest {
     class WhenDatabasesFromPriorTestRunsExist {
 
         private MongoClient mongoClient;
+        private String customerDatabaseName;
+        private String orderDatabaseName;
+        private String marketingDatabaseName;
         private String expiredDatabaseName1;
         private String expiredDatabaseName2;
         private String notExpiredDatabaseName1;
@@ -209,6 +230,9 @@ class MongoDbExtensionTest {
         void setUp() {
             mongoClient = testProperties.newMongoClient();
 
+            customerDatabaseName = createDatabase("customer_database");
+            orderDatabaseName = createDatabase("order_database");
+            marketingDatabaseName = createDatabase("marketing_database");
             expiredDatabaseName1 = createDatabaseTimestampedMinutesBefore(testProperties, 11);
             expiredDatabaseName2 = createDatabaseTimestampedMinutesBefore(testProperties, 10);
             notExpiredDatabaseName1 = createDatabaseTimestampedMinutesBefore(testProperties, 9);
@@ -217,6 +241,10 @@ class MongoDbExtensionTest {
 
         private String createDatabaseTimestampedMinutesBefore(MongoTestProperties testProperties, int minutesToSubtract) {
             var databaseName = databaseNameTimestampedMinutesBefore(testProperties, minutesToSubtract);
+            return createDatabase(databaseName);
+        }
+
+        private String createDatabase(String databaseName) {
             var database = mongoClient.getDatabase(databaseName);
             database.getCollection("test_collection").insertOne(new Document());
             return databaseName;
@@ -235,6 +263,7 @@ class MongoDbExtensionTest {
             var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
 
             assertThat(databaseNames)
+                    .contains(customerDatabaseName, orderDatabaseName, marketingDatabaseName)
                     .contains(notExpiredDatabaseName1, notExpiredDatabaseName2)
                     .doesNotContain(expiredDatabaseName1, expiredDatabaseName2);
         }
@@ -247,7 +276,8 @@ class MongoDbExtensionTest {
                     .build();
 
             var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
-            assertThat(databaseNames).isEmpty();
+            assertThat(databaseNames)
+                    .containsExactlyInAnyOrder(customerDatabaseName, orderDatabaseName, marketingDatabaseName);
         }
 
         @Test
@@ -270,8 +300,9 @@ class MongoDbExtensionTest {
                     .build();
 
             var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
-            assertThat(databaseNames).contains(
-                    notExpiredDatabaseName1, notExpiredDatabaseName2, expiredDatabaseName1, expiredDatabaseName2);
+            assertThat(databaseNames)
+                    .contains(customerDatabaseName, orderDatabaseName, marketingDatabaseName)
+                    .contains(notExpiredDatabaseName1, notExpiredDatabaseName2, expiredDatabaseName1, expiredDatabaseName2);
         }
     }
 }

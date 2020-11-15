@@ -17,6 +17,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import lombok.Builder;
 import lombok.Value;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.kiwiproject.net.KiwiUrls;
 
 import javax.annotation.Nullable;
@@ -68,6 +69,9 @@ public class MongoTestProperties {
     // Windows invalid characters:    /\. "$*<>:|?
     // See https://docs.mongodb.com/manual/reference/limits/#naming-restrictions
     private static final String INVALID_DB_NAME_CHARS = "/\\. \"$*<>:|?";
+
+    // Minimum expected length for timestamps returned by System.currentTimeMillis()
+    private static final int MIN_TIMESTAMP_LENGTH = 13;
 
     String hostName;
     int port;
@@ -162,7 +166,7 @@ public class MongoTestProperties {
         }
 
         // If name still exceeds limit, chop service name down to 46 characters. This also assumes the short test ID
-        // is 4 characters long, such that the total length is (46 + 4 + 13) = 60
+        // is 4 characters long, such that the total length is (46 + 4 + 13) = 63
         // NOTE: 46 characters is accurate only so long as System.currentTimeMillis() returns a number 13 digits long,
         // which means we're good through Sat Nov 20 2286 17:46:39 GMT+0000 (GMT)
         if (nameExceedsMongoLength(dbName)) {
@@ -229,6 +233,35 @@ public class MongoTestProperties {
      */
     public String getDatabaseNameWithoutTimestamp() {
         return databaseNameWithoutTimestamp(databaseName);
+    }
+
+    /**
+     * Do a basic check whether the given database name contains either {@link #UNIT_TEST_ID} or
+     * {@link #UNIT_TEST_ID_SHORT}, which is a pretty good indicator that the database name was created
+     * by this class. If the name contains either of those, then also check for a timestamp as the last
+     * part in the name following the last underscore, i.e. find the last underscore and check if the remainder
+     * of the name contains only digits.
+     *
+     * @param databaseName the database name to check
+     * @return true if the given database name looks like a name that was created by this class
+     */
+    public static boolean looksLikeTestDatabaseName(String databaseName) {
+        var containsUnitTestInName = databaseName.contains(UNIT_TEST_ID) || databaseName.contains(UNIT_TEST_ID_SHORT);
+
+        if (!containsUnitTestInName) {
+            return false;
+        }
+
+        var index = databaseName.lastIndexOf('_');
+        verify(index >= 0,
+                "database name should have two or more underscores unless UNIT_TEST_ID or UNIT_TEST_ID_SHORT were changed!");
+        var lastNameSegment = databaseName.substring(index + 1);
+
+        // Check the last segment is all digits and its length is at least 13 digits, since System.currentTimeMillis
+        // currently returns a 13 digit number, and will continue to do so until the year 2286. After that it will
+        // be 14 digits long!
+
+        return lastNameSegment.length() >= MIN_TIMESTAMP_LENGTH && NumberUtils.isDigits(lastNameSegment);
     }
 
     /**

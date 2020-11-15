@@ -21,6 +21,7 @@ import org.kiwiproject.test.mongo.MongoTestProperties;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -246,8 +247,13 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
 
     @VisibleForTesting
     static boolean isUnitTestDatabaseForThisService(String databaseName, MongoTestProperties props) {
-        return MongoTestProperties.databaseNameWithoutTimestamp(databaseName)
-                .equals(props.getDatabaseNameWithoutTimestamp());
+        if (MongoTestProperties.looksLikeTestDatabaseName(databaseName)) {
+            return Objects.equals(
+                    MongoTestProperties.databaseNameWithoutTimestamp(databaseName),
+                    props.getDatabaseNameWithoutTimestamp());
+        }
+
+        return false;
     }
 
     @VisibleForTesting
