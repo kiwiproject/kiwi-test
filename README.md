@@ -1,5 +1,5 @@
 ### Kiwi Test
-[![Build Status](https://travis-ci.com/kiwiproject/kiwi-test.svg?branch=master)](https://travis-ci.com/kiwiproject/kiwi-test)
+[![Build](https://github.com/kiwiproject/kiwi-test/workflows/build/badge.svg)](https://github.com/kiwiproject/kiwi-test/actions?query=workflow%3Abuild)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_kiwi-test&metric=alert_status)](https://sonarcloud.io/dashboard?id=kiwiproject_kiwi-test)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_kiwi-test&metric=coverage)](https://sonarcloud.io/dashboard?id=kiwiproject_kiwi-test)
 [![javadoc](https://javadoc.io/badge2/org.kiwiproject/kiwi-test/javadoc.svg)](https://javadoc.io/doc/org.kiwiproject/kiwi-test)
