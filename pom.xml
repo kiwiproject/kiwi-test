@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.kiwiproject</groupId>
         <artifactId>kiwi-parent</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </parent>
 
     <artifactId>kiwi-test</artifactId>
@@ -29,10 +29,10 @@
     <properties>
         <!-- Versions for required dependencies -->
         <guava.version>30.0-jre</guava.version>
-        <kiwi.version>0.15.0</kiwi.version>
+        <kiwi.version>0.16.0</kiwi.version>
 
         <!-- Versions for provided dependencies -->
-        <byte.buddy.version>1.10.10</byte.buddy.version>
+        <byte.buddy.version>1.10.18</byte.buddy.version>
         <commons-text.version>1.9</commons-text.version>
         <curator.version>2.13.0</curator.version>
         <dropwizard.version>2.0.15</dropwizard.version>
