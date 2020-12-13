@@ -47,7 +47,8 @@ import java.util.function.Consumer;
  * {@link DropTime} and {@link CleanupOption} only make sense during the execution of a single test class. For example
  * given a {@code SomethingUsingMongoTest} class containing a bunch of individual tests, these options can still be
  * used, but once JUnit has executed all the tests in the class, obviously the database and collections are destroyed
- * when the in-memory server shuts down.
+ * when the in-memory server shuts down. An alternative to this extension for using an in-memory MongoDB is the
+ * {@link MongoServerExtension}.
  * <p>
  * For example using a constructor:
  * <pre>
@@ -81,6 +82,8 @@ import java.util.function.Consumer;
  *     .databaseCleanupThreshold(Duration.ofMinutes(60))
  *     .build();
  * </pre>
+ *
+ * @see MongoServerExtension
  */
 @Slf4j
 public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, AfterAllCallback {

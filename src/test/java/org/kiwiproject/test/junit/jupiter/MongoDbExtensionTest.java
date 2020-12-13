@@ -2,8 +2,8 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static com.google.common.base.Verify.verify;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.buildMongoTestProperties;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.startInMemoryMongoServer;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.buildMongoTestProperties;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.startInMemoryMongoServer;
 
 import com.mongodb.MongoClient;
 import de.bwaldvogel.mongo.MongoServer;
@@ -260,7 +260,7 @@ class MongoDbExtensionTest {
         @Test
         void shouldCleanupDatabasesOlderThanThreshold() {
             new MongoDbExtension(testProperties);
-            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            var databaseNames = MongoDbExtensionTestHelpers.databaseNames(mongoClient);
 
             assertThat(databaseNames)
                     .contains(customerDatabaseName, orderDatabaseName, marketingDatabaseName)
@@ -275,7 +275,7 @@ class MongoDbExtensionTest {
                     .databaseCleanupThreshold(Duration.ofSeconds(45))
                     .build();
 
-            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            var databaseNames = MongoDbExtensionTestHelpers.databaseNames(mongoClient);
             assertThat(databaseNames)
                     .containsExactlyInAnyOrder(customerDatabaseName, orderDatabaseName, marketingDatabaseName);
         }
@@ -287,7 +287,7 @@ class MongoDbExtensionTest {
                     .databaseCleanupThreshold(Duration.ofMinutes(45))
                     .build();
 
-            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            var databaseNames = MongoDbExtensionTestHelpers.databaseNames(mongoClient);
             assertThat(databaseNames).contains(
                     notExpiredDatabaseName1, notExpiredDatabaseName2, expiredDatabaseName1, expiredDatabaseName2);
         }
@@ -299,7 +299,7 @@ class MongoDbExtensionTest {
                     .skipDatabaseCleanup(true)
                     .build();
 
-            var databaseNames = MongoDbTestHelpers.databaseNames(mongoClient);
+            var databaseNames = MongoDbExtensionTestHelpers.databaseNames(mongoClient);
             assertThat(databaseNames)
                     .contains(customerDatabaseName, orderDatabaseName, marketingDatabaseName)
                     .contains(notExpiredDatabaseName1, notExpiredDatabaseName2, expiredDatabaseName1, expiredDatabaseName2);
