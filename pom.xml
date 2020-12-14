@@ -518,6 +518,13 @@
         </dependency>
 
         <dependency>
+            <groupId>de.bwaldvogel</groupId>
+            <artifactId>mongo-java-server</artifactId>
+            <version>${mongo-java-server.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <version>${zookeeper.version}</version>
@@ -548,13 +555,6 @@
         </dependency>
 
         <!-- test dependencies -->
-
-        <dependency>
-            <groupId>de.bwaldvogel</groupId>
-            <artifactId>mongo-java-server</artifactId>
-            <version>${mongo-java-server.version}</version>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 

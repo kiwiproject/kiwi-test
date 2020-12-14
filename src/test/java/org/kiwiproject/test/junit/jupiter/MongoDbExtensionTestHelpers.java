@@ -17,7 +17,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 @UtilityClass
-class MongoDbTestHelpers {
+class MongoDbExtensionTestHelpers {
 
     public static final String TEST_COLLECTION_NAME = "test_collection";
 

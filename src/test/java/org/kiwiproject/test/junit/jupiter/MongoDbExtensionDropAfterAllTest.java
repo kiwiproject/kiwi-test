@@ -2,13 +2,13 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoDataInCollections;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoDocumentsAndInsertFirstDocument;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoDocumentsAndInsertSecondDocument;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertNoTestDatabaseExists;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.assertTestDatabaseExists;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.buildMongoTestProperties;
-import static org.kiwiproject.test.junit.jupiter.MongoDbTestHelpers.startInMemoryMongoServer;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoDataInCollections;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoDocumentsAndInsertFirstDocument;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoDocumentsAndInsertSecondDocument;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoTestDatabaseExists;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertTestDatabaseExists;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.buildMongoTestProperties;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.startInMemoryMongoServer;
 
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
