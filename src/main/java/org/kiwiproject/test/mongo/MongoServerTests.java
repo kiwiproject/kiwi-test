@@ -26,7 +26,7 @@ public class MongoServerTests {
     /**
      * Convenience method to build the Mongo database connection string for the given {@link MongoServer}.
      * <p>
-     * Example: {@code mongodb://localhost:45678
+     * Example: {@code mongodb://localhost:45678}
      *
      * @param mongoServer the MongoServer instance, used to obtain the host and port
      * @return the connection string
