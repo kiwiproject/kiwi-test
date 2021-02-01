@@ -88,24 +88,24 @@ class ParameterizedValidationTestHelperTest {
             assertThat(errors).hasSize(4);
 
             assertThat(first(errors)).contains("input: [X]")
-                    .contains("Expected size:<2> but was:<1>")
+                    .contains("Expected size: 2 but was: 1")
                     .contains("propertyPath=lastName")
                     .contains("length must be between 2 and 100");
 
             assertThat(second(errors)).contains("input: []")
-                    .contains("Expected size:<0> but was:<2>")
+                    .contains("Expected size: 0 but was: 2")
                     .contains("propertyPath=lastName")
                     .contains("must not be blank")
                     .contains("length must be between 2 and 100");
 
             assertThat(third(errors)).contains("input: [ ]")
-                    .contains("Expected size:<1> but was:<2>")
+                    .contains("Expected size: 1 but was: 2")
                     .contains("propertyPath=lastName")
                     .contains("must not be blank")
                     .contains("length must be between 2 and 100");
 
             assertThat(fourth(errors)).contains("input: [null]")
-                    .contains("Expected size:<0> but was:<1>")
+                    .contains("Expected size: 0 but was: 1")
                     .contains("propertyPath=lastName")
                     .contains("must not be blank");
         }
@@ -164,11 +164,11 @@ class ParameterizedValidationTestHelperTest {
             assertThat(first(errors))
                     .contains("input: [Smith]")
                     .contains("Expecting ArrayList:")
-                    .contains("<[]>")
+                    .contains("[]")
                     .contains("to contain only")
-                    .contains("<[\"must not be blank\"]>")
+                    .contains("[\"must not be blank\"]")
                     .contains("but could not find the following element(s):")
-                    .contains("<[\"must not be blank\"]>");
+                    .contains("[\"must not be blank\"]");
 
             // NOTE:
             // We are omitting assertion on the value below, since the order is not deterministic, i.e. sometimes
@@ -183,9 +183,9 @@ class ParameterizedValidationTestHelperTest {
                     .contains("Expecting ArrayList:")
                     // (see note above on omitting value assertion)
                     .contains("to contain only")
-                    .contains("<[\"length must be between 2 and 100\"]>")
+                    .contains("[\"length must be between 2 and 100\"]")
                     .contains("but the following element(s) were unexpected:")
-                    .contains("<[\"must not be blank\"]>");
+                    .contains("[\"must not be blank\"]");
         }
     }
 
