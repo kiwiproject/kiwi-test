@@ -29,7 +29,7 @@
     <properties>
         <!-- Versions for required dependencies -->
         <guava.version>30.0-jre</guava.version>
-        <kiwi.version>0.18.0</kiwi.version>
+        <kiwi.version>0.19.0</kiwi.version>
 
         <!-- Versions for provided dependencies -->
         <byte.buddy.version>1.10.18</byte.buddy.version>
