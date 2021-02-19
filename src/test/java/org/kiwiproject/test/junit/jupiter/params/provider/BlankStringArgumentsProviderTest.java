@@ -11,7 +11,13 @@ class BlankStringArgumentsProviderTest {
 
     @ParameterizedTest
     @ArgumentsSource(BlankStringArgumentsProvider.class)
-    void testThatEachProvidedArgumentIsBlank(String blankString) {
+    void shouldProvidedBlankArguments(String blankString) {
+        assertThat(blankString).isBlank();
+    }
+
+    @ParameterizedTest
+    @BlankStringSource
+    void shouldProvidedBlankArgumentsUsingAnnotation(String blankString) {
         assertThat(blankString).isBlank();
     }
 }
