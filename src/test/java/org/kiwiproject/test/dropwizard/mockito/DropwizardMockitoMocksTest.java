@@ -60,6 +60,11 @@ class DropwizardMockitoMocksTest {
         }
 
         @Test
+        void shouldSetAdminEnvironment() {
+            assertIsMockitoMock(env.admin());
+        }
+
+        @Test
         void shouldSetObjectMapper() {
             assertThat(env.getObjectMapper()).isSameAs(OBJECT_MAPPER);
         }
@@ -114,6 +119,13 @@ class DropwizardMockitoMocksTest {
         }
 
         @Test
+        void shouldSetAdminEnvironment() {
+            var adminEnvironment = context.adminEnvironment();
+            assertIsMockitoMock(adminEnvironment);
+            assertThat(context.environment().admin()).isSameAs(adminEnvironment);
+        }
+
+        @Test
         void shouldSetObjectMapper() {
             var mapper = context.objectMapper();
             assertThat(mapper).isSameAs(OBJECT_MAPPER);
@@ -155,6 +167,7 @@ class DropwizardMockitoMocksTest {
                 assertVerifyExceptionThrownBy(softly, () -> DropwizardMockitoMocks.mockHealthCheckRegistry(realEnv));
                 assertVerifyExceptionThrownBy(softly, () -> DropwizardMockitoMocks.mockMetricRegistry(realEnv));
                 assertVerifyExceptionThrownBy(softly, () -> DropwizardMockitoMocks.mockLifecycleEnvironment(realEnv));
+                assertVerifyExceptionThrownBy(softly, () -> DropwizardMockitoMocks.mockAdminEnvironment(realEnv));
                 assertVerifyExceptionThrownBy(softly,
                         () -> DropwizardMockitoMocks.useObjectMapper(realEnv, OBJECT_MAPPER));
                 assertVerifyExceptionThrownBy(softly,
@@ -198,6 +211,13 @@ class DropwizardMockitoMocksTest {
         }
 
         @Test
+        void shouldMockAdminEnvironment() {
+            var adminEnv = DropwizardMockitoMocks.mockAdminEnvironment(env);
+            assertIsMockitoMock(adminEnv);
+            assertThat(env.admin()).isSameAs(adminEnv);
+        }
+
+        @Test
         void shouldUseObjectMapper() {
             var mapper = Jackson.newMinimalObjectMapper();
             DropwizardMockitoMocks.useObjectMapper(env, mapper);
@@ -217,7 +237,7 @@ class DropwizardMockitoMocksTest {
         assertThat(Mockito.mockingDetails(object).isMock()).isTrue();
     }
 
-    static class TestConfig extends Configuration {
+    private static class TestConfig extends Configuration {
     }
 
 }

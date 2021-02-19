@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Verify;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Environment;
 import lombok.experimental.UtilityClass;
 import org.kiwiproject.test.validation.ValidationTestHelper;
@@ -53,6 +54,7 @@ public class DropwizardMockitoMocks {
         mockHealthCheckRegistry(env);
         mockMetricRegistry(env);
         mockLifecycleEnvironment(env);
+        mockAdminEnvironment(env);
         useObjectMapper(env, mapper);
         useValidator(env, validator);
         return env;
@@ -79,16 +81,17 @@ public class DropwizardMockitoMocks {
      * @return a context object providing easy access to the mocked Dropwizard application objects
      */
     public static DropwizardMockitoContext mockDropwizard(ObjectMapper mapper, Validator validator) {
-        var env = mock(Environment.class);
+        var env = mockEnvironment(mapper, validator);
         useObjectMapper(env, mapper);
         useValidator(env, validator);
 
         return DropwizardMockitoContext.builder()
                 .environment(env)
-                .jersey(mockJerseyEnvironment(env))
-                .healthChecks(mockHealthCheckRegistry(env))
-                .metrics(mockMetricRegistry(env))
-                .lifecycle(mockLifecycleEnvironment(env))
+                .adminEnvironment(env.admin())
+                .jersey(env.jersey())
+                .healthChecks(env.healthChecks())
+                .metrics(env.metrics())
+                .lifecycle(env.lifecycle())
                 .objectMapper(mapper)
                 .validator(validator)
                 .build();
@@ -144,6 +147,19 @@ public class DropwizardMockitoMocks {
         var lifecycleEnvironment = mock(LifecycleEnvironment.class);
         when(mockEnv.lifecycle()).thenReturn(lifecycleEnvironment);
         return lifecycleEnvironment;
+    }
+
+    /**
+     * Mock the {@link AdminEnvironment} in the given Dropwizard environment.
+     *
+     * @param mockEnv a mock {@link Environment}
+     * @return a mock {@link AdminEnvironment}
+     */
+    public static AdminEnvironment mockAdminEnvironment(Environment mockEnv) {
+        verifyIsMockitoMock(mockEnv);
+        var adminEnvironment = mock(AdminEnvironment.class);
+        when(mockEnv.admin()).thenReturn(adminEnvironment);
+        return adminEnvironment;
     }
 
     /**

@@ -5,6 +5,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Environment;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,6 +24,7 @@ import javax.validation.Validator;
 @Builder(access = AccessLevel.PACKAGE)
 public class DropwizardMockitoContext {
     private final Environment environment;
+    private final AdminEnvironment adminEnvironment;
     private final JerseyEnvironment jersey;
     private final HealthCheckRegistry healthChecks;
     private final MetricRegistry metrics;
