@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  *
  * @see RandomIntSource
  */
-public class RandomIntArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<RandomIntSource> {
+class RandomIntArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<RandomIntSource> {
 
     private RandomIntSource randomIntSource;
 
