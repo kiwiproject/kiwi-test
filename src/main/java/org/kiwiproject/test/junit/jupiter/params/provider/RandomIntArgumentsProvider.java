@@ -1,5 +1,7 @@
 package org.kiwiproject.test.junit.jupiter.params.provider;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -34,12 +36,14 @@ class RandomIntArgumentsProvider implements ArgumentsProvider, AnnotationConsume
      */
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+        checkArgument(randomIntSource.min() <= randomIntSource.max(), "min must be equal or less than max");
+
         var random = ThreadLocalRandom.current();
-        var min = randomIntSource.min();
-        var max = randomIntSource.max() + 1L;
+        var originInclusive = randomIntSource.min();
+        var boundExclusive = randomIntSource.max() + 1L;
         var count = randomIntSource.count();
 
-        return Stream.generate(() -> random.nextLong(min, max))
+        return Stream.generate(() -> random.nextLong(originInclusive, boundExclusive))
                 .map(Math::toIntExact)
                 .map(Arguments::of)
                 .limit(count);
