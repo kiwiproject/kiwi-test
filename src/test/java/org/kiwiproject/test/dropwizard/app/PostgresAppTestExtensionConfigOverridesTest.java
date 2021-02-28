@@ -15,19 +15,13 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-/**
- * @implNote See the implementation note in {@link PostgresAppTestExtensionTest}.
- */
 @DisplayName("PostgresAppTestExtension: ConfigOverrides")
-@EnabledOnOs(OS.LINUX)
 class PostgresAppTestExtensionConfigOverridesTest {
 
     @Getter
