@@ -22,6 +22,8 @@ public @interface RandomLongSource {
      * The minimum value this source will produce.
      * <p>
      * Defaults to {@link Long#MIN_VALUE}.
+     *
+     * @return the minimum value
      */
     long min() default Long.MIN_VALUE;
 
@@ -30,6 +32,7 @@ public @interface RandomLongSource {
      * <p>
      * Defaults to {@link Long#MAX_VALUE}.
      *
+     * @return the maximum value
      * @implNote When set to {@link Long#MAX_VALUE}, the maximum is actually {@code (Long.MAX_VALUE - 1)} since
      * {@link java.util.concurrent.ThreadLocalRandom#nextLong(long, long) nextLong} has an exclusive upper bound, and
      * without resorting to using {@link java.math.BigInteger} we cannot ever get to {@link Long#MAX_VALUE}. We assume
@@ -41,6 +44,8 @@ public @interface RandomLongSource {
      * The number of random longs to produce.
      * <p>
      * Defaults to 25.
+     *
+     * @return the number of longs to produce
      */
     int count() default 25;
 }
