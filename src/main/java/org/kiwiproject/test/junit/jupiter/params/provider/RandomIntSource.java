@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@code @RandomIntSource} is an {@link ArgumentsSource} that provides a limited number of random integer values
+ * {@code @RandomIntSource} is an {@link ArgumentsSource} that provides a limited number of random {@code int} values
  * for use in parameterized tests.
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})

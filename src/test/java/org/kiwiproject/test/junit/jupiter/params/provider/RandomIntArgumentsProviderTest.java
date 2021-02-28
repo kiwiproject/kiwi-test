@@ -2,6 +2,7 @@ package org.kiwiproject.test.junit.jupiter.params.provider;
 
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,29 +16,19 @@ import java.util.Arrays;
 class RandomIntArgumentsProviderTest {
 
     @Test
+    void shouldThrowIllegalArgumentException_WhenMaxLessThanMin() {
+        var randomIntSource = newRandomIntSource(5, 4, 25);
+        var provider = new RandomIntArgumentsProvider();
+        provider.accept(randomIntSource);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> provider.provideArguments(null))
+                .withMessage("min must be equal or less than max");
+    }
+
+    @Test
     void shouldProduceTheExpectedNumberOfValues() {
-        var randomIntSource = new RandomIntSource() {
-
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return RandomIntSource.class;
-            }
-
-            @Override
-            public int min() {
-                return 2;
-            }
-
-            @Override
-            public int max() {
-                return 6;
-            }
-
-            @Override
-            public int count() {
-                return 100;
-            }
-        };
+        var randomIntSource = newRandomIntSource(2, 6, 100);
 
         var provider = new RandomIntArgumentsProvider();
         provider.accept(randomIntSource);
@@ -69,14 +60,39 @@ class RandomIntArgumentsProviderTest {
     }
 
     @ParameterizedTest
-    @RandomIntSource(min = 2147483647, count = 5)
+    @RandomIntSource(min = Integer.MAX_VALUE, count = 5)
     void shouldProvideRandomIntegersWithUpperBoundAsMaxInteger(int value) {
         assertThat(value).isEqualTo(Integer.MAX_VALUE);
     }
 
     @ParameterizedTest
-    @RandomIntSource(max = -2147483648, count = 5)
-    void shouldProvideRandomIntegersWithBoundsAsMinInteger(int value) {
+    @RandomIntSource(max = Integer.MIN_VALUE, count = 5)
+    void shouldProvideRandomIntegersWithLowerBoundAsMinInteger(int value) {
         assertThat(value).isEqualTo(Integer.MIN_VALUE);
+    }
+
+    private RandomIntSource newRandomIntSource(int min, int max, int count) {
+        return new RandomIntSource() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return RandomIntSource.class;
+            }
+
+            @Override
+            public int min() {
+                return min;
+            }
+
+            @Override
+            public int max() {
+                return max;
+            }
+
+            @Override
+            public int count() {
+                return count;
+            }
+        };
     }
 }
