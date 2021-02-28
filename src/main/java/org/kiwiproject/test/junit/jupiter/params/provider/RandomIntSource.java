@@ -22,6 +22,8 @@ public @interface RandomIntSource {
      * The minimum value this source will produce.
      * <p>
      * Defaults to {@link Integer#MIN_VALUE}.
+     *
+     * @return the minimum value
      */
     int min() default Integer.MIN_VALUE;
 
@@ -29,6 +31,8 @@ public @interface RandomIntSource {
      * The maximum value this source will produce.
      * <p>
      * Defaults to {@link Integer#MAX_VALUE}.
+     *
+     * @return the maximum value
      */
     int max() default Integer.MAX_VALUE;
 
@@ -36,6 +40,8 @@ public @interface RandomIntSource {
      * The number of random integers to produce.
      * <p>
      * Defaults to 25.
+     *
+     * @return the number of integers to produce
      */
     int count() default 25;
 }
