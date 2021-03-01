@@ -100,7 +100,7 @@ public class DropwizardAppTests {
                 .filter(o -> o instanceof DropwizardResourceConfig.SpecificBinder)
                 .map(DropwizardResourceConfig.SpecificBinder.class::cast)
                 .flatMap(specificBinder -> specificBinder.getBindings().stream())
-                .filter(binding -> binding instanceof InstanceBinding)
+                .filter(InstanceBinding.class::isInstance)
                 .map(InstanceBinding.class::cast)
                 .map(InstanceBinding::getService)
                 .collect(toSet());
