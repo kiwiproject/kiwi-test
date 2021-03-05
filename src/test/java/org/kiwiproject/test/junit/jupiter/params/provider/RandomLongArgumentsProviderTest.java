@@ -45,13 +45,13 @@ class RandomLongArgumentsProviderTest {
 
     @ParameterizedTest
     @RandomLongSource
-    void shouldProvideRandomIntegersWithDefaultAnnotationValues(long value) {
+    void shouldProvideRandomLongsWithDefaultAnnotationValues(long value) {
         assertThat(value).isBetween(Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
     @ParameterizedTest
     @RandomLongSource(min = 60, max = 70, count = 75)
-    void shouldProvideRandomIntegersWithCustomBounds(long value) {
+    void shouldProvideRandomLongsWithCustomBounds(long value) {
         assertThat(value).isBetween(60L, 70L);
     }
 
