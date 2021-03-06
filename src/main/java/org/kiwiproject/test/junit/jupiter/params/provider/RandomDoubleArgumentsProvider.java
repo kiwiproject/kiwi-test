@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 /**
- * An {@link ArgumentsProvider} that provides random integer values. Accepts a {@link RandomDoubleSource} to
+ * An {@link ArgumentsProvider} that provides random double values. Accepts a {@link RandomDoubleSource} to
  * allow customization of the provided values.
  *
  * @see RandomDoubleSource
