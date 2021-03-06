@@ -102,6 +102,61 @@ public class ValidationTestHelper {
     }
 
     /**
+     * Asserts that there is at least one constraint violation on the given object using a default validator.
+     *
+     * @param object the object to validate
+     * @param groups the optional validation groups to apply
+     */
+    public static void assertHasViolations(Object object, Class<?>... groups) {
+        assertHasViolations(VALIDATOR, object, groups);
+    }
+
+    /**
+     * Asserts that there is at least one constraint violation on the given object using the given validator.
+     *
+     * @param validator the Validator instance to perform validation with
+     * @param object    the object to validate
+     * @param groups    the optional validation groups to apply
+     */
+    public static void assertHasViolations(Validator validator, Object object, Class<?>... groups) {
+        var violations = validator.validate(object, groups);
+        assertThat(violations)
+                .describedAs("Expected at least one constraint violation")
+                .isNotEmpty();
+    }
+
+    /**
+     * Performs an AssertJ soft assertion that is at least one constraint violation
+     * on the given object using a default validator.
+     *
+     * @param softly an AssertJ SoftAssertions instance for collecting multiple errors
+     * @param object the object to validate
+     * @param groups the optional validation groups to apply
+     */
+    public static void assertHasViolations(SoftAssertions softly, Object object, Class<?>... groups) {
+        assertHasViolations(softly, VALIDATOR, object, groups);
+    }
+
+    /**
+     * Performs an AssertJ soft assertion that is at least one constraint violation
+     * on the given object using the given validator.
+     *
+     * @param softly    an AssertJ SoftAssertions instance for collecting multiple errors
+     * @param validator the Validator instance to perform validation with
+     * @param object    the object to validate
+     * @param groups    the optional validation groups to apply
+     */
+    public static void assertHasViolations(SoftAssertions softly,
+                                           Validator validator,
+                                           Object object,
+                                           Class<?>... groups) {
+        var violations = validator.validate(object, groups);
+        softly.assertThat(violations)
+                .describedAs("Expected at least one constraint violation")
+                .isNotEmpty();
+    }
+
+    /**
      * Asserts that there are exactly {@code numExpectedViolations} constraint violations on the given object
      * using a default validator.
      *
