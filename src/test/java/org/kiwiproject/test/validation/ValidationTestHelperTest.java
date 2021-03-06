@@ -3,6 +3,7 @@ package org.kiwiproject.test.validation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertHasViolations;
 import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoPropertyViolations;
 import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoViolations;
 import static org.kiwiproject.test.validation.ValidationTestHelper.assertOnePropertyViolation;
@@ -88,6 +89,39 @@ class ValidationTestHelperTest {
             var jonesy = new Person(null, "Jones", 27, null);
 
             assertSoftAssertionFailure(softly -> assertNoViolations(softly, jonesy));
+        }
+    }
+
+    @Nested
+    class AssertHasViolations {
+
+        @Test
+        void shouldPass_WhenAnyViolationsExist() {
+            var alice = new Person("Bob", "Sackamano", 142, null);
+
+            assertHasViolations(alice);
+        }
+
+        @Test
+        void shouldThrow_WhenNoViolationsExist() {
+            var alice = new Person("Alice", "Smith", 42, null);
+
+            assertThatThrownBy(() -> assertHasViolations(alice))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        @Test
+        void shouldPass_UsingSoftAssertions_WhenAnyViolationsExist(SoftAssertions softly) {
+            var george = new Person("George", "", 43, null);
+
+            assertHasViolations(softly, george);
+        }
+
+        @Test
+        void shouldThrow_UsingSoftAssertions_WhenNoViolationsExist() {
+            var jan = new Person("Janice", "Kramer", 35, "Jan");
+
+            assertSoftAssertionFailure(softly -> assertHasViolations(softly, jan));
         }
     }
 
