@@ -1,10 +1,17 @@
 package org.kiwiproject.test.assertj.dropwizard.metrics;
 
+import static java.util.stream.Collectors.joining;
+import static org.kiwiproject.base.KiwiStrings.f;
+import static org.kiwiproject.collect.KiwiMaps.isNullOrEmpty;
+import static org.kiwiproject.logging.LazyLogParameterSupplier.lazy;
+
 import com.codahale.metrics.health.HealthCheck;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.kiwiproject.base.KiwiStrings;
+
+import java.util.Arrays;
 
 /**
  * Provides for fluent {@link HealthCheck} tests using AssertJ assertions.
@@ -345,6 +352,49 @@ public class HealthCheckResultAssertions {
         Assertions.assertThat(result.getDetails())
                 .describedAs("Expected detail not found")
                 .containsEntry(key, value);
+
+        return this;
+    }
+
+    /**
+     * Asserts the health check result does not contain the given key in its details.
+     *
+     * @param key the unexpected key
+     * @return this instance
+     */
+    public HealthCheckResultAssertions doesNotHaveDetailsContainingKey(String key) {
+        var details = result.getDetails();
+
+        if (isNullOrEmpty(details)) {
+            return this;
+        }
+
+        Assertions.assertThat(details)
+                .describedAs("Expected details not to contain key '%s'", key)
+                .doesNotContainKeys(key);
+
+        return this;
+    }
+
+    /**
+     * Asserts the health check result does not contain any of the the given keys in its details.
+     *
+     * @param keys the unexpected keys
+     * @return this instance
+     */
+    public HealthCheckResultAssertions doesNotHaveDetailsContainingKeys(String... keys) {
+        var details = result.getDetails();
+
+        if (isNullOrEmpty(details)) {
+            return this;
+        }
+
+        var lazyKeysArg = lazy(() ->
+                Arrays.stream(keys).map(key -> f("'{}'", key)).collect(joining(", ")));
+
+        Assertions.assertThat(details)
+                .describedAs("Expected details not to contain keys: %s", lazyKeysArg)
+                .doesNotContainKeys(keys);
 
         return this;
     }

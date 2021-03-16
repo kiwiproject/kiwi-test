@@ -14,6 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -580,6 +583,96 @@ class HealthCheckResultAssertionsTest {
                                 .isHealthy()
                                 .hasNullOrEmptyDetails())
                         .hasMessageContaining("Expected null or empty details");
+            }
+        }
+
+        @Nested
+        class DoesNotHaveDetailsContainingKey {
+
+            @Test
+            void shouldPass_WhenDetailsAreNull() {
+                var healthCheck = newHealthCheckWithNullDetails();
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKey("someKey"))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldPass_WhenDetailsAreEmpty() {
+                var healthCheck = newHealthCheckWithEmptyDetails();
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKey("someKey"))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldPass_WhenDetailsDoesNotContainGivenKey() {
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKey("numPages"))
+                        .doesNotThrowAnyException();
+            }
+
+            @ParameterizedTest
+            @ValueSource(strings = {"book", "author", "pubYear"})
+            void shouldFail_WhenDetailsContainsGivenKey(String key) {
+                assertThatThrownBy(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKey(key))
+                        .hasMessageContaining("Expected details not to contain key '%s'", key);
+            }
+        }
+
+        @Nested
+        class DoesNotHaveDetailsContainingKeys {
+
+            @Test
+            void shouldPass_WhenDetailsAreNull() {
+                var healthCheck = newHealthCheckWithNullDetails();
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKeys("someKey", "anotherKey", "yetAnotherKey"))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldPass_WhenDetailsAreEmpty() {
+                var healthCheck = newHealthCheckWithEmptyDetails();
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKeys("someKey", "anotherKey", "yetAnotherKey"))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldPass_WhenDetailsDoesNotContainGivenKeys() {
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKeys("numPages", "publisher", "ISBN"))
+                        .doesNotThrowAnyException();
+            }
+
+            @ParameterizedTest
+            @CsvSource({
+                    "author, pubYear",
+                    "author, book",
+                    "book, pubYear"
+            })
+            void shouldFail_WhenDetailsContainsGivenKey(String key1, String key2) {
+                assertThatThrownBy(() ->
+                        assertThat(healthCheck)
+                                .isHealthy()
+                                .doesNotHaveDetailsContainingKeys(key1, key2))
+                        .hasMessageContaining("Expected details not to contain keys: '%s', '%s'", key1, key2);
             }
         }
     }
