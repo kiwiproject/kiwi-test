@@ -1,11 +1,17 @@
 package org.kiwiproject.test.assertj;
 
+import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @DisplayName("KiwiAssertJ")
 class KiwiAssertJTest {
@@ -55,6 +61,107 @@ class KiwiAssertJTest {
 
             assertThatThrownBy(() -> KiwiAssertJ.assertIsTypeOrSubtype(plane, Car.class))
                     .isInstanceOf(AssertionError.class);
+        }
+    }
+
+    @Nested
+    class AssertThatOnlyOneElementInIterable {
+
+        @Test
+        void shouldAcceptLists() {
+            var anakin = new Person();
+            var people = List.of(anakin);
+
+            KiwiAssertJ.assertThatOnlyElementIn(people).isSameAs(anakin);
+        }
+
+        @Test
+        void shouldAcceptSets() {
+            var kenobi = new Person();
+            var people = Set.of(kenobi);
+
+            KiwiAssertJ.assertThatOnlyElementIn(people).isSameAs(kenobi);
+        }
+
+        @Test
+        void shouldThrow_WhenIterable_HasNoElements() {
+            var emptySet = Collections.emptySortedSet();
+            assertThatThrownBy(() -> KiwiAssertJ.assertThatOnlyElementIn(emptySet))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Expected exactly one element");
+        }
+
+        @Test
+        void shouldThrow_WhenIterable_HasMoreThanOneElement() {
+            var people = Set.of(new Person(), new Person());
+            assertThatThrownBy(() -> KiwiAssertJ.assertThatOnlyElementIn(people))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Expected exactly one element");
+        }
+    }
+
+    @Nested
+    class AssertAndGetOnlyElementInIterable {
+
+        @Test
+        void shouldAcceptLists() {
+            var anakin = new Person();
+            var people = List.of(anakin);
+
+            var darth = KiwiAssertJ.assertAndGetOnlyElementIn(people);
+            assertThat(darth).isSameAs(anakin);
+        }
+
+        @Test
+        void shouldAcceptSets() {
+            var kenobi = new Person();
+            var people = Set.of(kenobi);
+
+            var formerMaster = KiwiAssertJ.assertAndGetOnlyElementIn(people);
+            assertThat(formerMaster).isSameAs(kenobi);
+        }
+
+        @Test
+        void shouldThrow_WhenIterable_HasNoElements() {
+            var emptySet = Collections.emptySortedSet();
+            assertThatThrownBy(() -> KiwiAssertJ.assertAndGetOnlyElementIn(emptySet))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Expected exactly one element");
+        }
+
+        @Test
+        void shouldThrow_WhenIterable_HasMoreThanOneElement() {
+            var people = Set.of(new Person(), new Person());
+            assertThatThrownBy(() -> KiwiAssertJ.assertAndGetOnlyElementIn(people))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Expected exactly one element");
+        }
+    }
+
+    @Nested
+    class AssertAndGetOnlyEntryInMap {
+
+        @Test
+        void shouldGetOnlyEntry() {
+            var map = Map.of("answer", 42);
+            var entry = KiwiAssertJ.assertAndGetOnlyEntryIn(map);
+            assertThat(entry).isEqualTo(entry("answer", 42));
+        }
+
+        @Test
+        void shouldThrowWhenMapIsEmpty() {
+            var emptyMap = Collections.emptyMap();
+            assertThatThrownBy(() -> KiwiAssertJ.assertAndGetOnlyEntryIn(emptyMap))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Expected exactly one entry");
+        }
+
+        @Test
+        void shouldThrowWhenMapHasMoreThanOneEntry() {
+            var employees = Map.of("bob", new Employee(), "alice", new Employee());
+            assertThatThrownBy(() -> KiwiAssertJ.assertAndGetOnlyEntryIn(employees))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Expected exactly one entry");
         }
     }
 
