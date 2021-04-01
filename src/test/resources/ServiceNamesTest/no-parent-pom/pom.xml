@@ -17,21 +17,21 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
+            <groupId>com.goggle.tangerine</groupId>
+            <artifactId>tangerine</artifactId>
+            <version>42.0.42</version>
         </dependency>
 
         <dependency>
-            <groupId>org.kiwiproject</groupId>
-            <artifactId>kiwi</artifactId>
-            <version>0.7.0</version>
+            <groupId>com.acme</groupId>
+            <artifactId>fizzle-splits</artifactId>
+            <version>6.7.8</version>
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <groupId>com.acme</groupId>
+            <artifactId>awesome-logging-api</artifactId>
+            <version>1.42.0</version>
         </dependency>
 
     </dependencies>

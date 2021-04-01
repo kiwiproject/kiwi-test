@@ -40,7 +40,6 @@ class ServiceNamesTest {
         })
         void shouldFindServiceOrEmulator(String path, String expectedName) {
             var rootPath = Path.of(basePath, path).toString();
-            System.out.println(rootPath);
             var name = ServiceNames.findServiceOrEmulatorNameFromRoot(rootPath);
             assertThat(name).isEqualTo(expectedName);
         }
