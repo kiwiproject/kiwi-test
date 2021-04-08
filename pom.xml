@@ -35,7 +35,7 @@
         <byte.buddy.version>1.10.20</byte.buddy.version>
         <commons-text.version>1.9</commons-text.version>
         <curator.version>2.13.0</curator.version>
-        <dropwizard.version>2.0.20</dropwizard.version>
+        <dropwizard.version>2.0.21</dropwizard.version>
         <dropwizard.metrics.version>4.1.18</dropwizard.metrics.version>
         <dropwizard.modules.dropwizard-jdbi.version>2.0.19</dropwizard.modules.dropwizard-jdbi.version>
         <embedded-postgres.version>1.2.10</embedded-postgres.version>
