@@ -64,7 +64,7 @@ public class DropwizardJdbi {
      * <strong>NOTE:</strong> Please make sure to read the documentation for
      * {@link #registerDefaultDropwizardJdbiFeatures(DBI, String, TimeZone)} whenever the Dropwizard version is updated.
      */
-    public static final String EXPECTED_DROPWIZARD_VERSION = "2.0.12";
+    public static final String EXPECTED_DROPWIZARD_VERSION = "2.0.21";
 
     /**
      * Detected version of Dropwizard using the {@link GuavaOptionalArgumentFactory} from the
