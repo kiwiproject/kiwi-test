@@ -24,14 +24,14 @@ class DropwizardJdbiTest {
     void shouldFindExpectedDropwizardVersion() {
         assertThat(DropwizardJdbi.EXPECTED_DROPWIZARD_VERSION)
                 .describedAs(UPDATED_DROPWIZARD_MESSAGE)
-                .isEqualTo("2.0.12");
+                .isEqualTo("2.0.21");
     }
 
     @Test
     void shouldDetectDropwizardVersion() {
         assertThat(DropwizardJdbi.DETECTED_DROPWIZARD_VERSION)
                 .describedAs(UPDATED_DROPWIZARD_MESSAGE)
-                .isEqualTo("2.0.19");
+                .isEqualTo("2.0.21");
     }
 
     /**
