@@ -146,6 +146,7 @@ public class ParameterizedValidationTestHelper {
         checkArgumentNotNull(propertyName);
         checkInputAndExpectedValues(inputValues, expectedViolations, "expectedViolations");
 
+        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
             T input = inputValues.get(index);
             mutator.accept(input);
@@ -203,6 +204,7 @@ public class ParameterizedValidationTestHelper {
         checkArgumentNotNull(propertyName);
         checkInputAndExpectedValues(inputValues, expectedViolationMessages, "expectedViolationMessages");
 
+        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
             T input = inputValues.get(index);
             mutator.accept(input);

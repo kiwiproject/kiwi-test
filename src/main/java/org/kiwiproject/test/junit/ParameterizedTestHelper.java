@@ -91,6 +91,7 @@ public class ParameterizedTestHelper {
         checkArgumentNotNull(mutator);
         checkArgumentNotNull(resultSupplier);
 
+        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
             T input = inputValues.get(index);
             mutator.accept(input);
@@ -135,6 +136,7 @@ public class ParameterizedTestHelper {
         checkInputsAndExpectedResults(inputValues, expectedResults);
         checkArgumentNotNull(function);
 
+        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
             T input = inputValues.get(index);
             R result = function.apply(input);

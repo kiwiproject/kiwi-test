@@ -1,17 +1,19 @@
 package org.kiwiproject.test.util;
 
 import lombok.experimental.UtilityClass;
+import org.kiwiproject.base.KiwiDeprecated;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
-// TODO: We've only used this in test code. Is it worth moving to kiwi? i.e. is there any non-testing
-//  situation this might be useful?
-
 /**
  * Static utilities related to {@link IntStream}.
+ *
+ * @deprecated This has moved into kiwi as of 0.23.0 and will be removed in 0.20.0
  */
 @UtilityClass
+@Deprecated(since = "0.19.0", forRemoval = true)
+@KiwiDeprecated(since = "0.19.0", removeAt = "0.20.0")
 public class IntStreams {
 
     /**
