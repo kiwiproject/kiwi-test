@@ -7,6 +7,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.kiwiproject.base.KiwiDeprecated;
 import org.kiwiproject.test.dropwizard.jdbi2.DropwizardJdbi;
 import org.kiwiproject.test.jdbc.RuntimeSQLException;
 import org.skife.jdbi.v2.DBI;
@@ -24,9 +25,13 @@ import java.util.TimeZone;
 
 /**
  * Shared code for use by the JDBI 2 extension classes.
+ *
+ * @deprecated Dropping support for JDBI 2, use Jdbi3Helpers instead.
  */
 @UtilityClass
 @Slf4j
+@Deprecated(since = "0.19.0", forRemoval = true)
+@KiwiDeprecated(since = "0.19.0", removeAt = "0.20.0", replacedBy = "Jdbi3Helpers")
 class DropwizardJdbi2Helpers {
 
     static DBI buildDBI(DataSource dataSource,

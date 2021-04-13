@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.kiwiproject.base.KiwiDeprecated;
 import org.kiwiproject.test.dropwizard.jdbi2.DropwizardJdbi;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -34,8 +35,12 @@ import java.util.TimeZone;
  * <strong>NOTE: If the DAO under test creates its own {@link Handle}s, then you need to make sure that you always use
  * the <em>same connection</em> otherwise there will be transaction isolation issues. Prefer using the {@link Handle}
  * provided by this extension.</strong>
+ *
+ * @deprecated Dropping support for JDBI 2, use JDBI 3 extensions instead.
  */
 @Slf4j
+@Deprecated(since = "0.19.0", forRemoval = true)
+@KiwiDeprecated(since = "0.19.0", removeAt = "0.20.0", replacedBy = "Jdbi3Extension")
 public class DropwizardJdbi2Extension implements AfterEachCallback {
 
     /**

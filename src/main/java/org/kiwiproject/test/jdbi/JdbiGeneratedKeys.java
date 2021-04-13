@@ -1,6 +1,7 @@
 package org.kiwiproject.test.jdbi;
 
 import lombok.experimental.UtilityClass;
+import org.kiwiproject.base.KiwiDeprecated;
 import org.skife.jdbi.v2.GeneratedKeys;
 import org.skife.jdbi.v2.Update;
 
@@ -8,8 +9,12 @@ import java.util.Map;
 
 /**
  * Utilities for extracting generated keys from JDBI 2 {@link GeneratedKeys} objects.
+ *
+ * @deprecated Dropping support for JDBI 2. Use JDBI3GeneratedKeys instead.
  */
 @UtilityClass
+@Deprecated(since = "0.19.0", forRemoval = true)
+@KiwiDeprecated(since = "0.19.0", removeAt = "0.20.0", replacedBy = "Jdbi3GeneratedKeys")
 public class JdbiGeneratedKeys {
 
     /**
