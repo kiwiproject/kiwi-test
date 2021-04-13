@@ -41,6 +41,7 @@ import io.dropwizard.jdbi.args.ZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.kiwiproject.base.KiwiDeprecated;
 import org.kiwiproject.jar.KiwiJars;
 import org.skife.jdbi.v2.DBI;
 
@@ -53,9 +54,13 @@ import java.util.TimeZone;
  * <p>
  * <strong>NOTE:</strong> Please make sure to read the documentation for
  * {@link #registerDefaultDropwizardJdbiFeatures(DBI, String, TimeZone)} whenever the Dropwizard version is updated.
+ *
+ * @deprecated Dropping support for JDBI 2.
  */
 @UtilityClass
 @Slf4j
+@Deprecated(since = "0.19.0", forRemoval = true)
+@KiwiDeprecated(since = "0.19.0", removeAt = "0.20.0")
 public class DropwizardJdbi {
 
     /**

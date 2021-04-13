@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.kiwiproject.base.KiwiDeprecated;
 import org.kiwiproject.test.dropwizard.jdbi2.DropwizardJdbi;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -34,8 +35,12 @@ import java.util.TimeZone;
  * Before each tests, sets up a transaction. After each test completes, rolls the transaction back.
  *
  * @param <T> the DAO type
+ *
+ * @deprecated Dropping support for JDBI 2, use JDBI 3 extensions instead.
  */
 @Slf4j
+@Deprecated(since = "0.19.0", forRemoval = true)
+@KiwiDeprecated(since = "0.19.0", removeAt = "0.20.0", replacedBy = "Jdbi3DaoExtension")
 public class DropwizardJdbi2DaoExtension<T> implements BeforeEachCallback, AfterEachCallback {
 
     /**
