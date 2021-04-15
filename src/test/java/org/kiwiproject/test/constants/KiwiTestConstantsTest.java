@@ -12,7 +12,7 @@ import lombok.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.kiwiproject.test.junit.jupiter.WhiteBoxTest;
+import org.kiwiproject.test.junit.jupiter.ClearBoxTest;
 
 @DisplayName("KiwiTestConstants")
 class KiwiTestConstantsTest {
@@ -20,7 +20,7 @@ class KiwiTestConstantsTest {
     @Nested
     class ObjectMapper {
 
-        @WhiteBoxTest
+        @ClearBoxTest
         void shouldHave_FailOnUnknownProperties_Disabled() {
             assertThat(OBJECT_MAPPER.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES))
                     .describedAs("We are expecting FAIL_ON_UNKNOWN_PROPERTIES to be disabled by default")
