@@ -147,7 +147,7 @@ public class ParameterizedValidationTestHelper {
         checkInputAndExpectedValues(inputValues, expectedViolations, "expectedViolations");
 
         indicesOf(inputValues).forEach(index -> {
-            T input = inputValues.get(index);
+            var input = inputValues.get(index);
             mutator.accept(input);
             var violations = validator.validateProperty(object, propertyName, groups);
             softly.assertThat(violations)
@@ -203,9 +203,8 @@ public class ParameterizedValidationTestHelper {
         checkArgumentNotNull(propertyName);
         checkInputAndExpectedValues(inputValues, expectedViolationMessages, "expectedViolationMessages");
 
-        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
-            T input = inputValues.get(index);
+            var input = inputValues.get(index);
             mutator.accept(input);
             var violations = validator.validateProperty(object, propertyName, groups);
             softly.assertThat(violations)

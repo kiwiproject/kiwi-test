@@ -33,7 +33,7 @@ class LoggingDeserializationTestHandlerTest {
     void shouldCountEveryUnknownProperty() {
         ensureFailOnUnknownPropertiesIsDisabled();
 
-        int numTimes = 10;
+        var numTimes = 10;
         IntStream.rangeClosed(1, numTimes).forEach(ignored -> jsonHelper.copy(new Foo(), Bar.class));
 
         assertThat(handler.getErrorCount()).isEqualTo(numTimes);

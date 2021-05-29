@@ -276,7 +276,7 @@ public class MongoTestProperties {
      * @throws IllegalArgumentException if the databaseName is blank or does not have any underscores
      */
     public static String databaseNameWithoutTimestamp(String databaseName) {
-        int lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
+        var lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
         return databaseName.substring(0, lastUnderscoreIndex);
     }
 
@@ -305,7 +305,7 @@ public class MongoTestProperties {
      * @throws NumberFormatException    if the extracted "timestamp" cannot be parsed into a {@code long}
      */
     public static long extractDatabaseTimestamp(String databaseName) {
-        int lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
+        var lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
         return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
     }
 

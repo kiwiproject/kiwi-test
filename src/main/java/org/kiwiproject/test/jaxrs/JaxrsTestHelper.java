@@ -368,7 +368,7 @@ public class JaxrsTestHelper {
      * @see Response#getEntity()
      */
     public static <T> T assertResponseEntity(Response response, Class<T> expectedClass, T expectedEntity) {
-        T entity = assertNonNullResponseEntity(response, expectedClass);
+        var entity = assertNonNullResponseEntity(response, expectedClass);
         assertThat(entity).isSameAs(expectedEntity);
         return entity;
     }
