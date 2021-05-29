@@ -3,8 +3,8 @@ package org.kiwiproject.test.validation;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
+import static org.kiwiproject.stream.IntStreams.indicesOf;
 import static org.kiwiproject.test.junit.ParameterizedTests.inputs;
-import static org.kiwiproject.test.util.IntStreams.indicesOf;
 
 import org.assertj.core.api.SoftAssertions;
 
@@ -146,7 +146,6 @@ public class ParameterizedValidationTestHelper {
         checkArgumentNotNull(propertyName);
         checkInputAndExpectedValues(inputValues, expectedViolations, "expectedViolations");
 
-        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
             T input = inputValues.get(index);
             mutator.accept(input);
