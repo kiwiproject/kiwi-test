@@ -12,7 +12,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This utility class helps find service or emulator names from Maven POM files. It is useful only if you need to
@@ -102,7 +101,7 @@ public class ServiceNames {
      * @throws IllegalStateException if no parent element is found in the POM
      */
     public static String findServiceOrEmulatorNameInPom(Path pomPath) throws IOException {
-        try (Stream<String> lineStream = Files.lines(pomPath)) {
+        try (var lineStream = Files.lines(pomPath)) {
             var lines = lineStream.collect(toUnmodifiableList());
             checkParentTagExists(lines);
             var artifactIds = findFirstTwoArtifactIdTags(lines);

@@ -84,7 +84,7 @@ public class CuratorTestingServerExtension implements BeforeAllCallback, AfterAl
         } else if (client.getState() == CuratorFrameworkState.STOPPED) {
             LOG.trace("[beforeAll: {}] Re-initialize since client is STOPPED. There is probably more than one @Nested test class.",
                     displayName);
-            int newPort = findOpenPortOrThrow();
+            var newPort = findOpenPortOrThrow();
             initialize(newPort);
         }
 

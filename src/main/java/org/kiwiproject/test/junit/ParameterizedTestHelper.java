@@ -92,9 +92,9 @@ public class ParameterizedTestHelper {
         checkArgumentNotNull(resultSupplier);
 
         indicesOf(inputValues).forEach(index -> {
-            T input = inputValues.get(index);
+            var input = inputValues.get(index);
             mutator.accept(input);
-            R result = resultSupplier.get();
+            var result = resultSupplier.get();
             softly.assertThat(result)
                     .describedAs("input: [%s]", input)
                     .isEqualTo(expectedResults.get(index));
@@ -135,10 +135,9 @@ public class ParameterizedTestHelper {
         checkInputsAndExpectedResults(inputValues, expectedResults);
         checkArgumentNotNull(function);
 
-        // TODO: When kiwi 0.23.0 is released, switch this to the kiwi version
         indicesOf(inputValues).forEach(index -> {
-            T input = inputValues.get(index);
-            R result = function.apply(input);
+            var input = inputValues.get(index);
+            var result = function.apply(input);
             softly.assertThat(result)
                     .describedAs("input: [%s]", input)
                     .isEqualTo(expectedResults.get(index));

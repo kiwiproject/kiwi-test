@@ -17,15 +17,15 @@ class AsyncModeDisablingExtensionTest {
 
     @Test
     void shouldDisableAsyncModeDuringThisTest() {
-        int sleepTime = 100;
-        long startNanos = System.nanoTime();
+        var sleepTime = 100L;
+        var startNanos = System.nanoTime();
         Async.doAsync(() -> {
             new DefaultEnvironment().sleepQuietly(sleepTime, TimeUnit.MILLISECONDS);
             return 42;
         });
 
-        long elapsedNanos = System.nanoTime() - startNanos;
-        long elapsedMillis = Duration.ofNanos(elapsedNanos).toMillis();
+        var elapsedNanos = System.nanoTime() - startNanos;
+        var elapsedMillis = Duration.ofNanos(elapsedNanos).toMillis();
         LOG.info("Elapsed time: {} millis", elapsedMillis);
 
         assertThat(elapsedMillis)

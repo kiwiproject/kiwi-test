@@ -565,7 +565,7 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                MockHealthCheck healthCheck = newHealthCheckWithEmptyDetails();
+                var healthCheck = newMockHealthCheckWithEmptyDetails();
 
                 assertThatCode(() ->
                         assertThat(healthCheck)
@@ -601,7 +601,7 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                var healthCheck = newHealthCheckWithEmptyDetails();
+                var healthCheck = newMockHealthCheckWithEmptyDetails();
                 assertThatCode(() ->
                         assertThat(healthCheck)
                                 .isHealthy()
@@ -644,7 +644,7 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                var healthCheck = newHealthCheckWithEmptyDetails();
+                var healthCheck = newMockHealthCheckWithEmptyDetails();
                 assertThatCode(() ->
                         assertThat(healthCheck)
                                 .isHealthy()
@@ -693,7 +693,7 @@ class HealthCheckResultAssertionsTest {
         };
     }
 
-    private MockHealthCheck newHealthCheckWithEmptyDetails() {
+    private MockHealthCheck newMockHealthCheckWithEmptyDetails() {
         var healthCheck = MockHealthCheck.builder().build();
         var result = healthCheck.execute();
         var details = result.getDetails();
