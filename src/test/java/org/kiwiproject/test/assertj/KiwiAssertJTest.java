@@ -7,11 +7,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @DisplayName("KiwiAssertJ")
 class KiwiAssertJTest {
@@ -163,6 +167,29 @@ class KiwiAssertJTest {
                     .isInstanceOf(AssertionError.class)
                     .hasMessageContaining("Expected exactly one entry");
         }
+    }
+
+    @Nested
+    class AssertPresentAndGet {
+
+        @ParameterizedTest
+        @MethodSource("org.kiwiproject.test.assertj.KiwiAssertJTest#objectsForOptionals")
+        void shouldGetTheContainedValue(Object value) {
+            var anOptional = Optional.of(value);
+            var containedValue = KiwiAssertJ.assertPresentAndGet(anOptional);
+            assertThat(containedValue).isSameAs(value);
+        }
+
+        @Test
+        void shouldThrowWhenOptionalIsEmpty() {
+            var empty = Optional.empty();
+            assertThatThrownBy(() -> KiwiAssertJ.assertPresentAndGet(empty))
+                    .isInstanceOf(AssertionError.class);
+        }
+    }
+
+    static Stream<Object> objectsForOptionals() {
+        return Stream.of(42, "foo", new Object(), 84L, 24.0, new Person(), new Car());
     }
 
     private static class Person {

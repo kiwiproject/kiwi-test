@@ -6,6 +6,8 @@ import lombok.experimental.UtilityClass;
 import org.assertj.core.api.ObjectAssert;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Some AssertJ test utilities that you might or might find useful.
@@ -88,5 +90,33 @@ public class KiwiAssertJ {
                 .describedAs("Expected exactly one entry")
                 .hasSize(1);
         return map.entrySet().iterator().next();
+    }
+
+    /**
+     * Assert the given {@link Optional} contains a value, and return that value if true. Otherwise, the assertion
+     * fails if the Optional does not contain a value.
+     * <p>
+     * This is useful in situations in which you don't want to use AssertJ's Optional assertion methods. One
+     * specific example is when the Optional contains some JSON or XML, and you want to check that the contained
+     * value, if present, contains several substrings. Example:
+     * <pre>
+     * var xml = assertPresentAndGet(xmlOptional);
+     * assertThat(xml)
+     *         .contains("&lt;name>Alice&lt;/name>")
+     *         .contains("&lt;age>42&lt;/age>")
+     *         .contains("&lt;state>VA&lt;/state>");
+     * </pre>
+     * You could also do this using the {@link org.assertj.core.api.AbstractOptionalAssert#hasValueSatisfying(Consumer)}
+     * method in AssertJ and putting the same assertions as above within a lambda. However, we usually find the example
+     * code shown above to be simpler and easier to read.
+     *
+     * @param optional the Optional
+     * @param <T>      the type that the Optional contains
+     * @return the value
+     */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static <T> T assertPresentAndGet(Optional<T> optional) {
+        assertThat(optional).isPresent();
+        return optional.orElseThrow();
     }
 }
