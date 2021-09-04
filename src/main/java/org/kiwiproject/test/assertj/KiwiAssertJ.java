@@ -102,9 +102,9 @@ public class KiwiAssertJ {
      * <pre>
      * var xml = assertPresentAndGet(xmlOptional);
      * assertThat(xml)
-     *         .contains("&lt;name>Alice&lt;/name>")
-     *         .contains("&lt;age>42&lt;/age>")
-     *         .contains("&lt;state>VA&lt;/state>");
+     *         .contains("&lt;name&gt;Alice&lt;/name&gt;")
+     *         .contains("&lt;age&gt;42&lt;/age&gt;")
+     *         .contains("&lt;state&gt;VA&lt;/state&gt;");
      * </pre>
      * You could also do this using the {@link org.assertj.core.api.AbstractOptionalAssert#hasValueSatisfying(Consumer)}
      * method in AssertJ and putting the same assertions as above within a lambda. However, we usually find the example
