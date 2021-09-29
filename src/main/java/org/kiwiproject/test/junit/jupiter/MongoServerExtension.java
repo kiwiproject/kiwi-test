@@ -8,8 +8,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import de.bwaldvogel.mongo.MongoServer;
+import de.bwaldvogel.mongo.ServerVersion;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.h2.tools.Server;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -54,6 +56,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 @Slf4j
 public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback, AfterEachCallback {
+
+    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_3_6;
 
     /**
      * The in-memory {@link MongoServer} instance started by this extension.
@@ -103,10 +107,16 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     private final DropTime dropTime;
 
     /**
+     * The version of the mongo server to use;
+     */
+    @Getter
+    private final ServerVersion serverVersion;
+
+    /**
      * Creates a new instance that will drop and re-create the test database after each test.
      */
     public MongoServerExtension() {
-        this(DropTime.AFTER_EACH);
+        this(DropTime.AFTER_EACH, DEFAULT_SERVER_VERSION);
     }
 
     /**
@@ -115,7 +125,28 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
      * @param dropTime when to drop the test database
      */
     public MongoServerExtension(DropTime dropTime) {
+        this(dropTime, DEFAULT_SERVER_VERSION);
+    }
+
+    /**
+     * Creates a new instance that will drop and re-create the test database after each test with the given {@link ServerVersion}.
+     *
+     * @param serverVersion the version of the mongo server to use.
+     */
+    public MongoServerExtension(ServerVersion serverVersion) {
+        this(DropTime.AFTER_EACH, serverVersion);
+    }
+
+    /**
+     * Creates a new instance that will drop the test database using the given {@link DropTime} and uses the given
+     * {@link ServerVersion}.
+     *
+     * @param dropTime when to drop the test database
+     * @param serverVersion the version of the mongo server to use
+     */
+    public MongoServerExtension(DropTime dropTime, ServerVersion serverVersion) {
         this.dropTime = requireNotNull(dropTime, "dropTime cannot be null");
+        this.serverVersion = requireNotNull(serverVersion, "serverVersion cannot be null");
     }
 
     /**

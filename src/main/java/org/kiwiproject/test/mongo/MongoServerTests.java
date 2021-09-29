@@ -3,6 +3,7 @@ package org.kiwiproject.test.mongo;
 import static org.kiwiproject.base.KiwiStrings.f;
 
 import de.bwaldvogel.mongo.MongoServer;
+import de.bwaldvogel.mongo.ServerVersion;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import lombok.experimental.UtilityClass;
 
@@ -15,10 +16,23 @@ public class MongoServerTests {
     /**
      * Start a new in-memory {@link MongoServer}.
      *
+     * Defaults server version to Mongo 3.6
+     *
      * @return the started MongoServer instance
      */
     public static MongoServer startInMemoryMongoServer() {
-        var mongoServer = new MongoServer(new MemoryBackend());
+        return startInMemoryMongoServer(ServerVersion.MONGO_3_6);
+    }
+
+    /**
+     * Start a new in-memory {@link MongoServer} with the given {@link ServerVersion}.
+     *
+     * @return the started MongoServer instance
+     */
+    public static MongoServer startInMemoryMongoServer(ServerVersion serverVersion) {
+        var backend = new MemoryBackend().version(serverVersion);
+
+        var mongoServer = new MongoServer(backend);
         mongoServer.bind();
         return mongoServer;
     }
