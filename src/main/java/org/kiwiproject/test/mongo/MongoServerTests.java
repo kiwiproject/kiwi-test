@@ -15,7 +15,7 @@ public class MongoServerTests {
 
     /**
      * Start a new in-memory {@link MongoServer}.
-     *
+     * <p>
      * Defaults server version to Mongo 3.6
      *
      * @return the started MongoServer instance

@@ -11,7 +11,6 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.ServerVersion;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.tools.Server;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -107,7 +106,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     private final DropTime dropTime;
 
     /**
-     * The version of the mongo server to use;
+     * The version of the mongo server to use.
      */
     @Getter
     private final ServerVersion serverVersion;
@@ -164,7 +163,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        mongoServer = startInMemoryMongoServer();
+        mongoServer = startInMemoryMongoServer(serverVersion);
         connectionString = MongoServerTests.getConnectionString(mongoServer);
         testDatabaseName = generateTestDatabaseName();
 
