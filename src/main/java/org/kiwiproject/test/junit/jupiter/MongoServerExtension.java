@@ -34,6 +34,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * to enable tests to obtain various objects such as the connection string, the test database name, a
  * {@link MongoDatabase} for the test database, a {@link MongoClient}, and more.
  * <p>
+ * By default, the in-memory Mongo server will be set to the 3.6 flavor of Mongo.  If you need to use the 3.0 version of
+ * Mongo, then the {@link ServerVersion} can be passed into the constructor to set the version.
+ * <p>
  * Usage:
  * <pre>
  * class MyMongoTest {
@@ -113,6 +116,8 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
 
     /**
      * Creates a new instance that will drop and re-create the test database after each test.
+     * <p>
+     * The Mongo server will be set to the 3.6 version
      */
     public MongoServerExtension() {
         this(DropTime.AFTER_EACH, DEFAULT_SERVER_VERSION);
@@ -120,6 +125,8 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
 
     /**
      * Creates a new instance that will drop the test database using the given {@link DropTime}.
+     * <p>
+     * The Mongo server will be set to the 3.6 version
      *
      * @param dropTime when to drop the test database
      */
