@@ -3,6 +3,7 @@ package org.kiwiproject.test.junit.jupiter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mongodb.client.model.Filters;
+import de.bwaldvogel.mongo.ServerVersion;
 import org.bson.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,5 +72,17 @@ class MongoServerExtensionTest {
 
         var firstDoc = Optional.ofNullable(collection.find(Filters.eq("a", 1)).first()).orElseThrow();
         assertThat(firstDoc.get("_id")).isEqualTo(id);
+    }
+
+    @Test
+    void shouldCreateServerExtensionWithMongo3_0() {
+        var extension = new MongoServerExtension(ServerVersion.MONGO_3_0);
+        assertThat(extension.getServerVersion()).isEqualTo(ServerVersion.MONGO_3_0);
+    }
+
+    @Test
+    void shouldCreateServerExtensionWithDefaultMongo3_6() {
+        var extension = new MongoServerExtension();
+        assertThat(extension.getServerVersion()).isEqualTo(ServerVersion.MONGO_3_6);
     }
 }

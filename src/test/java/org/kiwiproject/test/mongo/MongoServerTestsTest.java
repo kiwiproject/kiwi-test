@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.bwaldvogel.mongo.MongoServer;
+import de.bwaldvogel.mongo.ServerVersion;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +30,12 @@ class MongoServerTestsTest {
     @Test
     void shouldStartInMemoryMongoServer() {
         assertThat(mongoServer).isNotNull();
+    }
+
+    @Test
+    void shouldStartInMemoryMongoServer_WithServerVersion3() {
+        var server = MongoServerTests.startInMemoryMongoServer(ServerVersion.MONGO_3_0);
+        assertThat(server).isNotNull();
     }
 
     @Test
