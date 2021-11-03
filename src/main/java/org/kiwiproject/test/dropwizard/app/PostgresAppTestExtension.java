@@ -19,16 +19,42 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * embedded PostgreSQL database instance, run the migrations and then configure the {@link DropwizardAppExtension} with the
  * database information.
  * <p>
- * Note: The embedded PostgreSQL extension supports both Flyway and Liquibase, but we are assuming migrations are Liquibase.
+ * Currently, this extension has a few limitations/caveats:
+ * <ul>
+ *     <li>
+ *         The embedded PostgreSQL extension supports both Flyway and Liquibase, but we are assuming migrations are Liquibase.
+ *     </li>
+ *     <li>
+ *         The application's {@link Configuration} class must have a Dropwizard
+ *         {@link io.dropwizard.db.DataSourceFactory DataSourceFactory} with JSON its property name as "database",
+ *         i.e. the property will either have {@code @JsonProperty("database")} or be named "database"
+ *      </li>
+ *      <li>
+ *          The YAML configuration file provided to this extension must contain a {@code database} property that
+ *          contains a {@code driverClass} with the string value: {@code org.postgresql.Driver} (this corresponds to
+ *          the "database" property mentioned above which defines the {@code DataSourceFactory})
+ *      </li>
+ * </ul>
  * <p>
- * To include this extension in an AppTest then add the following at the top of the class:
+ * To include this extension in an Application test, add the following at the top of the class:
  * <pre>
  * {@literal @}RegisterExtension
  *  public static PostgresAppTestExtension&lt;AppConfiguration&gt; POSTGRES_APP =
  *      new PostgresAppTestExtension("migrations.xml", "config.yml", App.class);
  * </pre>
+ * Here is a sample {@code config.yml}:
+ * <pre>
+ * ---
+ * database:
+ *   driverClass: org.postgresql.Driver
+ * </pre>
+ * And here is a fragment of a sample Configuration class:
+ * <pre>
+ * {@literal @}JsonProperty("database")
+ *  private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+ * </pre>
  * <p>
- * The test instance will have access to the application and the PostgreSQL instance by calling
+ * The test extension instance will have access to the application and the PostgreSQL instance by calling
  * {@code POSTGRES_APP.getApp()} and {@code POSTGRES_APP.getPostgres()} respectively.
  * <p>
  * You can also provide one or more {@link ConfigOverride} values to the extension:
@@ -44,9 +70,11 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  * the embedded Postgres extension since this extension programmatically registers both of them. Doing so will almost
  * certainly result in unexpected behavior such as {@code NullPointerException}s being thrown.
  * <p>
- * For information on how the embedded PostgreSQL extension works see: https://github.com/zonkyio/embedded-postgres
+ * For information on how the embedded PostgreSQL extension works see:
+ * <a href="https://github.com/zonkyio/embedded-postgres">https://github.com/zonkyio/embedded-postgres</a>
  * <br>
- * For information on how the dropwizard app extension works see: https://www.dropwizard.io/en/latest/manual/testing.html#junit-5
+ * For information on how the dropwizard app extension works see:
+ * <a href="https://www.dropwizard.io/en/latest/manual/testing.html#junit-5">https://www.dropwizard.io/en/latest/manual/testing.html#junit-5</a>
  *
  * @param <T> the {@link Configuration} implementation for the application
  */
