@@ -59,7 +59,7 @@
         <error_prone_annotations.version>2.9.0</error_prone_annotations.version>
 
         <!-- Versions for test dependencies -->
-        <mongo-java-server.version>1.38.0</mongo-java-server.version>
+        <mongo-java-server.version>1.39.0</mongo-java-server.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
