@@ -75,7 +75,7 @@ public class H2DatabaseTestHelper {
         dataSource.setURL(url);
 
         try (var conn = dataSource.getConnection();
-             var ps = conn.prepareStatement("create table test_table (first varchar , second integer)")
+             var ps = conn.prepareStatement("create table test_table (col_1 varchar , col_2 integer)")
         ) {
             ps.execute();
             LOG.trace("Successfully created test_table");

@@ -92,15 +92,15 @@ class Jdbi3DaoExtensionTest {
 
     @Value
     private static class TestTableValue {
-        String first;
-        int second;
+        String col1;
+        int col2;
     }
 
     // Must be public for JDBI to instantiate
     public static class TestTableValueMapper implements RowMapper<TestTableValue> {
         @Override
         public TestTableValue map(ResultSet rs, StatementContext ctx) throws SQLException {
-            return new TestTableValue(rs.getString("first"), rs.getInt("second"));
+            return new TestTableValue(rs.getString("col_1"), rs.getInt("col_2"));
         }
     }
 
