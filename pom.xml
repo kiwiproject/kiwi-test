@@ -28,8 +28,8 @@
 
     <properties>
         <!-- Versions for required dependencies -->
-        <kiwi.version>1.1.1-SNAPSHOT</kiwi.version>
-        <kiwi-bom.version>0.4.0-SNAPSHOT</kiwi-bom.version>
+        <kiwi.version>1.2.0</kiwi.version>
+        <kiwi-bom.version>0.4.0</kiwi-bom.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
