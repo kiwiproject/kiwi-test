@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
@@ -26,7 +25,6 @@ import java.util.List;
 
 @DisplayName("Jdbi3Helpers")
 @ExtendWith(H2FileBasedDatabaseExtension.class)
-@Slf4j
 class Jdbi3HelpersTest {
 
     @Nested

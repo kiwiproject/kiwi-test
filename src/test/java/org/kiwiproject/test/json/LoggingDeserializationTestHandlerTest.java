@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +16,6 @@ import org.kiwiproject.json.JsonHelper;
 import java.util.stream.IntStream;
 
 @DisplayName("LoggingDeserializationTestHandler")
-@Slf4j
 class LoggingDeserializationTestHandlerTest {
 
     private JsonHelper jsonHelper;

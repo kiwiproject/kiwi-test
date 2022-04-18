@@ -2,7 +2,6 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +16,6 @@ import java.sql.SQLException;
  */
 @DisplayName("H2FileBasedDatabaseExtension using @ExtendWith")
 @ExtendWith(H2FileBasedDatabaseExtension.class)
-@Slf4j
 class H2FileBasedDatabaseExtensionExtendWithTest {
 
     private H2FileBasedDatabase databaseFromSetup;
