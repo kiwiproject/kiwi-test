@@ -10,8 +10,8 @@ import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.ass
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.buildMongoTestProperties;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.startInMemoryMongoServer;
 
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import de.bwaldvogel.mongo.MongoServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +41,7 @@ class MongoDbExtensionDropAfterAllTest {
 
     @BeforeAll
     static void beforeAll() {
-        client = new MongoClient(new ServerAddress(INET_SOCKET_ADDRESS));
+        client = MongoClients.create(TEST_PROPERTIES.getUri());
     }
 
     @SuppressWarnings("unused")
