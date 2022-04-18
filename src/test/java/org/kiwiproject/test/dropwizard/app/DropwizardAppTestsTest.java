@@ -21,7 +21,6 @@ import lombok.Setter;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,7 +89,7 @@ class DropwizardAppTestsTest {
     public static class UnmanagedManaged extends NoOpManaged {
     }
 
-    public static class MyLifeCycleListener extends AbstractLifeCycle.AbstractLifeCycleListener {
+    public static class MyLifeCycleListener implements LifeCycle.Listener {
     }
 
     public static class MyServerLifecycleListener implements ServerLifecycleListener {
