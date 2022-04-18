@@ -43,7 +43,6 @@ class CuratorTestingServerExtensionImmediateStartTest {
      * a timeout to ensure it stops if it cannot connect). This is an indirect way of determining whether the testing
      * server has started.
      */
-    @Slf4j
     static class ZooKeeperUsingExtension implements BeforeAllCallback {
 
         @Getter
