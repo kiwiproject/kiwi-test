@@ -71,7 +71,7 @@ class MongoServerExtensionTest {
         assertThat(id).isNotNull();
 
         var firstDoc = Optional.ofNullable(collection.find(Filters.eq("a", 1)).first()).orElseThrow();
-        assertThat(firstDoc.get("_id")).isEqualTo(id);
+        assertThat(firstDoc).containsEntry("_id", id);
     }
 
     @Test
