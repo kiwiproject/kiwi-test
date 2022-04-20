@@ -58,6 +58,11 @@
             <artifactId>kiwi</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
         <!-- provided dependencies -->
 
@@ -214,6 +219,14 @@
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
             <scope>provided</scope>
+        </dependency>
+        
+        <!-- test dependencies -->
+        
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
