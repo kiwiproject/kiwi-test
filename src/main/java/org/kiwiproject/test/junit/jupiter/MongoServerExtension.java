@@ -4,8 +4,8 @@ import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.test.mongo.MongoServerTests.startInMemoryMongoServer;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.ServerVersion;
@@ -174,7 +174,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
         connectionString = MongoServerTests.getConnectionString(mongoServer);
         testDatabaseName = generateTestDatabaseName();
 
-        mongoClient = new MongoClient(new MongoClientURI(connectionString));
+        mongoClient = MongoClients.create(connectionString);
         testDatabase = mongoClient.getDatabase(testDatabaseName);
     }
 
@@ -193,7 +193,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     }
 
     private void dropAndRecreateTestDatabase() {
-        mongoClient.dropDatabase(testDatabaseName);
+        mongoClient.getDatabase(testDatabaseName).drop();
         this.testDatabase = mongoClient.getDatabase(testDatabaseName);
     }
 

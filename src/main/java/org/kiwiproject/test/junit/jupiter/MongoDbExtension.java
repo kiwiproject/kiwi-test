@@ -6,7 +6,7 @@ import static java.util.stream.Collectors.toList;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import lombok.Builder;
 import lombok.Getter;

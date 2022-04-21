@@ -13,8 +13,9 @@ import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -219,8 +220,7 @@ public class MongoTestProperties {
      * @return a new {@link MongoClient}
      */
     public MongoClient newMongoClient() {
-        var mongoClientURI = new MongoClientURI(uri);
-        return new MongoClient(mongoClientURI);
+        return MongoClients.create(uri);
     }
 
     /**
