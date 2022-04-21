@@ -202,16 +202,12 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
-            <!-- TODO: Remove version once update kiwi-bom with a mongodb-driver-sync.version property -->
-            <version>4.5.1</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
-             <!-- TODO: Remove version once update kiwi-bom with a mongodb-driver-core.version property -->
-            <version>4.5.1</version>
             <scope>provided</scope>
         </dependency>
 
