@@ -7,13 +7,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.kiwiproject.net.UncheckedURISyntaxException;
+import org.kiwiproject.test.junit.jupiter.ClearBoxTest;
 
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnmappableCharacterException;
 
 @DisplayName("Fixtures")
 class FixturesTest {
@@ -37,12 +41,60 @@ class FixturesTest {
         }
 
         @Test
-        void shouldThrow_WhenFixtureCannotBeRead() {
-            // Use charset that will cause an IOException
+        void shouldThrow_WhenFixtureCannotBeRead_DueToMalformedInput() {
+            // Use charset that will cause a MalformedInputException
             assertThatThrownBy(() -> Fixtures.fixture(PANGRAM_FIXTURE, StandardCharsets.UTF_16))
                     .isExactlyInstanceOf(UncheckedIOException.class)
                     .hasCauseExactlyInstanceOf(MalformedInputException.class)
                     .hasMessage("Error reading fixture: %s", PANGRAM_FIXTURE);
+        }
+
+        @Test
+        void shouldThrow_WhenFixtureCannotBeRead_DueToUnmappableCharacter() {
+            // Use charset that will cause UnmappableCharacterException
+            // The JIS_X0212-1990 charset was found by trial and error, not
+            // because I know anything about Japanese charsets!
+            var jisCharset = Charset.forName("JIS_X0212-1990");
+            assertThatThrownBy(() -> Fixtures.fixture(PANGRAM_FIXTURE, jisCharset))
+                    .isExactlyInstanceOf(UncheckedIOException.class)
+                    .hasCauseExactlyInstanceOf(UnmappableCharacterException.class)
+                    .hasMessage("Error reading fixture: %s", PANGRAM_FIXTURE);
+        }
+
+        @Nested
+        class UncheckedIOExceptionOrOriginalError {
+
+            @ClearBoxTest
+            void shouldReturnTheOriginalError_WhenIt_HasNoCause() {
+                var error = new Error();
+                assertThat(Fixtures.uncheckedIOExceptionOrOriginalError(error, PANGRAM_FIXTURE))
+                        .isSameAs(error);
+            }
+
+            @ClearBoxTest
+            void shouldReturnTheOriginalError_WhenItsCause_IsNotCharacterCodingException() {
+                var error = new Error(new IOException("I/O error"));
+                assertThat(Fixtures.uncheckedIOExceptionOrOriginalError(error, PANGRAM_FIXTURE))
+                        .isSameAs(error);
+            }
+
+            @ClearBoxTest
+            void shouldReturnUncheckedIOException_WhenErrorCause_IsMalformedInputException() {
+                var malformedInputEx = new MalformedInputException(42);
+                var error = new Error(malformedInputEx);
+                assertThat(Fixtures.uncheckedIOExceptionOrOriginalError(error, PANGRAM_FIXTURE))
+                        .isExactlyInstanceOf(UncheckedIOException.class)
+                        .hasCause(malformedInputEx);
+            }
+
+            @ClearBoxTest
+            void shouldReturnUncheckedIOException_WhenErrorCause_IsUnmappableCharacterException() {
+                var unmappableCharacterEx = new UnmappableCharacterException(84);
+                var error = new Error(unmappableCharacterEx);
+                assertThat(Fixtures.uncheckedIOExceptionOrOriginalError(error, PANGRAM_FIXTURE))
+                        .isExactlyInstanceOf(UncheckedIOException.class)
+                        .hasCause(unmappableCharacterEx);
+            }
         }
     }
 
