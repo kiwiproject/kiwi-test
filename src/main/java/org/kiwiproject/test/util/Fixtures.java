@@ -6,7 +6,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Resources;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.kiwiproject.base.KiwiThrowables;
 import org.kiwiproject.net.UncheckedURISyntaxException;
 
 import java.io.File;
@@ -87,8 +86,7 @@ public class Fixtures {
      */
     @VisibleForTesting
     static Throwable uncheckedIOExceptionOrOriginalError(Error error, String resourceName) {
-        var throwableInfo = KiwiThrowables.throwableInfoOfNonNull(error);
-        var cause = throwableInfo.getCause().orElse(null);
+        var cause = error.getCause();
         if (nonNull(cause) && cause instanceof CharacterCodingException) {
             return new UncheckedIOException("Error reading fixture: " + resourceName, (CharacterCodingException) cause);
         }
