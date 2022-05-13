@@ -56,13 +56,14 @@ public class Fixtures {
      * {@link IOException} whose actual type was one of the previously mentioned {@link CharacterCodingException}
      * subclasses. Its Javadoc clearly states that it throws an {@link IOException} "if an I/O error occurs reading
      * from the file or a malformed or unmappable byte sequence is read". In our tests of malformed input and unmappable
-     * characters, we see the {@link Error} thrown instead of a {@link CharacterCodingException} on JDK 17 and later.
+     * characters, we see the {@link Error} thrown instead of a {@link CharacterCodingException} on JDK 17 and 18.
      * This is a bug in the JDK reported as <a href="https://bugs.openjdk.java.net/browse/JDK-8286287">JDK-8286287</a>.
-     * There is also a question on Stack Overflow titled <em>Error which "shouldn't happen" caused by MalformedInputException when reading file
-     * to string with UTF-16</em>. It includes a lot of interesting information regarding differences between UTF-8 and
-     * UTF-16 if you're interested in such things. You can find it <a href="https://stackoverflow.com/q/72127702">here</a>.
-     * As a result, we have included code to handle the specific case when an {@link Error} is thrown and its cause is a
-     * {@link CharacterCodingException}.
+     * It was fixed by pull request [8286287: Reading file as UTF-16 causes Error which "shouldn't happen"](https://github.com/openjdk/jdk/pull/8640)
+     * and is scheduled for Java 19. There is also a question on Stack Overflow titled <em>Error which "shouldn't happen" caused
+     * by MalformedInputException when reading file to string with UTF-16</em>. It includes a lot of interesting information
+     * regarding differences between UTF-8 and UTF-16 if you're interested in such things. You can find it
+     * <a href="https://stackoverflow.com/q/72127702">here</a>. As a result, we have included code to handle the
+     * specific case when an {@link Error} is thrown and its cause is a {@link CharacterCodingException}.
      */
     @SneakyThrows
     @SuppressWarnings("java:S1181")  // Suppress Sonar "Throwable and Error should not be caught" warning (see implNote)
@@ -74,7 +75,7 @@ public class Fixtures {
         } catch (IOException e) {
             throw new UncheckedIOException("Error reading fixture: " + resourceName, e);
         } catch (Error error) {
-            // Special handling for JDK 17+ (see implementation note above). Also, this relies on the "SneakyThrows".
+            // Special handling for JDK 17 and 18 (see implementation note above). Also, this relies on the "SneakyThrows".
             throw uncheckedIOExceptionOrOriginalError(error, resourceName);
         }
     }
