@@ -58,7 +58,7 @@ public class Fixtures {
      * from the file or a malformed or unmappable byte sequence is read". In our tests of malformed input and unmappable
      * characters, we see the {@link Error} thrown instead of a {@link CharacterCodingException} on JDK 17 and 18.
      * This is a bug in the JDK reported as <a href="https://bugs.openjdk.java.net/browse/JDK-8286287">JDK-8286287</a>.
-     * It was fixed by pull request [8286287: Reading file as UTF-16 causes Error which "shouldn't happen"](https://github.com/openjdk/jdk/pull/8640)
+     * It was fixed by pull request (<a href="https://github.com/openjdk/jdk/pull/8640">8286287: Reading file as UTF-16 causes Error which "shouldn't happen"</a>)
      * and is scheduled for Java 19. There is also a question on Stack Overflow titled <em>Error which "shouldn't happen" caused
      * by MalformedInputException when reading file to string with UTF-16</em>. It includes a lot of interesting information
      * regarding differences between UTF-8 and UTF-16 if you're interested in such things. You can find it
