@@ -19,4 +19,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Test
 public @interface ClearBoxTest {
+
+    /**
+     * Optional description or explanation why this is a "clear box" test.
+     */
+    String value() default "";
 }
