@@ -64,7 +64,7 @@ class FixturesTest {
         @Nested
         class UncheckedIOExceptionOrOriginalError {
 
-            @ClearBoxTest
+            @ClearBoxTest("non-public API")
             void shouldReturnTheOriginalError_WhenIt_HasNoCause() {
                 var error = new Error();
                 assertThat(Fixtures.uncheckedIOExceptionOrOriginalError(error, PANGRAM_FIXTURE))
