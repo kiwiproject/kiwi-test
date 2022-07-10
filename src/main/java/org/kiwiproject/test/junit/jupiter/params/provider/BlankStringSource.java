@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
  * </pre>
  *
  * @see AsciiOnlyBlankStringSource
+ * @see MinimalBlankStringSource
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

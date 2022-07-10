@@ -9,12 +9,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * {@code @AsciiOnlyBlankStringSource} is an {@link ArgumentsSource} which provides ASCII blank strings.
+ * {@code @MinimalBlankStringSource} is an {@link ArgumentsSource} which provides a few blank strings including
+ * null, zero-length string, strings with only spaces, and strings with only newline, carriage return, and tab.
+ *
  * <p>
  * Usage:
  * <pre>
  * {@literal @}ParameterizedTest
- * {@literal @}AsciiOnlyBlankStringSource
+ * {@literal @}MinimalBlankStringSource
  *  void testThatEachProvidedArgumentIsBlank(String blankString) {
  *      assertThat(blankString).isBlank();
  *      // or whatever else you need to test where you need a blank String...
@@ -22,11 +24,11 @@ import java.lang.annotation.Target;
  * </pre>
  *
  * @see BlankStringSource
- * @see MinimalBlankStringSource
+ * @see AsciiOnlyBlankStringSource
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ArgumentsSource(AsciiOnlyBlankStringArgumentsProvider.class)
-public @interface AsciiOnlyBlankStringSource {
+@ArgumentsSource(MinimalBlankStringArgumentsProvider.class)
+public @interface MinimalBlankStringSource {
 }
