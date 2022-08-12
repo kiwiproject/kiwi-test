@@ -56,6 +56,10 @@ import org.kiwiproject.test.h2.H2FileBasedDatabase;
  * When using this extension via {@code @RegisterExtension}, you can use the getter methods to retrieve the entire
  * {@link H2FileBasedDatabase} object or its individual properties. When using it with {@code @ExtendWith} and an
  * injected parameter, you obviously have direct access to the {@link H2FileBasedDatabase} object.
+ * <p>
+ * This requires <a href="https://mvnrepository.com/artifact/com.h2database/h2">h2</a> and
+ * <a href="https://mvnrepository.com/artifact/commons-io/commons-io">commons-io</a> to be
+ * available at runtime when tests are executing.
  */
 @Slf4j
 public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAllCallback, ParameterResolver {

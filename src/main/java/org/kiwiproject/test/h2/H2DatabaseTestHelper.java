@@ -14,6 +14,9 @@ import java.sql.SQLException;
 
 /**
  * Utilities for H2 databases.
+ * <p>
+ * This requires <a href="https://mvnrepository.com/artifact/com.h2database/h2">h2</a> to be
+ * available at runtime when tests are executing.
  */
 @UtilityClass
 @Slf4j
