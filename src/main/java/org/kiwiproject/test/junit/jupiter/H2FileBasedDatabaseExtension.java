@@ -96,7 +96,7 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
     }
 
     /**
-     * Deletes the H2 file-based database if the test class is not annotated with {@link Nested}.
+     * Deletes the H2 file-based database unless exiting a nested test class.
      *
      * @param context extension context
      * @throws Exception if the database directory could not be deleted
