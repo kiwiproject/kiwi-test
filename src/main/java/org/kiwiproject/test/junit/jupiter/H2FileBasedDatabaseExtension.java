@@ -76,8 +76,7 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
     private H2FileBasedDatabase database;
 
     /**
-     * Creates a new H2 file-based database if a database does not exist and the test class is not
-     * annotated with {@link Nested}.
+     * Creates a new H2 file-based database if a database does not exist.
      *
      * @param context extension context
      */
