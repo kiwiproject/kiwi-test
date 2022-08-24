@@ -1,9 +1,13 @@
 package org.kiwiproject.test.junit.jupiter;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -71,29 +75,65 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
     private H2FileBasedDatabase database;
 
     /**
-     * Creates a new H2 file-based database.
+     * Creates a new H2 file-based database if a database does not exist and the test class is not
+     * annotated with {@link Nested}.
      *
      * @param context extension context
      */
     @Override
     public void beforeAll(ExtensionContext context) {
-        database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
-        LOG.trace("Created database: {}", database);
+        if (isNull(database)) {
+            LOG.trace("Database does not exist; create it");
+            database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
+            LOG.trace("Created database: {}", database);
+        } else if (inNestedClass(context)) {
+            LOG.trace("A database already exists and we are inside @Nested test class {}, so not doing anything.",
+                    testClassNameOrNull(context));
+        } else {
+            LOG.warn("database is not null and we are not in a nested class." +
+                    " Not sure what to do, so doing nothing! This could be a bug. Please report it.");
+        }
 
         var namespace = createNamespace();
         context.getStore(namespace).put(DATABASE_KEY, database);
     }
 
     /**
-     * Deletes the H2 file-based database.
+     * Deletes the H2 file-based database if the test class is not annotated with {@link Nested}.
      *
      * @param context extension context
      * @throws Exception if the database directory could not be deleted
      */
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        LOG.trace("Deleting database: {}", database);
-        FileUtils.deleteDirectory(database.getDirectory());
+        if (inNestedClass(context)) {
+            LOG.trace("We're in nested class {}, so NOT deleting the database", testClassNameOrNull(context));
+        } else {
+            LOG.trace("Deleting database: {}", database);
+            FileUtils.deleteDirectory(database.getDirectory());
+        }
+    }
+
+    private static boolean inNestedClass(ExtensionContext context) {
+        var testClass = context.getTestClass().orElse(null);
+        if (nonNull(testClass)) {
+            return testClass.isAnnotationPresent(Nested.class);
+        }
+
+        // This is a fallback in case the test class doesn't exist for some reason.
+        // It is not clear from JUnit's documentation how and when that can occur.
+        // This is admittedly brittle since it relies on the value of a constant in
+        // an internal JUnit API (NestedClassTestDescriptor.SEGMENT_TYPE) which is
+        // not exported from its module definition.
+        LOG.warn("No test class exists for context {} ;" +
+                " trying 'nested-class' fallback to determine if we're in a @Nested test class",
+                context.getUniqueId());
+
+        return context.getUniqueId().contains("nested-class");
+    }
+
+    private static String testClassNameOrNull(ExtensionContext context) {
+        return context.getTestClass().map(Class::getName).orElse(null);
     }
 
     /**
