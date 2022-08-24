@@ -1,6 +1,6 @@
 package org.kiwiproject.test.junit.jupiter;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.isTestClassNested;
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrNull;
 
@@ -83,20 +83,17 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
      */
     @Override
     public void beforeAll(ExtensionContext context) {
-        if (isNull(database)) {
-            LOG.trace("Database does not exist; create it");
-            database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
-            LOG.trace("Created database: {}", database);
-        } else if (isTestClassNested(context)) {
-            LOG.trace("A database already exists and we are inside @Nested test class {}, so not doing anything.",
-                    testClassNameOrNull(context));
-        } else {
-            LOG.warn("database is not null and we are not in a nested class." +
-                    " Not sure what to do, so doing nothing! This could be a bug. Please report it.");
+        if (nonNull(database)) {
+            LOG.trace("A database already exists (we are probably inside a @Nested test class) so not doing anything");
+            return;
         }
+
+        LOG.trace("Database does not exist; create it");
+        database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
 
         var namespace = createNamespace();
         context.getStore(namespace).put(DATABASE_KEY, database);
+        LOG.trace("Created and stored database: {}", database);
     }
 
     /**
