@@ -27,6 +27,7 @@ class H2FileBasedDatabaseExtensionRegisterTest {
     private H2FileBasedDatabase databaseFromSetup;
 
     // This exists so that we can test custom database setup
+    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     @BeforeAll
     static void beforeAll(@H2Database H2FileBasedDatabase database) {
         try (var conn = database.getDataSource().getConnection()) {

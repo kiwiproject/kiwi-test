@@ -2,16 +2,15 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static java.util.Objects.nonNull;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.extension.ExtensionContext;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * Static utilities related to JUnit Jupiter.
  * <p>
- * Currently this is only for internal usage only.
+ * Currently, this is only for internal usage only.
  */
 @UtilityClass
 @Slf4j
@@ -22,7 +21,7 @@ class JupiterHelpers {
      * annotated with {@link Nested}.
      * <p>
      * If there is no test class, tries a fallback mechanism which inspects
-     * the unique ID of the context to see if if contains "nested-class". This
+     * the unique ID of the context to see if it contains "nested-class". This
      * fallback is admittedly brittle since it relies on the value of a constant
      * in an internal JUnit API (NestedClassTestDescriptor.SEGMENT_TYPE) which is
      * not exported from its module definition.
