@@ -1,5 +1,9 @@
 package org.kiwiproject.test.junit.jupiter;
 
+import static java.util.Objects.nonNull;
+import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.isTestClassNested;
+import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrNull;
+
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -71,29 +75,39 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
     private H2FileBasedDatabase database;
 
     /**
-     * Creates a new H2 file-based database.
+     * Creates a new H2 file-based database if a database does not exist.
      *
      * @param context extension context
      */
     @Override
     public void beforeAll(ExtensionContext context) {
+        if (nonNull(database)) {
+            LOG.trace("A database already exists (we are probably inside a @Nested test class) so not doing anything");
+            return;
+        }
+
+        LOG.trace("Database does not exist; create it");
         database = H2DatabaseTestHelper.buildH2FileBasedDatabase();
-        LOG.trace("Created database: {}", database);
 
         var namespace = createNamespace();
         context.getStore(namespace).put(DATABASE_KEY, database);
+        LOG.trace("Created and stored database: {}", database);
     }
 
     /**
-     * Deletes the H2 file-based database.
+     * Deletes the H2 file-based database unless exiting a nested test class.
      *
      * @param context extension context
      * @throws Exception if the database directory could not be deleted
      */
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        LOG.trace("Deleting database: {}", database);
-        FileUtils.deleteDirectory(database.getDirectory());
+        if (isTestClassNested(context)) {
+            LOG.trace("We're in nested class {}, so NOT deleting the database", testClassNameOrNull(context));
+        } else {
+            LOG.trace("Deleting database: {}", database);
+            FileUtils.deleteDirectory(database.getDirectory());
+        }
     }
 
     /**

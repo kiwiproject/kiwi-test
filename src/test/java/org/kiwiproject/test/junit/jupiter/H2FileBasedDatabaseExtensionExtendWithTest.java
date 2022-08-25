@@ -2,6 +2,7 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,24 @@ import java.sql.SQLException;
 class H2FileBasedDatabaseExtensionExtendWithTest {
 
     private H2FileBasedDatabase databaseFromSetup;
+
+    // This exists so that we can test custom database setup
+    @SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
+    @BeforeAll
+    static void beforeAll(@H2Database H2FileBasedDatabase database) {
+        try (var conn = database.getDataSource().getConnection()) {
+            var createTableStmt = conn.createStatement();
+            createTableStmt.execute("create table people (name varchar , age integer)");
+
+            var insertDataStmt = conn.createStatement();
+            insertDataStmt.addBatch("insert into people values ('Bob', 42)");
+            insertDataStmt.addBatch("insert into people values ('Alice', 24)");
+            insertDataStmt.addBatch("insert into people values ('Zack', 12)");
+            insertDataStmt.executeBatch();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @BeforeEach
     void setUp(@H2Database H2FileBasedDatabase database) {
@@ -49,6 +68,17 @@ class H2FileBasedDatabaseExtensionExtendWithTest {
         }
     }
 
+    @Test
+    void shouldHaveCreatedPeopleTableInCustomBeforeAll(@H2Database H2FileBasedDatabase database) throws SQLException {
+        try (var conn = database.getDataSource().getConnection();
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery("select count(*) as count from people")) {
+
+            assertThat(rs.next()).isTrue();
+            assertThat(rs.getInt("count")).isEqualTo(3);
+        }
+    }
+
     @Nested
     class NestedTestClass {
 
@@ -74,6 +104,25 @@ class H2FileBasedDatabaseExtensionExtendWithTest {
         @Test
         void shouldHaveSameDatabaseForNestedAndParentSetup() {
             assertThat(databaseFromNestedSetup).isSameAs(databaseFromSetup);
+        }
+    }
+
+    @DisplayName("Another Nested Test Class")
+    @Nested
+    class AnotherNestedTestClass {
+
+        @Test
+        void shouldReceiveSameDatabaseAsParent(@H2Database H2FileBasedDatabase database) {
+            assertThat(database).isSameAs(databaseFromSetup);
+        }
+
+        @Nested
+        class NestedInsideAnotherNestedTestClass {
+
+            @Test
+            void shouldReceiveSameDatabaseAsParent(@H2Database H2FileBasedDatabase database) {
+                assertThat(database).isSameAs(databaseFromSetup);
+            }
         }
     }
 }
