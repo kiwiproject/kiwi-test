@@ -1,6 +1,5 @@
 package org.kiwiproject.test.junit.jupiter;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
