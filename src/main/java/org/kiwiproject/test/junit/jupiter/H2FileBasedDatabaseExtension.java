@@ -5,6 +5,8 @@ import static java.util.Objects.nonNull;
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.isTestClassNested;
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrNull;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +125,8 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
         }
     }
 
-    private static void deleteOrThrowUnchecked(Path p) {
+    @VisibleForTesting
+    static void deleteOrThrowUnchecked(Path p) {
         try {
             Files.delete(p);
         } catch (IOException e) {
