@@ -58,7 +58,7 @@
             <artifactId>kiwi</artifactId>
             <version>${kiwi.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -69,12 +69,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -216,9 +210,9 @@
             <artifactId>mongo-java-server</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- test dependencies -->
-        
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

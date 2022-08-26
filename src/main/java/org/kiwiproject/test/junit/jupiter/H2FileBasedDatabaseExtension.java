@@ -1,5 +1,6 @@
 package org.kiwiproject.test.junit.jupiter;
 
+import static java.util.Comparator.reverseOrder;
 import static java.util.Objects.nonNull;
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.isTestClassNested;
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrNull;
@@ -7,7 +8,6 @@ import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrN
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -15,6 +15,12 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.kiwiproject.test.h2.H2DatabaseTestHelper;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * JUnit Jupiter extension that creates a file-based H2 database before all tests and deletes it after all tests
@@ -106,7 +112,22 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
             LOG.trace("We're in nested class {}, so NOT deleting the database", testClassNameOrNull(context));
         } else {
             LOG.trace("Deleting database: {}", database);
-            FileUtils.deleteDirectory(database.getDirectory());
+            deleteDirectory(database.getDirectory());
+        }
+    }
+
+    private static void deleteDirectory(File directory) throws IOException {
+        var pathToBeDeleted = directory.toPath();
+        try (var pathStream = Files.walk(pathToBeDeleted)) {
+            pathStream.sorted(reverseOrder()).forEach(H2FileBasedDatabaseExtension::deleteOrThrowUnchecked);
+        }
+    }
+
+    private static void deleteOrThrowUnchecked(Path p) {
+        try {
+            Files.delete(p);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
