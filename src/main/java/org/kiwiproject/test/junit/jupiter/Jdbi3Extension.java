@@ -29,7 +29,7 @@ import java.util.List;
  * (1) a {@link DataSource}, (2) a JDBI {@link ConnectionFactory}, or
  * (3) the JDBC URL, username, and password.
  * <p>
- * Before each tests, sets up a transaction. After each test completes, rolls the transaction back.
+ * Before each test, sets up a transaction. After each test completes, rolls the transaction back.
  * <p>
  * <strong>NOTE: If the DAO under test creates its own {@link Handle}s, then you need to make sure that you always use
  * the <em>same connection</em> otherwise there will be transaction isolation issues. Prefer using the {@link Handle}
