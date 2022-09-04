@@ -42,7 +42,7 @@ import org.kiwiproject.test.jdbc.SimpleSingleConnectionDataSource;
  * </pre>
  * Note in the above that the {@link PostgresLiquibaseTestExtension} is declared both static and final, while the
  * {@link Jdbi3Extension} is not static but is final. This configuration ensures that the embedded Postgres database
- * is setup only one time before all tests run. The {@link Jdbi3Extension} is initialized before each test with
+ * is set up only one time before all tests run. The {@link Jdbi3Extension} is initialized before each test with
  * a new transaction that is rolled back after each test, which again ensures code running in the transaction
  * participates in the same transaction and can see uncommitted data, but also ensures no data is actually committed
  * since the transaction is rolled back. Each test therefore does not need to worry about cleaning up any data from
