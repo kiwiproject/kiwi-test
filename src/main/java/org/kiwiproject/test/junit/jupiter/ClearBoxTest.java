@@ -22,6 +22,8 @@ public @interface ClearBoxTest {
 
     /**
      * Optional description or explanation why this is a "clear box" test.
+     *
+     * @return the description (empty string by default)
      */
     String value() default "";
 }

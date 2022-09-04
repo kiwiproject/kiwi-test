@@ -27,6 +27,7 @@ public class MongoServerTests {
     /**
      * Start a new in-memory {@link MongoServer} with the given {@link ServerVersion}.
      *
+     * @param serverVersion the version of Mongo to use
      * @return the started MongoServer instance
      */
     public static MongoServer startInMemoryMongoServer(ServerVersion serverVersion) {
