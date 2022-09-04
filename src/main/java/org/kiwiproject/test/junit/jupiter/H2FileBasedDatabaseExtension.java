@@ -6,7 +6,6 @@ import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.isTestClassNeste
 import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrNull;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +68,7 @@ import java.nio.file.Path;
  * {@link H2FileBasedDatabase} object or its individual properties. When using it with {@code @ExtendWith} and an
  * injected parameter, you obviously have direct access to the {@link H2FileBasedDatabase} object.
  * <p>
- * This requires <a href="https://mvnrepository.com/artifact/com.h2database/h2">h2</a> and
- * <a href="https://mvnrepository.com/artifact/commons-io/commons-io">commons-io</a> to be
+ * This requires <a href="https://mvnrepository.com/artifact/com.h2database/h2">h2</a> to be
  * available at runtime when tests are executing.
  */
 @Slf4j
