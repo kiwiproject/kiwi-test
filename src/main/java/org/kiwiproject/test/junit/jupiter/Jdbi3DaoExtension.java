@@ -126,13 +126,16 @@ public class Jdbi3DaoExtension<T> implements BeforeEachCallback, AfterEachCallba
         LOG.trace("Opening handle");
         handle = jdbi.open();
 
-        LOG.trace("Txn isolation level: {}", handle.getTransactionIsolationLevel());
+        LOG.trace("Original autoCommit: {}", Jdbi3Helpers.describeAutoCommit(handle));
 
         LOG.trace("Attach type {} to handle", daoType);
         dao = handle.attach(daoType);
 
         LOG.trace("Beginning transaction");
         handle.begin();
+
+        LOG.trace("Transaction isolation level: {}", Jdbi3Helpers.describeTransactionIsolationLevel(handle));
+        LOG.trace("autoCommit in transaction: {}", Jdbi3Helpers.describeAutoCommit(handle));
 
         LOG.trace("Done setting up for JDBI DAO test");
     }

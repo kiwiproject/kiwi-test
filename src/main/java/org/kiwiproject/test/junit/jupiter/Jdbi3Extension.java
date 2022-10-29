@@ -103,10 +103,13 @@ public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
         LOG.trace("Opening handle");
         handle = jdbi.open();
 
-        LOG.trace("Txn isolation level: {}", handle.getTransactionIsolationLevel());
+        LOG.trace("Original autoCommit: {}", Jdbi3Helpers.describeAutoCommit(handle));
 
         LOG.trace("Beginning transaction");
         handle.begin();
+
+        LOG.trace("Transaction isolation level: {}", Jdbi3Helpers.describeTransactionIsolationLevel(handle));
+        LOG.trace("autoCommit in transaction: {}", Jdbi3Helpers.describeAutoCommit(handle));
 
         LOG.trace("Done setting up for JDBI test");
     }

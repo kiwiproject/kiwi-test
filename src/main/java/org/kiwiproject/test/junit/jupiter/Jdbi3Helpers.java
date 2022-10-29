@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import static java.util.function.Predicate.not;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.logging.LazyLogParameterSupplier.lazy;
 
 import lombok.AccessLevel;
@@ -19,7 +20,9 @@ import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.jdbi.v3.core.statement.SqlLogger;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.jdbi.v3.core.transaction.TransactionIsolationLevel;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import org.kiwiproject.base.KiwiThrowables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,12 @@ class Jdbi3Helpers {
 
     /**
      * Currently supports only Postgres and H2.
+     *
+     * @implNote This uses {@link H2DatabasePlugin} directly in order to get the H2 plugin class name because
+     * it is in <a href="https://mvnrepository.com/artifact/org.jdbi/jdbi3-core">jdbi3-core</a>, whereas
+     * other plugins are outside core and require a separate dependency. For example, the Postgres plugin resides
+     * in <a href="https://mvnrepository.com/artifact/org.jdbi/jdbi3-postgres">jdbi3-postgres</a>, so we use
+     * a String for the plugin class name to avoid a hard dependency.
      */
     enum DatabaseType {
 
@@ -54,7 +63,7 @@ class Jdbi3Helpers {
         /**
          * Given a JDBC database URL, attempt to find and instantiate a plugin.
          * <p>
-         * Currently supports only H2 and Postgres.
+         * Currently, supports only H2 and Postgres.
          *
          * @param databaseUrl the JDBC database URL
          * @return an Optional with a plugin instance or an empty Optional
@@ -67,7 +76,7 @@ class Jdbi3Helpers {
         /**
          * Determine the database type from the given JDBC database URL.
          * <p>
-         * Currently supports only H2 and Postgres.
+         * Currently, supports only H2 and Postgres.
          *
          * @param databaseUrl the JDBC database URL
          * @return an Optional containing the database type if found, otherwise an empty Optional
@@ -137,7 +146,7 @@ class Jdbi3Helpers {
         return jdbi;
     }
 
-    private static Optional<JdbiPlugin> findDatabasePlugin(Jdbi jdbi) {
+    static Optional<JdbiPlugin> findDatabasePlugin(Jdbi jdbi) {
         try {
             return jdbi.withHandle(handle -> {
                 var connection = handle.getConnection();
@@ -224,15 +233,105 @@ class Jdbi3Helpers {
         }
     }
 
+    static String describeTransactionIsolationLevel(Handle handle) {
+        var result = getTransactionIsolationLevel(handle);
+
+        var level = result.getLeft();
+        if (nonNull(level)) {
+            return f("{} (java.sql.Connection isolation level: {})", level.name(), level.intValue());
+        }
+
+        var exception = result.getRight();
+        var throwableInfo = KiwiThrowables.throwableInfoOfNonNull(exception);
+        return f("ERROR ({}: {}, cause: {})", throwableInfo.type, throwableInfo.message, throwableInfo.cause);
+    }
+
+    /**
+     * Attempt to get the transaction isolation level for the given Handle.
+     *
+     * @return a Pair with the transaction isolation level or the Exception that occurred
+     * trying to obtain the isolation level (exactly one will be null, the other non-null)
+     */
+    static Pair<TransactionIsolationLevel, Exception> getTransactionIsolationLevel(Handle handle) {
+        try {
+            return Pair.of(handle.getTransactionIsolationLevel(), null);
+        } catch (Exception e) {
+            LOG.warn("Unable to get transaction isolation level", e);
+            return Pair.of(null, e);
+        }
+    }
+
+    static String describeAutoCommit(Handle handle) {
+        var result = getAutoCommit(handle);
+
+        var autoCommit = result.getLeft();
+        if (nonNull(autoCommit)) {
+            return autoCommit.toString();
+        }
+
+        var exception = result.getRight();
+        var throwableInfo = KiwiThrowables.throwableInfoOfNonNull(exception);
+        return f("ERROR ({}: {}, cause: {})", throwableInfo.type, throwableInfo.message, throwableInfo.cause);
+    }
+
+    /**
+     * Attempt to get the autoCommit setting of the given Handle's JDBC Connection.
+     *
+     * @return a Pair with the autoCommit value or the Exception that occurred
+     * trying to obtain the autoCommit value (exactly one will be null, the other non-null)
+     */
+    static Pair<Boolean, Exception> getAutoCommit(Handle handle) {
+        try {
+            return Pair.of(handle.getConnection().getAutoCommit(), null);
+        } catch (Exception e) {
+            LOG.warn("Unable to get autoCommit", e);
+            return Pair.of(null, e);
+        }
+    }
+
+    /**
+     * Rollback and close the given Handle, suppressing exceptions that occur during rollback or close.
+     * <p>
+     * Exceptions are logged at WARN level to help diagnose problems. Note that if errors occur rolling
+     * back and/or closing the Handle (and thus the underlying JDBC Connection), other tests may
+     * fail in unexpected ways. For example, if a single Connection is used for all tests (e.g. for
+     * performance reasons) and a test (accidentally?) enables autoCommit when using Postgres, the rollback
+     * will fail. In this situation, data that has been auto-committed will be seen by the remaining tests
+     * which may cause unexpected assertion failures, e.g. a test sees more data than it expects to see.
+     */
     static void rollbackAndClose(Handle handle, Logger logger) {
         logger.trace("Tearing down after JDBI test");
 
+        var autoCommit = Jdbi3Helpers.describeAutoCommit(handle);
+        logger.trace("autoCommit before rollback: {}", autoCommit);
+
         logger.trace("Rollback transaction");
-        handle.rollback();
+        tryRollback(handle, logger);
+
+        var newAutoCommit = Jdbi3Helpers.describeAutoCommit(handle);
+        logger.trace("autoCommit after rollback: {}", newAutoCommit);
 
         logger.trace("Close handle");
-        handle.close();
+        tryClose(handle, logger);
 
         logger.trace("Done tearing down after JDBI test");
+    }
+
+    private static void tryRollback(Handle handle, Logger logger) {
+        try {
+            handle.rollback();
+        } catch (Exception e) {
+            logger.warn("Error in transaction rollback for Handle {} with Connection {}",
+                    handle, handle.getConnection(), e);
+        }
+    }
+
+    private static void tryClose(Handle handle, Logger logger) {
+        try {
+            handle.close();
+        } catch (Exception e) {
+            logger.warn("Error closing Handle {} with Connection {}",
+                    handle, handle.getConnection(), e);
+        }
     }
 }
