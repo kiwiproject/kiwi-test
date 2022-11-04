@@ -1,6 +1,7 @@
 package org.kiwiproject.test.junit.jupiter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +9,11 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.jdbi.v3.core.statement.UnableToCreateStatementException;
 import org.jdbi.v3.sqlobject.config.RegisterRowMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -90,6 +94,21 @@ class Jdbi3DaoExtensionTest {
         assertThat(jdbi3DaoExtension.getDao()).isNotNull();
     }
 
+    @Test
+    @Order(6)
+    void shouldHandleExceptionsInPersistenceCode() {
+        assertThatThrownBy(() -> dao.findAllInvalidSql())
+                .isInstanceOf(UnableToCreateStatementException.class);
+    }
+
+    @Test
+    @Order(7)
+    void shouldNotBeAffectedByPreviousFailure() {
+        assertThat(dao.insert("hello", 42)).isOne();
+        assertThat(dao.insert("world", 84)).isOne();
+        assertThat(dao.findAll()).hasSize(2);
+    }
+
     @Value
     private static class TestTableValue {
         String col1;
@@ -106,7 +125,15 @@ class Jdbi3DaoExtensionTest {
 
     @RegisterRowMapper(TestTableValueMapper.class)
     private interface TestTableDao {
+
+        @SqlUpdate("insert into test_table values (:col1, :col2)")
+        int insert(@Bind("col1") String value1, @Bind("col2") int value2);
+
         @SqlQuery("select * from test_table")
         List<TestTableValue> findAll();
+
+        @SuppressWarnings("UnusedReturnValue")
+        @SqlQuery("select does_not_exist from test_table")
+        List<TestTableValue> findAllInvalidSql();
     }
 }

@@ -71,6 +71,19 @@ class Jdbi3MultiDaoExtensionTest {
     }
 
     @Test
+    @Order(0)
+    void shouldProvideMetadata() {
+        assertThat(multiDaoExtension.getJdbi()).isNotNull();
+        assertThat(multiDaoExtension.getDaoTypes())
+                .containsExactlyInAnyOrder(PersonDao.class, PlaceDao.class, ThingDao.class);
+        assertThat(multiDaoExtension.getDaos())
+                .hasSize(3)
+                .containsEntry(PersonDao.class, personDao)
+                .containsEntry(PlaceDao.class, placeDao)
+                .containsEntry(ThingDao.class, thingDao);
+    }
+
+    @Test
     @Order(1)
     void shouldBeginTransactionResultingInDisabledAutoCommit() throws SQLException {
         assertThat(handle.getConnection().getAutoCommit()).isFalse();

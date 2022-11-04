@@ -1,6 +1,7 @@
 package org.kiwiproject.test.junit.jupiter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.jdbi.v3.core.statement.UnableToCreateStatementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -85,6 +87,21 @@ class Jdbi3ExtensionTest {
         assertThat(jdbi3Extension.getHandle()).isNotNull();
     }
 
+    @Test
+    @Order(6)
+    void shouldHandleExceptionsInPersistenceCode() {
+        assertThatThrownBy(() -> dao.findAllInvalidSql(handle))
+                .isInstanceOf(UnableToCreateStatementException.class);
+    }
+
+    @Test
+    @Order(7)
+    void shouldNotBeAffectedByPreviousFailure() {
+        assertThat(dao.insert(handle, "hello", 42)).isOne();
+        assertThat(dao.insert(handle, "world", 84)).isOne();
+        assertThat(dao.findAll(handle)).hasSize(2);
+    }
+
     @Value
     private static class TestTableValue {
         String col1;
@@ -98,14 +115,28 @@ class Jdbi3ExtensionTest {
         }
     }
 
+    /**
+     * @implNote We need the same exact {@link Handle} to be used in the tests to ensure we get the same
+     * SQL {@code Connection}, otherwise you run into transaction isolation issues.
+     */
     private static class TestTableDao {
 
-        /**
-         * @implNote We need the same exact {@link Handle} to be used in the tests to ensure we get the same
-         * SQL {@code Connection}, otherwise you run into transaction isolation issues.
-         */
+        int insert(Handle handle, String value1, int value2) {
+            return handle.createUpdate("insert into test_table values (:col1, :col2)")
+                    .bind("col1", value1)
+                    .bind("col2", value2)
+                    .execute();
+        }
+
         List<TestTableValue> findAll(Handle handle) {
             return handle.createQuery("select * from test_table")
+                    .map(new TestTableValueMapper())
+                    .list();
+        }
+
+        @SuppressWarnings("UnusedReturnValue")
+        List<TestTableValue> findAllInvalidSql(Handle handle) {
+            return handle.createQuery("select does_not_exist from test_table")
                     .map(new TestTableValueMapper())
                     .list();
         }
