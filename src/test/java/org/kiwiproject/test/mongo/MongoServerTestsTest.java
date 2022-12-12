@@ -33,8 +33,8 @@ class MongoServerTestsTest {
     }
 
     @Test
-    void shouldStartInMemoryMongoServer_WithServerVersion3() {
-        var server = MongoServerTests.startInMemoryMongoServer(ServerVersion.MONGO_3_0);
+    void shouldStartInMemoryMongoServer_WithServerVersion3_6() {
+        var server = MongoServerTests.startInMemoryMongoServer(ServerVersion.MONGO_3_6);
         assertThat(server).isNotNull();
     }
 
