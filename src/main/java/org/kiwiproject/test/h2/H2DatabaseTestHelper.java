@@ -29,7 +29,7 @@ public class H2DatabaseTestHelper {
      * {@code java.io.tmpdir} system property. The returned {@link H2FileBasedDatabase} provides the
      * directory where the file-based database is located, and provides a {@link DataSource} so that
      * clients can connect. The database is created with one sample table named {@code test_table} having
-     * two columns: {@code first}, a {@code varchar}; and {@code second}, an {@code integer}.
+     * two columns: {@code col_1}, a {@code varchar}; and {@code col_2}, an {@code integer}.
      *
      * @return a {@link H2FileBasedDatabase} that represents the new database
      * @throws IllegalStateException if the database directory could not be created
