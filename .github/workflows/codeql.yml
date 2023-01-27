@@ -33,41 +33,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
         queries: security-extended,security-and-quality
 
-    # Use cache of Maven repository
     - name: Cache Maven packages
       uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-        
-    # Show file causing compilation problems before Delombok
-    - name: Debugging 1
-      run: |
-        cat /home/runner/work/kiwi-test/kiwi-test/src/main/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
-        echo "github.repository:"
-        echo ${{ github.repository }}
-        echo "github.action_path:"
-        echo ${{ github.action_path }}
-        echo "github.workspace:"
-        echo ${{ github.workspace }}
-        echo "ls github.workspace:"
-        ls ${{ github.workspace }}
 
-    # Delombok before the build
     - name: Delombok
       uses: advanced-security/delombok@main
-
-    # Show file causing compilation problems after Delombok
-    - name: Debugging 2
-      run: cat /home/runner/work/kiwi-test/kiwi-test/src/main/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
