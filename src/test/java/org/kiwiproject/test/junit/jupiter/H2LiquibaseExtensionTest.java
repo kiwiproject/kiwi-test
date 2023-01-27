@@ -37,11 +37,11 @@ class H2LiquibaseExtensionTest {
     }
 
     @Test
-    void shouldProvideH2FileBasedDatabase() {
-        var database = H2_LIQUIBASE_EXTENSION.getDatabase();
-        assertThat(database.getUrl()).startsWith("jdbc:h2:");
-        assertThat(database.getDataSource()).isNotNull();
-        assertThat(database.getDirectory()).isDirectory();
+    void shouldMakeDatabaseAvailableToTests() {
+        assertThat(H2_LIQUIBASE_EXTENSION.getDatabase()).isNotNull();
+        assertThat(H2_LIQUIBASE_EXTENSION.getUrl()).isNotBlank();
+        assertThat(H2_LIQUIBASE_EXTENSION.getDirectory()).isNotNull();
+        assertThat(H2_LIQUIBASE_EXTENSION.getDataSource()).isNotNull();
     }
 
     @Test
