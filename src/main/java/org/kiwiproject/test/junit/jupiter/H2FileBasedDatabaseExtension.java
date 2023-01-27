@@ -7,7 +7,6 @@ import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrN
 
 import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -22,6 +21,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import javax.sql.DataSource;
 
 /**
  * JUnit Jupiter extension that creates a file-based H2 database before all tests and deletes it after all tests
@@ -77,7 +78,6 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
     private static final String DATABASE_KEY = "database";
 
     @Getter
-    @Delegate
     private H2FileBasedDatabase database;
 
     /**
@@ -164,5 +164,17 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
 
     private H2FileBasedDatabase getDatabase(ExtensionContext context, ExtensionContext.Namespace namespace) {
         return context.getStore(namespace).get(DATABASE_KEY, H2FileBasedDatabase.class);
+    }
+
+    public File getDirectory() {
+        return this.getDatabase().getDirectory();
+    }
+
+    public String getUrl() {
+        return this.getDatabase().getUrl();
+    }
+
+    public DataSource getDataSource() {
+        return this.getDatabase().getDataSource();
     }
 }

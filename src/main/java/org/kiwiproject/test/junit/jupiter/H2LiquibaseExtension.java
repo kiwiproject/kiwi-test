@@ -8,7 +8,6 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.Getter;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -16,6 +15,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
+
+import java.io.File;
+
+import javax.sql.DataSource;
 
 /**
  * This JUnit Jupiter extension provides a file-based H2 database and runs Liquibase migrations to allow testing
@@ -84,7 +87,6 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      * The H2 file-based database for use by tests, e.g. to obtain the DataSource.
      */
     @Getter
-    @Delegate
     private H2FileBasedDatabase database;
 
     /**
@@ -158,5 +160,17 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
         return h2Extension.resolveParameter(parameterContext, extensionContext);
+    }
+
+    public File getDirectory() {
+        return this.getDatabase().getDirectory();
+    }
+
+    public String getUrl() {
+        return this.getDatabase().getUrl();
+    }
+
+    public DataSource getDataSource() {
+        return this.getDatabase().getDataSource();
     }
 }
