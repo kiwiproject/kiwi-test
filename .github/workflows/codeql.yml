@@ -50,7 +50,7 @@ jobs:
         
     # Show file causing compilation problems before Delombok
     - name: Debugging 1
-      run: cat/home/runner/work/kiwi-test/kiwi-test/src/test/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
+      run: cat /home/runner/work/kiwi-test/kiwi-test/src/test/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
 
     # Delombok before the build
     - name: Delombok
@@ -58,7 +58,7 @@ jobs:
 
     # Show file causing compilation problems after Delombok
     - name: Debugging 2
-      run: cat/home/runner/work/kiwi-test/kiwi-test/src/test/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
+      run: cat /home/runner/work/kiwi-test/kiwi-test/src/test/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v2
