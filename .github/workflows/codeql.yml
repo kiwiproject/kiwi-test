@@ -50,7 +50,10 @@ jobs:
         
     # Show file causing compilation problems before Delombok
     - name: Debugging 1
-      run: cat /home/runner/work/kiwi-test/kiwi-test/src/main/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
+      run: |
+        cat /home/runner/work/kiwi-test/kiwi-test/src/main/java/org/kiwiproject/test/junit/jupiter/H2FileBasedDatabaseExtension.java
+        echo ${{ github.workspace }}
+        ls ${{ github.workspace }}
 
     # Delombok before the build
     - name: Delombok
