@@ -2,10 +2,12 @@ package org.kiwiproject.test.jdbc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
+@DisplayName("RuntimeSQLException")
 class RuntimeSQLExceptionTest {
 
     @Test
