@@ -436,13 +436,15 @@ class MongoTestPropertiesTest {
         @ArgumentsSource(BlankStringArgumentsProvider.class)
         void shouldThrow_GivenBlankArgument(String blankValue) {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(blankValue));
+                    .isThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(blankValue))
+                    .withMessage("databaseName cannot be blank");
         }
 
         @Test
         void shouldThrow_GivenDatabaseNameEndingWithUnderscore() {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp("test-service_unit_test_host1_"));
+                    .isThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp("test-service_unit_test_host1_"))
+                    .withMessage("databaseName cannot end with an underscore");
         }
 
         @ParameterizedTest
@@ -453,7 +455,20 @@ class MongoTestPropertiesTest {
         })
         void shouldThrow_GivenNonNumericTimestamp(String databaseName) {
             assertThatThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(databaseName))
-                    .isExactlyInstanceOf(NumberFormatException.class);
+                    .isExactlyInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("databaseName does not have a numeric timestamp");
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "test-service-unit-test-host1-foo",
+                "test-service-unit-test-host1-1602375491864",
+                "test-service"
+        })
+        void shouldThrow_GivenInvalidFormatForName(String databaseName) {
+            assertThatThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(databaseName))
+                    .isExactlyInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("databaseName does not have correct format");
         }
 
         @ParameterizedTest

@@ -301,12 +301,16 @@ public class MongoTestProperties {
      *
      * @param databaseName the database name
      * @return the timestamp
-     * @throws IllegalArgumentException if the databaseName is blank or does not have any underscores
-     * @throws NumberFormatException    if the extracted "timestamp" cannot be parsed into a {@code long}
+     * @throws IllegalArgumentException if the databaseName is blank, does not contain any underscores, or if the
+     * extracted timestamp cannot be parsed into a {@code long}
      */
     public static long extractDatabaseTimestamp(String databaseName) {
         var lastUnderscoreIndex = getLastUnderscoreIndex(databaseName);
-        return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
+        try {
+            return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("databaseName does not have a numeric timestamp");
+        }
     }
 
     private static int getLastUnderscoreIndex(String databaseName) {
