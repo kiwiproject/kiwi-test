@@ -309,7 +309,7 @@ public class MongoTestProperties {
         try {
             return Long.parseLong(databaseName.substring(lastUnderscoreIndex + 1));
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("databaseName does not have a numeric timestamp");
+            throw new IllegalArgumentException("databaseName does not have a numeric timestamp", e);
         }
     }
 

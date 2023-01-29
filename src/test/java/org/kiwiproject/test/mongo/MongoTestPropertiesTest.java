@@ -456,7 +456,8 @@ class MongoTestPropertiesTest {
         void shouldThrow_GivenNonNumericTimestamp(String databaseName) {
             assertThatThrownBy(() -> MongoTestProperties.extractDatabaseTimestamp(databaseName))
                     .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("databaseName does not have a numeric timestamp");
+                    .hasMessage("databaseName does not have a numeric timestamp")
+                    .hasCauseExactlyInstanceOf(NumberFormatException.class);
         }
 
         @ParameterizedTest
