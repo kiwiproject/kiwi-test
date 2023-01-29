@@ -30,11 +30,12 @@ class H2FileBasedDatabaseExtensionRegisterTest {
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     @BeforeAll
     static void beforeAll(@H2Database H2FileBasedDatabase database) {
-        try (var conn = database.getDataSource().getConnection()) {
-            var createTableStmt = conn.createStatement();
+        try (var conn = database.getDataSource().getConnection();
+             var createTableStmt = conn.createStatement();
+             var insertDataStmt = conn.createStatement()) {
+
             createTableStmt.execute("create table people (name varchar , age integer)");
 
-            var insertDataStmt = conn.createStatement();
             insertDataStmt.addBatch("insert into people values ('Bob', 42)");
             insertDataStmt.addBatch("insert into people values ('Alice', 24)");
             insertDataStmt.addBatch("insert into people values ('Zack', 12)");
