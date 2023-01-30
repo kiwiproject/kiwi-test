@@ -123,7 +123,7 @@ public class ParameterizedTestHelper {
      * @param inputValues     the inputs
      * @param expectedResults the expected results
      * @param function        function that accepts a T and produces an R
-     * @param <T>the          input type
+     * @param <T>             the input type
      * @param <R>             the result type
      * @see ParameterizedTests#inputs(Object[])
      * @see ParameterizedTestHelper#expectedResults(Object[])
