@@ -79,9 +79,9 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
      * Optionally, you can specify a custom name for the SLF4J Logger as well as {@link JdbiPlugin} instances to
      * install. The {@link org.jdbi.v3.sqlobject.SqlObjectPlugin} is always installed.
      *
-     * @param url               The JDBC URL; paired with username & password (optional, defaults to null)
-     * @param username          The JDBC username; paired with url & password (optional, defaults to null)
-     * @param password          The JDBC password; paired with url & username (optional, defaults to null)
+     * @param url               The JDBC URL; paired with username and password (optional, defaults to null)
+     * @param username          The JDBC username; paired with url and password (optional, defaults to null)
+     * @param password          The JDBC password; paired with url and username (optional, defaults to null)
      * @param connectionFactory The JDBI {@link ConnectionFactory} (optional, defaults to null)
      * @param dataSource        The JDBC {@link DataSource} (optional, defaults to null)
      * @param slf4jLoggerName   The SLF4J {@link org.slf4j.Logger} name (optional, defaults to the FQCN of {@link Jdbi}
