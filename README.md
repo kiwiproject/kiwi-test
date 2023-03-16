@@ -5,7 +5,7 @@
 [![CodeQL](https://github.com/kiwiproject/kiwi-test/actions/workflows/codeql.yml/badge.svg)](https://github.com/kiwiproject/kiwi-test/actions/workflows/codeql.yml)
 [![javadoc](https://javadoc.io/badge2/org.kiwiproject/kiwi-test/javadoc.svg)](https://javadoc.io/doc/org.kiwiproject/kiwi-test)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Maven Central](https://img.shields.io/maven-central/v/org.kiwiproject/kiwi-test)](https://search.maven.org/search?q=g:org.kiwiproject%20a:kiwi-test)
+[![Maven Central](https://img.shields.io/maven-central/v/org.kiwiproject/kiwi-test)](https://central.sonatype.com/artifact/org.kiwiproject/kiwi-test/2.3.2)
 
 Kiwi Test is a simple library that contains a variety of testing utilities that we have found useful over time in
 various projects.
