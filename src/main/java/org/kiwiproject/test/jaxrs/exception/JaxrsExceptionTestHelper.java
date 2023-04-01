@@ -119,14 +119,14 @@ public class JaxrsExceptionTestHelper {
     public static ErrorMessage assertContainsError(Response response, int statusCode, String substring) {
         var jaxrsException = toJaxrsException(response);
 
-        return jaxrsException.getErrors()
-                .stream()
+        var errors = jaxrsException.getErrors();
+        return errors.stream()
                 .filter(error -> matchesArguments(error, statusCode, substring))
                 .findFirst()
                 .orElseThrow(() -> {
                     var assertErrorMessage =
-                            f("Response does not contain an ErrorMessage having status {} and message containing: {}",
-                                    statusCode, substring);
+                            f("Response does not contain an ErrorMessage having status {} and message containing: '{}'. Actual errors: {}",
+                                    statusCode, substring, errors);
                     return new AssertionError(assertErrorMessage);
                 });
     }

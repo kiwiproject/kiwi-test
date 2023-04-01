@@ -267,8 +267,8 @@ class JaxrsExceptionTestHelperTest {
             assertThatThrownBy(() ->
                     JaxrsExceptionTestHelper.assertContainsError(response, statusCode, substring))
                     .isInstanceOf(AssertionError.class)
-                    .hasMessage("Response does not contain an ErrorMessage having status %d and message containing: %s",
-                            statusCode, substring);
+                    .hasMessage("Response does not contain an ErrorMessage having status %d and message containing: '%s'. Actual errors: %s",
+                            statusCode, substring, jaxrsException.getErrors());
         }
     }
 }
