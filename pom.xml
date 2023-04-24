@@ -29,7 +29,7 @@
     <properties>
         <!-- Versions for required dependencies -->
         <kiwi.version>2.5.0</kiwi.version>
-        <kiwi-bom.version>0.28.0</kiwi-bom.version>
+        <kiwi-bom.version>0.29.0</kiwi-bom.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
