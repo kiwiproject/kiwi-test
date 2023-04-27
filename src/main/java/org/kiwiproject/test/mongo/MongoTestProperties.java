@@ -19,9 +19,8 @@ import com.mongodb.client.MongoClients;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.kiwiproject.net.KiwiUrls;
-
-import javax.annotation.Nullable;
 
 /**
  * Simple value class that contains properties related to connecting to Mongo in the context of a service that uses
