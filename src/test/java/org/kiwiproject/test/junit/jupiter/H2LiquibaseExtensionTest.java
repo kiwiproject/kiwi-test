@@ -21,7 +21,7 @@ class H2LiquibaseExtensionTest {
 
     @RegisterExtension
     static final H2LiquibaseExtension H2_LIQUIBASE_EXTENSION =
-            new H2LiquibaseExtension("H2LiquibaseExtensionTest/test-migrations.xml");
+            new H2LiquibaseExtension("H2LiquibaseExtensionTest/DOES_NOT_EXIST_test-migrations.xml");
 
     private Connection conn;
 
