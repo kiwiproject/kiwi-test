@@ -177,6 +177,7 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <scope>provided</scope>
+            <version>4.21.0</version>  <!-- TODO: temporary -->
         </dependency>
 
         <dependency>
