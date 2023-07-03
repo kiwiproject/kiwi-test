@@ -10,6 +10,8 @@
 
     <logger name="org.kiwiproject.test" level="TRACE"/>
 
+    <logger name="liquibase" level="TRACE"/>  <!-- TODO temporary; remove later -->
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>

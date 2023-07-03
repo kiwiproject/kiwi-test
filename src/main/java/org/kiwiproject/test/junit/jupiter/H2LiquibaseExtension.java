@@ -95,7 +95,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      * @param migrationClassPathLocation classpath location of Liquibase migrations file
      */
     public H2LiquibaseExtension(String migrationClassPathLocation) {
-        LOG.trace("Constructing new instance with migration path: {}", migrationClassPathLocation);
+        LOG.warn("Constructing new instance with migration path: {}", migrationClassPathLocation);  // TODO revert back to TRACE
         this.migrationClassPathLocation = migrationClassPathLocation;
         this.h2Extension = new H2FileBasedDatabaseExtension();
     }
@@ -109,16 +109,16 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
         if (nonNull(database)) {
-            LOG.trace("Database exists (we are probably inside a @Nested test class) so not doing anything");
+            LOG.warn("Database exists (we are probably inside a @Nested test class) so not doing anything");  // TODO revert back to TRACE
             return;
         }
 
-        LOG.trace("Invoke H2FileBasedDatabaseExtension.beforeAll() to initialize H2 database");
+        LOG.warn("Invoke H2FileBasedDatabaseExtension.beforeAll() to initialize H2 database");  // TODO revert back to TRACE
         h2Extension.beforeAll(context);
 
         database = h2Extension.getDatabase();
 
-        LOG.trace("Running Liquibase migrations using migrations file: {}", migrationClassPathLocation);
+        LOG.warn("Running Liquibase migrations using migrations file: {}", migrationClassPathLocation);  // TODO revert back to TRACE
         try (var conn = database.getDataSource().getConnection()) {
             var liquibaseDb = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
             var liquibase = new Liquibase(migrationClassPathLocation, new ClassLoaderResourceAccessor(), liquibaseDb);
@@ -134,7 +134,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      */
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        LOG.trace("Invoke H2FileBasedDatabaseExtension.afterAll() to shut down H2 database (if not in nested class)");
+        LOG.warn("Invoke H2FileBasedDatabaseExtension.afterAll() to shut down H2 database (if not in nested class)");  // TODO revert back to TRACE
         h2Extension.afterAll(context);
     }
 

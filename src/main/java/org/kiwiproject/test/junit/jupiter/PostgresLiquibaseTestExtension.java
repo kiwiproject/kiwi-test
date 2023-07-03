@@ -75,7 +75,7 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
      * @param migrationClassPathLocation classpath location of Liquibase migrations file
      */
     public PostgresLiquibaseTestExtension(String migrationClassPathLocation) {
-        LOG.trace("Constructing new instance for migration path: {}", migrationClassPathLocation);
+        LOG.warn("Constructing new instance for migration path: {}", migrationClassPathLocation);  // TODO revert back to TRACE
 
         var liquibasePreparer = LiquibasePreparer.forClasspathLocation(migrationClassPathLocation);
         postgres = EmbeddedPostgresExtension.preparedDatabase(liquibasePreparer);
@@ -90,13 +90,13 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
      */
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        LOG.trace("Invoke PreparedDbExtension.beforeAll() to initialize the embedded Postgres");
+        LOG.warn("Invoke PreparedDbExtension.beforeAll() to initialize the embedded Postgres");  // TODO revert back to TRACE
         postgres.beforeAll(context);
 
         var connectionInfo = postgres.getConnectionInfo();
         var url = f("jdbc:postgresql://localhost:{}/{}", connectionInfo.getPort(), connectionInfo.getDbName());
         var user = connectionInfo.getUser();
-        LOG.trace("Initializing new single-connection test DataSource for URL {} and user {}", url, user);
+        LOG.warn("Initializing new single-connection test DataSource for URL {} and user {}", url, user);  // TODO revert back to TRACE
         testDataSource = JdbcTests.newTestDataSource(url, user, EMPTY_PASSWORD);
     }
 
@@ -108,11 +108,11 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
     @Override
     public void afterAll(ExtensionContext context) {
         if (nonNull(testDataSource)) {
-            LOG.trace("Closing test DataSource");
+            LOG.warn("Closing test DataSource");  // TODO revert back to TRACE
             testDataSource.close();
         }
 
-        LOG.trace("Invoke PreparedDbExtension.afterAll() to shut down the embedded Postgres");
+        LOG.warn("Invoke PreparedDbExtension.afterAll() to shut down the embedded Postgres");  // TODO revert back to TRACE
         postgres.afterAll(context);
     }
 }
