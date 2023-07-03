@@ -22,4 +22,13 @@
             <column name="another_col_2" type="integer"/>
         </createTable>
     </changeSet>
+
+    <changeSet id="0003_create_yat" author="denise">
+        <createTable tableName="yet_another_table">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="col_1" type="text"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
