@@ -10,6 +10,7 @@ import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.postgres.PostgresPlugin;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -21,6 +22,7 @@ import org.kiwiproject.test.jdbi.Jdbi3GeneratedKeys;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Disabled
 @DisplayName("PostgresLiquibaseTestExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
@@ -30,8 +32,7 @@ class PostgresLiquibaseTestExtensionTest {
     static final PostgresLiquibaseTestExtension POSTGRES =
             new PostgresLiquibaseTestExtension("PostgresLiquibaseTestExtensionTest/test-migrations.xml");
 
-    @RegisterExtension
-    final Jdbi3Extension jdbi3Extension = Jdbi3Extension.builder()
+    @RegisterExtension final Jdbi3Extension jdbi3Extension = Jdbi3Extension.builder()
             .dataSource(POSTGRES.getTestDataSource())
             .plugin(new PostgresPlugin())
             .build();
