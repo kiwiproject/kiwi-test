@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-@SuppressWarnings({ "SqlResolve", "SqlNoDataSourceInspection" })
+@SuppressWarnings({"SqlResolve", "SqlNoDataSourceInspection"})
 @DisplayName("H2LiquibaseExtension")
 class H2LiquibaseExtensionTest {
 
