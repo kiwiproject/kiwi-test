@@ -7,6 +7,7 @@ import lombok.Value;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +22,7 @@ import java.sql.SQLException;
 
 @DisplayName("H2LiquibaseExtension with JdbiExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
+@SuppressWarnings({ "SqlNoDataSourceInspection", "SqlResolve" })
 class H2LiquibaseExtensionWithJdbiExtensionTest {
 
     @RegisterExtension
@@ -33,6 +34,11 @@ class H2LiquibaseExtensionWithJdbiExtensionTest {
             .build();
 
     private Handle handle;
+
+    @BeforeEach
+    void setUp() {
+        handle = jdbi3Extension.getHandle();
+    }
 
     @Test
     @Order(1)
