@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.kiwiproject.test.PidLogger;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
 
 import java.sql.Connection;
@@ -27,6 +28,7 @@ class H2LiquibaseExtensionTest {
 
     @BeforeEach
     void setUp() throws SQLException {
+        PidLogger.logCurrentPid();
         conn = H2_LIQUIBASE_EXTENSION.getDataSource().getConnection();
         conn.setAutoCommit(false);
     }

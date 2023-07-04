@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.kiwiproject.test.PidLogger;
 import org.kiwiproject.test.jdbi.Jdbi3GeneratedKeys;
 
 import java.sql.ResultSet;
@@ -40,6 +41,7 @@ class PostgresLiquibaseTestExtensionTest {
 
     @BeforeEach
     void setUp() {
+        PidLogger.logCurrentPid();
         jdbi = jdbi3Extension.getJdbi();
         handle = jdbi3Extension.getHandle();
     }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.kiwiproject.test.PidLogger;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
 
 import java.sql.SQLException;
@@ -42,6 +43,7 @@ class H2FileBasedDatabaseExtensionExtendWithTest {
 
     @BeforeEach
     void setUp(@H2Database H2FileBasedDatabase database) {
+        PidLogger.logCurrentPid();
         this.databaseFromSetup = database;
     }
 
