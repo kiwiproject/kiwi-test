@@ -13,11 +13,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.kiwiproject.test.PidLogger;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -68,11 +66,6 @@ class PostgresAppTestExtensionConfigOverridesTest {
     static void setupAndStartExtension() throws Exception {
         mockContext = mock(ExtensionContext.class);
         EXTENSION.beforeAll(mockContext);
-    }
-
-    @BeforeEach
-    void setUp() {
-        PidLogger.logCurrentPid();
     }
 
     @AfterAll
