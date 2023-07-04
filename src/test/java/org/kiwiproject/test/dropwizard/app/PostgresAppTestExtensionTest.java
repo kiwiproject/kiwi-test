@@ -21,7 +21,6 @@ import org.kiwiproject.test.PidLogger;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-// @Disabled
 @DisplayName("PostgresAppTestExtension")
 class PostgresAppTestExtensionTest {
 

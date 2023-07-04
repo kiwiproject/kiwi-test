@@ -24,7 +24,6 @@ import javax.validation.constraints.NotNull;
 /**
  * Tests that we can specify a custom name in the configuration for the DataSourceFactory.
  */
-// @Disabled
 @DisplayName("PostgresAppTestExtension (custom DataSourceFactory property")
 class PostgresAppTestExtensionCustomPropertyTest {
 
