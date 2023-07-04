@@ -30,7 +30,8 @@ class PostgresLiquibaseTestExtensionTest {
     static final PostgresLiquibaseTestExtension POSTGRES =
             new PostgresLiquibaseTestExtension("PostgresLiquibaseTestExtensionTest/test-migrations.xml");
 
-    @RegisterExtension final Jdbi3Extension jdbi3Extension = Jdbi3Extension.builder()
+    @RegisterExtension
+    final Jdbi3Extension jdbi3Extension = Jdbi3Extension.builder()
             .dataSource(POSTGRES.getTestDataSource())
             .plugin(new PostgresPlugin())
             .build();
