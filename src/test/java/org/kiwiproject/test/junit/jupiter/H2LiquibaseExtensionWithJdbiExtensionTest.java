@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 @DisplayName("H2LiquibaseExtension with JdbiExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SuppressWarnings({ "SqlNoDataSourceInspection", "SqlResolve" })
+@SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
 class H2LiquibaseExtensionWithJdbiExtensionTest {
 
     @RegisterExtension
