@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-@Disabled
 @DisplayName("PostgresAppTestExtension")
 class PostgresAppTestExtensionTest {
 
