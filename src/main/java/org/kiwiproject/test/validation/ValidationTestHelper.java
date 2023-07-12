@@ -1,10 +1,5 @@
 package org.kiwiproject.test.validation;
 
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.kiwiproject.collect.KiwiLists.isNotNullOrEmpty;
-
 import lombok.experimental.UtilityClass;
 import org.assertj.core.api.SoftAssertions;
 import org.kiwiproject.base.KiwiStrings;
@@ -15,6 +10,11 @@ import javax.validation.Validator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.kiwiproject.collect.KiwiLists.isNotNullOrEmpty;
 
 /**
  * Provides helper methods for making assertions on validation of objects using the Bean Validation API.
@@ -45,6 +45,7 @@ public class ValidationTestHelper {
      * @return a new {@link Validator} instance
      */
     public static Validator newValidator() {
+        // noinspection resource
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
@@ -75,30 +76,39 @@ public class ValidationTestHelper {
     /**
      * Performs an AssertJ soft assertion that there are <strong>no</strong> constraint violations on the given
      * object using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param softly an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object the object to validate
      * @param groups the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertNoViolations(SoftAssertions softly, Object object, Class<?>... groups) {
-        assertNoViolations(softly, VALIDATOR, object, groups);
+    public static <T> Set<ConstraintViolation<T>> assertNoViolations(SoftAssertions softly, T object, Class<?>... groups) {
+        return assertNoViolations(softly, VALIDATOR, object, groups);
     }
 
     /**
      * Performs an AssertJ soft assertion that there are <strong>no</strong> constraint violations on the given
      * object using the specified validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param softly    an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator the Validator instance to perform validation with
      * @param object    the object to validate
      * @param groups    the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertNoViolations(SoftAssertions softly,
-                                          Validator validator,
-                                          Object object,
-                                          Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertNoViolations(SoftAssertions softly,
+                                                                     Validator validator,
+                                                                     T object,
+                                                                     Class<?>... groups) {
         var violations = validator.validate(object, groups);
         softly.assertThat(violations).isEmpty();
+        return violations;
     }
 
     /**
@@ -106,9 +116,10 @@ public class ValidationTestHelper {
      *
      * @param object the object to validate
      * @param groups the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertHasViolations(Object object, Class<?>... groups) {
-        assertHasViolations(VALIDATOR, object, groups);
+    public static <T> Set<ConstraintViolation<T>> assertHasViolations(T object, Class<?>... groups) {
+        return assertHasViolations(VALIDATOR, object, groups);
     }
 
     /**
@@ -117,43 +128,54 @@ public class ValidationTestHelper {
      * @param validator the Validator instance to perform validation with
      * @param object    the object to validate
      * @param groups    the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertHasViolations(Validator validator, Object object, Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertHasViolations(Validator validator, T object, Class<?>... groups) {
         var violations = validator.validate(object, groups);
         assertThat(violations)
                 .describedAs("Expected at least one constraint violation")
                 .isNotEmpty();
+        return violations;
     }
 
     /**
      * Performs an AssertJ soft assertion that is at least one constraint violation
      * on the given object using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object the object to validate
      * @param groups the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertHasViolations(SoftAssertions softly, Object object, Class<?>... groups) {
-        assertHasViolations(softly, VALIDATOR, object, groups);
+    public static <T> Set<ConstraintViolation<T>> assertHasViolations(SoftAssertions softly, T object, Class<?>... groups) {
+        return assertHasViolations(softly, VALIDATOR, object, groups);
     }
 
     /**
      * Performs an AssertJ soft assertion that is at least one constraint violation
      * on the given object using the given validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly    an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator the Validator instance to perform validation with
      * @param object    the object to validate
      * @param groups    the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertHasViolations(SoftAssertions softly,
-                                           Validator validator,
-                                           Object object,
-                                           Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertHasViolations(SoftAssertions softly,
+                                                                      Validator validator,
+                                                                      T object,
+                                                                      Class<?>... groups) {
         var violations = validator.validate(object, groups);
         softly.assertThat(violations)
                 .describedAs("Expected at least one constraint violation")
                 .isNotEmpty();
+        return violations;
     }
 
     /**
@@ -163,9 +185,10 @@ public class ValidationTestHelper {
      * @param object                the object to validate
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertViolations(Object object, int numExpectedViolations, Class<?>... groups) {
-        assertViolations(VALIDATOR, object, numExpectedViolations, groups);
+    public static <T> Set<ConstraintViolation<T>> assertViolations(T object, int numExpectedViolations, Class<?>... groups) {
+        return assertViolations(VALIDATOR, object, numExpectedViolations, groups);
     }
 
     /**
@@ -176,48 +199,59 @@ public class ValidationTestHelper {
      * @param object                the object to validate
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertViolations(Validator validator,
-                                        Object object,
-                                        int numExpectedViolations,
-                                        Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertViolations(Validator validator,
+                                                                   T object,
+                                                                   int numExpectedViolations,
+                                                                   Class<?>... groups) {
         var violations = validator.validate(object, groups);
         assertThat(violations).hasSize(numExpectedViolations);
+        return violations;
     }
 
     /**
      * Performs an AssertJ soft assertion that there are exactly {@code numExpectedViolations} constraint violations
      * on the given object using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly                an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object                the object to validate
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertViolations(SoftAssertions softly,
-                                        Object object,
-                                        int numExpectedViolations,
-                                        Class<?>... groups) {
-        assertViolations(softly, VALIDATOR, object, numExpectedViolations, groups);
+    public static <T> Set<ConstraintViolation<T>> assertViolations(SoftAssertions softly,
+                                                                   T object,
+                                                                   int numExpectedViolations,
+                                                                   Class<?>... groups) {
+        return assertViolations(softly, VALIDATOR, object, numExpectedViolations, groups);
     }
 
     /**
      * Performs an AssertJ soft assertion that there are exactly {@code numExpectedViolations} constraint violations
      * on the given object using the specified validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly                an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator             the Validator instance to perform validation with
      * @param object                the object to validate
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertViolations(SoftAssertions softly,
-                                        Validator validator,
-                                        Object object,
-                                        int numExpectedViolations,
-                                        Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertViolations(SoftAssertions softly,
+                                                                   Validator validator,
+                                                                   T object,
+                                                                   int numExpectedViolations,
+                                                                   Class<?>... groups) {
         var violations = validator.validate(object, groups);
         softly.assertThat(violations).hasSize(numExpectedViolations);
+        return violations;
     }
 
     /**
@@ -227,9 +261,10 @@ public class ValidationTestHelper {
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
      * @param groups       the optional validation groups to apply
+     * @return the single {@link ConstraintViolation} object, when the assertion passes
      */
-    public static void assertOnePropertyViolation(Object object, String propertyName, Class<?>... groups) {
-        assertOnePropertyViolation(VALIDATOR, object, propertyName, groups);
+    public static <T> ConstraintViolation<T> assertOnePropertyViolation(T object, String propertyName, Class<?>... groups) {
+        return assertOnePropertyViolation(VALIDATOR, object, propertyName, groups);
     }
 
     /**
@@ -240,46 +275,58 @@ public class ValidationTestHelper {
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
      * @param groups       the optional validation groups to apply
+     * @return the single {@link ConstraintViolation} object, when the assertion passes
      */
-    public static void assertOnePropertyViolation(Validator validator,
-                                                  Object object,
-                                                  String propertyName,
-                                                  Class<?>... groups) {
-        assertPropertyViolations(validator, object, propertyName, 1, groups);
+    public static <T> ConstraintViolation<T> assertOnePropertyViolation(Validator validator,
+                                                                        T object,
+                                                                        String propertyName,
+                                                                        Class<?>... groups) {
+        var constraintViolations = assertPropertyViolations(validator, object, propertyName, 1, groups);
+        return constraintViolations.iterator().next();
     }
 
     /**
      * Performs an AssertJ soft assertion that there is exactly one constraint violation on the given object for the
      * given {@code propertyName} using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values. This is also the reason it returns a
+     * set instead of just a single object.
      *
      * @param softly       an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
      * @param groups       the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertOnePropertyViolation(SoftAssertions softly,
-                                                  Object object,
-                                                  String propertyName,
-                                                  Class<?>... groups) {
-        assertOnePropertyViolation(softly, VALIDATOR, object, propertyName, groups);
+    public static <T> Set<ConstraintViolation<T>> assertOnePropertyViolation(SoftAssertions softly,
+                                                                             T object,
+                                                                             String propertyName,
+                                                                             Class<?>... groups) {
+        return assertOnePropertyViolation(softly, VALIDATOR, object, propertyName, groups);
     }
 
     /**
      * Performs an AssertJ soft assertion that there is exactly one constraint violation on the given object for the
      * given {@code propertyName} using the specified validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values. This is also the reason it returns a
+     * set instead of just a single object.
      *
      * @param softly       an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator    the Validator instance to perform validation with
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
      * @param groups       the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertOnePropertyViolation(SoftAssertions softly,
-                                                  Validator validator,
-                                                  Object object,
-                                                  String propertyName,
-                                                  Class<?>... groups) {
-        assertPropertyViolations(softly, validator, object, propertyName, 1, groups);
+    public static <T> Set<ConstraintViolation<T>> assertOnePropertyViolation(SoftAssertions softly,
+                                                                             Validator validator,
+                                                                             T object,
+                                                                             String propertyName,
+                                                                             Class<?>... groups) {
+        return assertPropertyViolations(softly, validator, object, propertyName, 1, groups);
     }
 
     /**
@@ -313,35 +360,43 @@ public class ValidationTestHelper {
     /**
      * Performs an AssertJ soft assertion that there are <strong>no</strong> constraint violations on the given
      * object for the given {@code propertyName} using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param softly       an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
      * @param groups       the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertNoPropertyViolations(SoftAssertions softly,
-                                                  Object object,
-                                                  String propertyName,
-                                                  Class<?>... groups) {
-        assertNoPropertyViolations(softly, VALIDATOR, object, propertyName, groups);
+    public static <T> Set<ConstraintViolation<T>> assertNoPropertyViolations(SoftAssertions softly,
+                                                                             T object,
+                                                                             String propertyName,
+                                                                             Class<?>... groups) {
+        return assertNoPropertyViolations(softly, VALIDATOR, object, propertyName, groups);
     }
 
     /**
      * Performs an AssertJ soft assertion that there are <strong>no</strong> constraint violations on the given
      * object for the given {@code propertyName} using the specified validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param softly       an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator    the Validator instance to perform validation with
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
      * @param groups       the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertNoPropertyViolations(SoftAssertions softly,
-                                                  Validator validator,
-                                                  Object object,
-                                                  String propertyName,
-                                                  Class<?>... groups) {
-        assertPropertyViolations(softly, validator, object, propertyName, 0, groups);
+    public static <T> Set<ConstraintViolation<T>> assertNoPropertyViolations(SoftAssertions softly,
+                                                                             Validator validator,
+                                                                             T object,
+                                                                             String propertyName,
+                                                                             Class<?>... groups) {
+        return assertPropertyViolations(softly, validator, object, propertyName, 0, groups);
     }
 
     /**
@@ -352,12 +407,13 @@ public class ValidationTestHelper {
      * @param propertyName          the name of the property to validate on the given object
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertPropertyViolations(Object object,
-                                                String propertyName,
-                                                int numExpectedViolations,
-                                                Class<?>... groups) {
-        assertPropertyViolations(VALIDATOR, object, propertyName, numExpectedViolations, groups);
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(T object,
+                                                                           String propertyName,
+                                                                           int numExpectedViolations,
+                                                                           Class<?>... groups) {
+        return assertPropertyViolations(VALIDATOR, object, propertyName, numExpectedViolations, groups);
     }
 
     /**
@@ -369,37 +425,46 @@ public class ValidationTestHelper {
      * @param propertyName          the name of the property to validate on the given object
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertPropertyViolations(Validator validator,
-                                                Object object,
-                                                String propertyName,
-                                                int numExpectedViolations,
-                                                Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(Validator validator,
+                                                                           T object,
+                                                                           String propertyName,
+                                                                           int numExpectedViolations,
+                                                                           Class<?>... groups) {
         var propertyViolations = validator.validateProperty(object, propertyName, groups);
         assertThat(propertyViolations).describedAs(propertyName).hasSize(numExpectedViolations);
+        return propertyViolations;
     }
 
     /**
      * Performs an AssertJ soft assertion that there are exactly {@code numExpectedViolations} constraint violations
      * on the given object for the given {@code propertyName} using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly                an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object                the object to validate
      * @param propertyName          the name of the property to validate on the given object
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertPropertyViolations(SoftAssertions softly,
-                                                Object object,
-                                                String propertyName,
-                                                int numExpectedViolations,
-                                                Class<?>... groups) {
-        assertPropertyViolations(softly, VALIDATOR, object, propertyName, numExpectedViolations, groups);
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(SoftAssertions softly,
+                                                                           T object,
+                                                                           String propertyName,
+                                                                           int numExpectedViolations,
+                                                                           Class<?>... groups) {
+        return assertPropertyViolations(softly, VALIDATOR, object, propertyName, numExpectedViolations, groups);
     }
 
     /**
      * Performs an AssertJ soft assertion that there are exactly {@code numExpectedViolations} constraint violations
      * on the given object for the given {@code propertyName} using the specified validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly                an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator             the Validator instance to perform validation with
@@ -407,15 +472,17 @@ public class ValidationTestHelper {
      * @param propertyName          the name of the property to validate on the given object
      * @param numExpectedViolations the number of violations that are expected
      * @param groups                the optional validation groups to apply
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public static void assertPropertyViolations(SoftAssertions softly,
-                                                Validator validator,
-                                                Object object,
-                                                String propertyName,
-                                                int numExpectedViolations,
-                                                Class<?>... groups) {
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(SoftAssertions softly,
+                                                                           Validator validator,
+                                                                           T object,
+                                                                           String propertyName,
+                                                                           int numExpectedViolations,
+                                                                           Class<?>... groups) {
         var propertyViolations = validator.validateProperty(object, propertyName, groups);
         softly.assertThat(propertyViolations).describedAs(propertyName).hasSize(numExpectedViolations);
+        return propertyViolations;
     }
 
     /**
@@ -425,9 +492,12 @@ public class ValidationTestHelper {
      * @param object           the object to validate
      * @param propertyName     the name of the property to validate on the given object
      * @param expectedMessages the exact validation messages that are expected
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertPropertyViolations(Object object, String propertyName, String... expectedMessages) {
-        assertPropertyViolations(VALIDATOR, object, propertyName, expectedMessages);
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(T object,
+                                                                           String propertyName,
+                                                                           String... expectedMessages) {
+        return assertPropertyViolations(VALIDATOR, object, propertyName, expectedMessages);
     }
 
     /**
@@ -438,11 +508,12 @@ public class ValidationTestHelper {
      * @param object           the object to validate
      * @param propertyName     the name of the property to validate on the given object
      * @param expectedMessages the exact validation messages that are expected
+     * @return the set of {@link ConstraintViolation} objects, when the assertion passes
      */
-    public static void assertPropertyViolations(Validator validator,
-                                                Object object,
-                                                String propertyName,
-                                                String... expectedMessages) {
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(Validator validator,
+                                                                           T object,
+                                                                           String propertyName,
+                                                                           String... expectedMessages) {
         var propertyViolations = validator.validateProperty(object, propertyName);
         var actualMessages = collectActualMessages(propertyViolations);
         var missingMessages = collectMissingMessages(actualMessages, expectedMessages);
@@ -450,39 +521,49 @@ public class ValidationTestHelper {
         if (isNotNullOrEmpty(missingMessages)) {
             fail(buildFailureMessageForMissingMessages(actualMessages, missingMessages));
         }
+
+        return propertyViolations;
     }
 
     /**
      * Performs an AssertJ soft assertion that the constraint violations match {@code expectedMessages} on the given
      * object for the given {@code propertyName} using a default validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly           an AssertJ SoftAssertions instance for collecting multiple errors
      * @param object           the object to validate
      * @param propertyName     the name of the property to validate on the given object
      * @param expectedMessages the exact validation messages that are expected
+     * @return the set of {@link ConstraintViolation} objects
      */
-    public static void assertPropertyViolations(SoftAssertions softly,
-                                                Object object,
-                                                String propertyName,
-                                                String... expectedMessages) {
-        assertPropertyViolations(softly, VALIDATOR, object, propertyName, expectedMessages);
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(SoftAssertions softly,
+                                                                           T object,
+                                                                           String propertyName,
+                                                                           String... expectedMessages) {
+        return assertPropertyViolations(softly, VALIDATOR, object, propertyName, expectedMessages);
     }
 
     /**
      * Performs an AssertJ soft assertion that the constraint violations match {@code expectedMessages} on the given
      * object for the given {@code propertyName} using the specified validator.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param softly           an AssertJ SoftAssertions instance for collecting multiple errors
      * @param validator        the Validator instance to perform validation with
      * @param object           the object to validate
      * @param propertyName     the name of the property to validate on the given object
      * @param expectedMessages the exact validation messages that are expected
+     * @return the set of {@link ConstraintViolation} objects
      */
-    public static void assertPropertyViolations(SoftAssertions softly,
-                                                Validator validator,
-                                                Object object,
-                                                String propertyName,
-                                                String... expectedMessages) {
+    public static <T> Set<ConstraintViolation<T>> assertPropertyViolations(SoftAssertions softly,
+                                                                           Validator validator,
+                                                                           T object,
+                                                                           String propertyName,
+                                                                           String... expectedMessages) {
         var propertyViolations = validator.validateProperty(object, propertyName);
         var actualMessages = collectActualMessages(propertyViolations);
         var missingMessages = collectMissingMessages(actualMessages, expectedMessages);
@@ -490,9 +571,11 @@ public class ValidationTestHelper {
         if (isNotNullOrEmpty(missingMessages)) {
             softly.fail(buildFailureMessageForMissingMessages(actualMessages, missingMessages));
         }
+
+        return propertyViolations;
     }
 
-    private static List<String> collectActualMessages(Set<ConstraintViolation<Object>> violations) {
+    private static <T> List<String> collectActualMessages(Set<ConstraintViolation<T>> violations) {
         return violations.stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(toList());

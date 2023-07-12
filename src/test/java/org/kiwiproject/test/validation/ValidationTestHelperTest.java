@@ -1,17 +1,5 @@
 package org.kiwiproject.test.validation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.fail;
-import static org.kiwiproject.test.validation.ValidationTestHelper.assertHasViolations;
-import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoPropertyViolations;
-import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoViolations;
-import static org.kiwiproject.test.validation.ValidationTestHelper.assertOnePropertyViolation;
-import static org.kiwiproject.test.validation.ValidationTestHelper.assertPropertyViolations;
-import static org.kiwiproject.test.validation.ValidationTestHelper.assertViolations;
-import static org.kiwiproject.test.validation.ValidationTestHelper.getValidator;
-import static org.kiwiproject.test.validation.ValidationTestHelper.newValidator;
-
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
@@ -25,13 +13,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.ConstraintViolation;
+import javax.validation.Path;
+import javax.validation.constraints.*;
 import javax.validation.groups.Default;
 import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.kiwiproject.test.validation.ValidationTestHelper.*;
 
 @DisplayName("ValidationTestHelper")
 @ExtendWith(SoftAssertionsExtension.class)
@@ -81,7 +70,8 @@ class ValidationTestHelperTest {
         void shouldPass_UsingSoftAssertions_WhenNoViolations(SoftAssertions softly) {
             var fred = new Person("Fred", "Smith", 25, "Freddy");
 
-            assertNoViolations(softly, fred);
+            var constraintViolations = assertNoViolations(softly, fred);
+            assertThat(constraintViolations).isEmpty();
         }
 
         @Test
@@ -99,7 +89,8 @@ class ValidationTestHelperTest {
         void shouldPass_WhenAnyViolationsExist() {
             var alice = new Person("Bob", "Sackamano", 142, null);
 
-            assertHasViolations(alice);
+            var constraintViolations = assertHasViolations(alice);
+            assertThat(constraintViolations).isNotEmpty();
         }
 
         @Test
@@ -114,7 +105,11 @@ class ValidationTestHelperTest {
         void shouldPass_UsingSoftAssertions_WhenAnyViolationsExist(SoftAssertions softly) {
             var george = new Person("George", "", 43, null);
 
-            assertHasViolations(softly, george);
+            var constraintViolations = assertHasViolations(softly, george);
+            assertThat(constraintViolations)
+                    .extracting(ConstraintViolation::getPropertyPath)
+                    .map(Path::toString)
+                    .containsExactlyInAnyOrder("lastName", "lastName");
         }
 
         @Test
@@ -248,9 +243,14 @@ class ValidationTestHelperTest {
         void shouldPass_WhenActualViolationCount_EqualsExpectedCount() {
             var alice = new Person("", "", 26, null);
 
-            assertPropertyViolations(alice, "firstName", 1);
-            assertPropertyViolations(alice, "lastName", 2);
-            assertPropertyViolations(alice, "age", 0);
+            var firstNameViolations = assertPropertyViolations(alice, "firstName", 1);
+            assertThat(firstNameViolations).hasSize(1);
+
+            var lastNameViolations = assertPropertyViolations(alice, "lastName", 2);
+            assertThat(lastNameViolations).hasSize(2);
+
+            var ageViolations = assertPropertyViolations(alice, "age", 0);
+            assertThat(ageViolations).isEmpty();
         }
 
         @Test
@@ -265,9 +265,14 @@ class ValidationTestHelperTest {
         void shouldPass_UsingSoftAssertions_WhenActualViolationCount_EqualsExpectedCount(SoftAssertions softly) {
             var alice = new Person("", "", 26, null);
 
-            assertPropertyViolations(softly, alice, "firstName", 1);
-            assertPropertyViolations(softly, alice, "lastName", 2);
-            assertPropertyViolations(softly, alice, "age", 0);
+            var firstNameViolations = assertPropertyViolations(softly, alice, "firstName", 1);
+            assertThat(firstNameViolations).hasSize(1);
+
+            var lastNameViolations = assertPropertyViolations(softly, alice, "lastName", 2);
+            assertThat(lastNameViolations).hasSize(2);
+
+            var ageViolations = assertPropertyViolations(softly, alice, "age", 0);
+            assertThat(ageViolations).isEmpty();
         }
 
         @Test
@@ -299,10 +304,17 @@ class ValidationTestHelperTest {
         void shouldMatchExpectedMessages() {
             var alice = Person.builder().age(135).build();
 
-            assertPropertyViolations(alice, "firstName", "must not be blank");
-            assertPropertyViolations(alice, "lastName", "must not be blank");
-            assertPropertyViolations(alice, "age", "must be less than or equal to 130");
-            assertPropertyViolations(alice, "nickname");  // there are no errors
+            var firstNameViolations = assertPropertyViolations(alice, "firstName", "must not be blank");
+            assertThat(firstNameViolations).hasSize(1);
+
+            var lastNameViolations = assertPropertyViolations(alice, "lastName", "must not be blank");
+            assertThat(lastNameViolations).hasSize(1);
+
+            var ageViolations = assertPropertyViolations(alice, "age", "must be less than or equal to 130");
+            assertThat(ageViolations).hasSize(1);
+
+            var nicknameViolations = assertPropertyViolations(alice, "nickname");// there are no errors
+            assertThat(nicknameViolations).isEmpty();
         }
 
         @Test
@@ -329,10 +341,17 @@ class ValidationTestHelperTest {
         void shouldWorkWithAssertJSoftAssertions(SoftAssertions softly) {
             var alice = Person.builder().age(135).build();
 
-            assertPropertyViolations(softly, alice, "firstName", "must not be blank");
-            assertPropertyViolations(softly, alice, "lastName", "must not be blank");
-            assertPropertyViolations(softly, alice, "age", "must be less than or equal to 130");
-            assertPropertyViolations(softly, alice, "nickname");
+            var firstNameViolations = assertPropertyViolations(softly, alice, "firstName", "must not be blank");
+            assertThat(firstNameViolations).hasSize(1);
+
+            var lastNameViolations = assertPropertyViolations(softly, alice, "lastName", "must not be blank");
+            assertThat(lastNameViolations).hasSize(1);
+
+            var ageViolations = assertPropertyViolations(softly, alice, "age", "must be less than or equal to 130");
+            assertThat(ageViolations).hasSize(1);
+
+            var nicknameViolations = assertPropertyViolations(softly, alice, "nickname");
+            assertThat(nicknameViolations).isEmpty();
         }
 
         @Test
@@ -411,7 +430,8 @@ class ValidationTestHelperTest {
 
         @Test
         void shouldAssertNoViolations_UsingSoftAssertions(SoftAssertions softly) {
-            assertNoViolations(softly, user, Default.class, Transient.class);
+            var constraintViolations = assertNoViolations(softly, user, Default.class, Transient.class);
+            assertThat(constraintViolations).isEmpty();
 
             var persistentUser = user.withId(84L);
             assertNoViolations(softly, persistentUser, Default.class, Persistent.class);
@@ -419,22 +439,26 @@ class ValidationTestHelperTest {
 
         @Test
         void shouldAssertViolationCount() {
-            assertViolations(user, 1, Default.class, Persistent.class);
+            var constraintViolations = assertViolations(user, 1, Default.class, Persistent.class);
+            assertThat(constraintViolations).hasSize(1);
         }
 
         @Test
         void shouldAssertViolationCount_UsingSoftAssertions(SoftAssertions softly) {
-            assertViolations(softly, user, 1, Default.class, Persistent.class);
+            var constraintViolations = assertViolations(softly, user, 1, Default.class, Persistent.class);
+            assertThat(constraintViolations).hasSize(1);
         }
 
         @Test
         void shouldAssertOnePropertyViolation() {
-            assertOnePropertyViolation(user, "id", Default.class, Persistent.class);
+            var constraintViolation = assertOnePropertyViolation(user, "id", Default.class, Persistent.class);
+            assertThat(constraintViolation.getPropertyPath()).hasToString("id");
         }
 
         @Test
         void shouldAssertOnePropertyViolation_UsingSoftAssertions(SoftAssertions softly) {
-            assertOnePropertyViolation(softly, user, "id", Default.class, Persistent.class);
+            var constraintViolations = assertOnePropertyViolation(softly, user, "id", Default.class, Persistent.class);
+            assertThat(constraintViolations).hasSize(1);
         }
 
         @Test
@@ -451,9 +475,14 @@ class ValidationTestHelperTest {
 
         @Test
         void shouldAssertNoPropertyViolations_UsingSoftAssertions(SoftAssertions softly) {
-            assertNoPropertyViolations(softly, user, "id", Default.class, Transient.class);
-            assertNoPropertyViolations(softly, user, "userName", Default.class, Transient.class);
-            assertNoPropertyViolations(softly, user, "emailAddress", Default.class, Transient.class);
+            var idConstraintViolations = assertNoPropertyViolations(softly, user, "id", Default.class, Transient.class);
+            assertThat(idConstraintViolations).isEmpty();
+
+            var userNameConstraintViolations = assertNoPropertyViolations(softly, user, "userName", Default.class, Transient.class);
+            assertThat(userNameConstraintViolations).isEmpty();
+
+            var emailAddressConstraintViolations = assertNoPropertyViolations(softly, user, "emailAddress", Default.class, Transient.class);
+            assertThat(emailAddressConstraintViolations).isEmpty();
 
             var persistentUser = user.withId(84L);
             assertNoPropertyViolations(softly, persistentUser, "id", Default.class, Persistent.class);

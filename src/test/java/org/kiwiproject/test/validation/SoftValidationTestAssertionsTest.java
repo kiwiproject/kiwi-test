@@ -10,9 +10,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Objects;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("SoftValidationTestAssertions")
 @ExtendWith(SoftAssertionsExtension.class)
@@ -55,7 +59,8 @@ class SoftValidationTestAssertionsTest {
         void shouldVerifyNoViolations(SoftAssertions softly) {
             var alice = new Person("Alice", "Mayberry", 32, null);
 
-            newSoftValidation(softly).assertNoViolations(alice);
+            var constraintViolations = newSoftValidation(softly).assertNoViolations(alice);
+            assertThat(constraintViolations).isEmpty();
         }
     }
 
@@ -68,10 +73,17 @@ class SoftValidationTestAssertionsTest {
 
             softValidation = newSoftValidation(softly);
 
-            softValidation.assertNoPropertyViolations(alice, "firstName");
-            softValidation.assertNoPropertyViolations(alice, "lastName");
-            softValidation.assertNoPropertyViolations(alice, "age");
-            softValidation.assertNoPropertyViolations(alice, "nickname");
+            var firstNameViolations = softValidation.assertNoPropertyViolations(alice, "firstName");
+            assertThat(firstNameViolations).isEmpty();
+
+            var lastNameViolations = softValidation.assertNoPropertyViolations(alice, "lastName");
+            assertThat(lastNameViolations).isEmpty();
+
+            var ageViolations = softValidation.assertNoPropertyViolations(alice, "age");
+            assertThat(ageViolations).isEmpty();
+
+            var nicknameViolations = softValidation.assertNoPropertyViolations(alice, "nickname");
+            assertThat(nicknameViolations).isEmpty();
         }
     }
 
@@ -82,7 +94,8 @@ class SoftValidationTestAssertionsTest {
         void shouldVerifyExpectedNumberOfViolationsForObject(SoftAssertions softly) {
             var alice = new Person("", "Mayberry", 132, null);
 
-            newSoftValidation(softly).assertViolations(alice, 2);
+            var constraintViolations = newSoftValidation(softly).assertViolations(alice, 2);
+            assertThat(constraintViolations).hasSize(2);
         }
     }
 
@@ -95,10 +108,17 @@ class SoftValidationTestAssertionsTest {
 
             softValidation = newSoftValidation(softly);
 
-            softValidation.assertPropertyViolations(alice, "firstName", 1);
-            softValidation.assertPropertyViolations(alice, "lastName", 2);
-            softValidation.assertPropertyViolations(alice, "age", 1);
-            softValidation.assertPropertyViolations(alice, "nickname", 0);
+            var firstNameViolations = softValidation.assertPropertyViolations(alice, "firstName", 1);
+            assertThat(firstNameViolations).hasSize(1);
+
+            var lastNameViolations = softValidation.assertPropertyViolations(alice, "lastName", 2);
+            assertThat(lastNameViolations).hasSize(2);
+
+            var ageViolations = softValidation.assertPropertyViolations(alice, "age", 1);
+            assertThat(ageViolations).hasSize(1);
+
+            var nicknameViolations = softValidation.assertPropertyViolations(alice, "nickname", 0);
+            assertThat(nicknameViolations).isEmpty();
         }
     }
 
@@ -124,7 +144,12 @@ class SoftValidationTestAssertionsTest {
         void shouldVerifyOneViolationForMultipleProperties(SoftAssertions softly) {
             var alice = new Person("", null, 132, null);
 
-            newSoftValidation(softly).assertPropertiesEachHaveOneViolation(alice, "firstName", "lastName", "age");
+            var constraintViolations = newSoftValidation(softly)
+                    .assertPropertiesEachHaveOneViolation(alice, "firstName", "lastName", "age");
+            assertThat(constraintViolations)
+                    .extracting(ConstraintViolation::getPropertyPath)
+                    .map(Objects::toString)
+                    .containsExactlyInAnyOrder("firstName", "lastName", "age");
         }
     }
 
@@ -135,7 +160,9 @@ class SoftValidationTestAssertionsTest {
         void shouldVerifyNoViolationsForMultipleProperties(SoftAssertions softly) {
             var alice = new Person("Alice", "Mayberry", 32, null);
 
-            newSoftValidation(softly).assertPropertiesEachHaveNoViolations(alice, "firstName", "lastName", "age");
+            var constraintViolations = newSoftValidation(softly)
+                    .assertPropertiesEachHaveNoViolations(alice, "firstName", "lastName", "age");
+            assertThat(constraintViolations).isEmpty();
         }
     }
 

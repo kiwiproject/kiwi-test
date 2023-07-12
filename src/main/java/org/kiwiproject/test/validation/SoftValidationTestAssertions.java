@@ -2,8 +2,12 @@ package org.kiwiproject.test.validation;
 
 import org.assertj.core.api.SoftAssertions;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.Arrays;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * A helper class with methods for making AssertJ {@link SoftAssertions} when validating objects using the
@@ -43,95 +47,130 @@ public class SoftValidationTestAssertions {
 
     /**
      * Softly asserts that there are <strong>no</strong> constraint violations.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param object the object to validate
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      * @see ValidationTestHelper#assertNoViolations(SoftAssertions, Validator, Object, Class...)
      */
-    public void assertNoViolations(Object object) {
-        ValidationTestHelper.assertNoViolations(softly, validator, object);
+    public <T> Set<ConstraintViolation<T>> assertNoViolations(T object) {
+        return ValidationTestHelper.assertNoViolations(softly, validator, object);
     }
 
     /**
      * Softly asserts that there are exactly {@code numExpectedViolations} constraint violations on the given object.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param object                the object to validate
      * @param numExpectedViolations the number of violations that are expected
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      * @see ValidationTestHelper#assertViolations(SoftAssertions, Validator, Object, int, Class...)
      */
-    public void assertViolations(Object object, int numExpectedViolations) {
-        ValidationTestHelper.assertViolations(softly, validator, object, numExpectedViolations);
+    public <T> Set<ConstraintViolation<T>> assertViolations(T object, int numExpectedViolations) {
+        return ValidationTestHelper.assertViolations(softly, validator, object, numExpectedViolations);
     }
 
     /**
      * Softly asserts that there is exactly one constraint violation on the given object for the given
      * {@code propertyName}.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values. This is also the reason it returns a
+     * set instead of just a single object.
      *
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      * @see ValidationTestHelper#assertOnePropertyViolation(SoftAssertions, Validator, Object, String, Class...)
      */
-    public void assertOnePropertyViolation(Object object, String propertyName) {
-        ValidationTestHelper.assertOnePropertyViolation(softly, validator, object, propertyName);
+    public <T> Set<ConstraintViolation<T>> assertOnePropertyViolation(T object, String propertyName) {
+        return ValidationTestHelper.assertOnePropertyViolation(softly, validator, object, propertyName);
     }
 
     /**
      * Softly asserts that each of the specified properties has exactly one constraint violation on the given
      * object.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param object        the object to validate
      * @param propertyNames the names of the properties to validate on the given object
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public void assertPropertiesEachHaveOneViolation(Object object, String... propertyNames) {
-        Arrays.stream(propertyNames)
-                .forEach(propertyName -> assertOnePropertyViolation(object, propertyName));
+    public <T> Set<ConstraintViolation<T>> assertPropertiesEachHaveOneViolation(T object, String... propertyNames) {
+        return Arrays.stream(propertyNames)
+                .flatMap(propertyName -> assertOnePropertyViolation(object, propertyName).stream())
+                .collect(toSet());
     }
 
     /**
      * Softly asserts that there are <strong>no</strong> constraint violations on the given object for the
      * given {@code propertyName}.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param object       the object to validate
      * @param propertyName the name of the property to validate on the given object
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      * @see ValidationTestHelper#assertNoPropertyViolations(SoftAssertions, Validator, Object, String, Class...)
      */
-    public void assertNoPropertyViolations(Object object, String propertyName) {
-        ValidationTestHelper.assertNoPropertyViolations(softly, validator, object, propertyName);
+    public <T> Set<ConstraintViolation<T>> assertNoPropertyViolations(T object, String propertyName) {
+        return ValidationTestHelper.assertNoPropertyViolations(softly, validator, object, propertyName);
     }
 
     /**
      * Softly assert that each of the specified properties has no constraint violations on the given object.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may not be empty.
      *
      * @param object        the object to validate
      * @param propertyNames the names of the properties to validate on the given object
+     * @return the set of {@link ConstraintViolation} objects that were found when validating the object
      */
-    public void assertPropertiesEachHaveNoViolations(Object object, String... propertyNames) {
-        Arrays.stream(propertyNames)
-                .forEach(propertyName -> assertNoPropertyViolations(object, propertyName));
+    public <T> Set<ConstraintViolation<T>> assertPropertiesEachHaveNoViolations(T object, String... propertyNames) {
+        return Arrays.stream(propertyNames)
+                .flatMap(propertyName -> assertNoPropertyViolations(object, propertyName).stream())
+                .collect(toSet());
     }
 
     /**
      * Softly asserts that there are exactly {@code numExpectedViolations} constraint violations on the given object
      * for the given {@code propertyName}.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param object                the object to validate
      * @param propertyName          the name of the property to validate on the given object
      * @param numExpectedViolations the number of violations that are expected
+     * @return the set of {@link ConstraintViolation} objects
      * @see ValidationTestHelper#assertPropertyViolations(SoftAssertions, Validator, Object, String, int, Class...)
      */
-    public void assertPropertyViolations(Object object, String propertyName, int numExpectedViolations) {
-        ValidationTestHelper.assertPropertyViolations(softly, validator, object, propertyName, numExpectedViolations);
+    public <T> Set<ConstraintViolation<T>> assertPropertyViolations(T object, String propertyName, int numExpectedViolations) {
+        return ValidationTestHelper.assertPropertyViolations(softly, validator, object, propertyName, numExpectedViolations);
     }
 
     /**
      * Softly asserts that the constraint violations match {@code expectedMessages} on the given
      * object for the given {@code propertyName}.
+     * <p>
+     * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
+     * constraint violations may or may not have the expected values.
      *
      * @param object           the object to validate
      * @param propertyName     the name of the property to validate on the given object
      * @param expectedMessages the exact validation messages that are expected
+     * @return the set of {@link ConstraintViolation} objects
      * @see ValidationTestHelper#assertPropertyViolations(SoftAssertions, Validator, Object, String, String...)
      */
-    public void assertPropertyViolations(Object object, String propertyName, String... expectedMessages) {
-        ValidationTestHelper.assertPropertyViolations(softly, validator, object, propertyName, expectedMessages);
+    public <T> Set<ConstraintViolation<T>> assertPropertyViolations(T object, String propertyName, String... expectedMessages) {
+        return ValidationTestHelper.assertPropertyViolations(softly, validator, object, propertyName, expectedMessages);
     }
 }
