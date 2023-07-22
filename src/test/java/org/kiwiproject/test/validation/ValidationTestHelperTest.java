@@ -1,5 +1,17 @@
 package org.kiwiproject.test.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertHasViolations;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoPropertyViolations;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoViolations;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertOnePropertyViolation;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertPropertyViolations;
+import static org.kiwiproject.test.validation.ValidationTestHelper.assertViolations;
+import static org.kiwiproject.test.validation.ValidationTestHelper.getValidator;
+import static org.kiwiproject.test.validation.ValidationTestHelper.newValidator;
+
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
@@ -15,12 +27,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Path;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.groups.Default;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.kiwiproject.test.validation.ValidationTestHelper.*;
 
 @DisplayName("ValidationTestHelper")
 @ExtendWith(SoftAssertionsExtension.class)
