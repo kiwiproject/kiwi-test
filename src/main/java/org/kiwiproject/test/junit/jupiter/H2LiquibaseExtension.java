@@ -2,11 +2,13 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static java.util.Objects.nonNull;
 
-import liquibase.Contexts;
-import liquibase.Liquibase;
+import liquibase.command.CommandScope;
+import liquibase.command.core.UpdateCommandStep;
+import liquibase.command.core.helpers.DbUrlConnectionCommandStep;
+import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.exception.CommandExecutionException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -121,9 +123,15 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
         LOG.trace("Running Liquibase migrations using migrations file: {}", migrationClassPathLocation);
         try (var conn = database.getDataSource().getConnection()) {
             var liquibaseDb = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
-            var liquibase = new Liquibase(migrationClassPathLocation, new ClassLoaderResourceAccessor(), liquibaseDb);
-            liquibase.update(new Contexts());
+            runLiquibaseUpdate(liquibaseDb, migrationClassPathLocation);
         }
+    }
+
+    private static void runLiquibaseUpdate(Database database, String changeLogLocation) throws CommandExecutionException {
+        var updateCommand = new CommandScope(UpdateCommandStep.COMMAND_NAME)
+                .addArgumentValue(DbUrlConnectionCommandStep.DATABASE_ARG, database)
+                .addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changeLogLocation);
+        updateCommand.execute();
     }
 
     /**
