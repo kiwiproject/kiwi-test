@@ -18,11 +18,18 @@ import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnmappableCharacterException;
+import java.nio.file.Path;
 
 @DisplayName("Fixtures")
 class FixturesTest {
 
-    private static final String PANGRAM_FIXTURE = "FixturesTest/pangram.txt";
+    private static final String FIXTURES_TEST_DIRECTORY = "FixturesTest";
+
+    private static final String PANGRAM_FIXTURE =
+            Path.of(FIXTURES_TEST_DIRECTORY, "pangram.txt").toString();
+
+    private static final String PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE =
+            Path.of(FIXTURES_TEST_DIRECTORY, "pangram-leading-trailing-whitespace.txt").toString();
 
     @Nested
     class Fixture {
@@ -95,6 +102,74 @@ class FixturesTest {
                         .isExactlyInstanceOf(UncheckedIOException.class)
                         .hasCause(unmappableCharacterEx);
             }
+        }
+    }
+
+    @Nested
+    class FixtureStripLeadingAndTrailingWhitespace {
+
+        @Test
+        void shouldStripLeadingAndTrailingWhitespace() {
+            var fixture = Fixtures.fixtureStripLeadingAndTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).strip();
+            assertThat(fixture).isEqualTo(expected);
+        }
+
+        @Test
+        void shouldStripLeadingAndTrailingWhitespaceWithCharset() {
+            var fixture = Fixtures.fixtureStripLeadingAndTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8).strip();
+            assertThat(fixture).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class FixtureStripLeadingWhitespace {
+
+        @Test
+        void shouldStripLeadingWhitespace() {
+            var fixture = Fixtures.fixtureStripLeadingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripLeading();
+            assertThat(fixture).isEqualTo(expected);
+        }
+
+        @Test
+        void shouldStripLeadingWhitespaceWithCharset() {
+            var fixture = Fixtures.fixtureStripLeadingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8).stripLeading();
+            assertThat(fixture).isEqualTo(expected);
+        }
+
+        @Test
+        void shouldNotStripTrailingWhitespace() {
+            var fixture = Fixtures.fixtureStripLeadingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripLeading();
+            assertThat(fixture).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class FixtureStripTrailingWhitespace {
+
+        @Test
+        void shouldStripTrailingWhitespace() {
+            var fixture = Fixtures.fixtureStripTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripTrailing();
+            assertThat(fixture).isEqualTo(expected);
+        }
+
+        @Test
+        void shouldStripTrailingWhitespaceWithCharset() {
+            var fixture = Fixtures.fixtureStripTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8).stripTrailing();
+            assertThat(fixture).isEqualTo(expected);
+        }
+
+        @Test
+        void shouldNotStripLeadingWhitespace() {
+            var fixture = Fixtures.fixtureStripTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
+            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripTrailing();
+            assertThat(fixture).isEqualTo(expected);
         }
     }
 
