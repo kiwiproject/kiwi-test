@@ -81,6 +81,87 @@ public class Fixtures {
     }
 
     /**
+     * Reads the given fixture file from the classpath (e.g. {@code src/test/resources})
+     * and returns its contents with leading and trailing whitespace removed.
+     *
+     * @param resourceName the name/path of to the classpath resource
+     * @return the stripped fixture contents
+     * @throws UncheckedURISyntaxException if the resource name/path is invalid as a URI
+     * @throws UncheckedIOException        if an I/O error occurs; see the implNote in {@link #fixture(String, Charset)}
+     */
+    public static String fixtureStripLeadingAndTrailingWhitespace(String resourceName) {
+        return fixture(resourceName).strip();
+    }
+
+    /**
+     * Reads the given fixture file from the classpath (e.g. {@code src/test/resources})
+     * and returns its contents with leading and trailing whitespace removed.
+     *
+     * @param resourceName the name/path of to the classpath resource
+     * @param charset      the charset of the fixture file
+     * @return the stripped fixture contents
+     * @throws UncheckedURISyntaxException if the resource name/path is invalid as a URI
+     * @throws UncheckedIOException        if an I/O error occurs; see the implNote in {@link #fixture(String, Charset)}
+     */
+    public static String fixtureStripLeadingAndTrailingWhitespace(String resourceName, Charset charset) {
+        return fixture(resourceName, charset).strip();
+    }
+
+    /**
+     * Reads the given fixture file from the classpath (e.g. {@code src/test/resources})
+     * and returns its contents with leading whitespace removed.
+     *
+     * @param resourceName the name/path of to the classpath resource
+     * @return the stripped fixture contents
+     * @throws UncheckedURISyntaxException if the resource name/path is invalid as a URI
+     * @throws UncheckedIOException        if an I/O error occurs; see the implNote in {@link #fixture(String, Charset)}
+     */
+    public static String fixtureStripLeadingWhitespace(String resourceName) {
+        return fixture(resourceName).stripLeading();
+    }
+
+    /**
+     * Reads the given fixture file from the classpath (e.g. {@code src/test/resources})
+     * and returns its contents with leading whitespace removed.
+     *
+     * @param resourceName the name/path of to the classpath resource
+     * @param charset      the charset of the fixture file
+     * @return the stripped fixture contents
+     * @throws UncheckedURISyntaxException if the resource name/path is invalid as a URI
+     * @throws UncheckedIOException        if an I/O error occurs; see the implNote in {@link #fixture(String, Charset)}
+     */
+    public static String fixtureStripLeadingWhitespace(String resourceName, Charset charset) {
+        return fixture(resourceName, charset).stripLeading();
+    }
+
+    /**
+     * Reads the given fixture file from the classpath (e.g. {@code src/test/resources})
+     * and returns its contents with trailing whitespace removed.
+     *
+     * @param resourceName the name/path of to the classpath resource
+     * @return the stripped fixture contents
+     * @throws UncheckedURISyntaxException if the resource name/path is invalid as a URI
+     * @throws UncheckedIOException        if an I/O error occurs; see the implNote in {@link #fixture(String, Charset)}
+     */
+    public static String fixtureStripTrailingWhitespace(String resourceName) {
+        return fixture(resourceName).stripTrailing();
+    }
+
+    /**
+     * Reads the given fixture file from the classpath (e.g. {@code src/test/resources})
+     * and returns its contents with leading and trailing whitespace removed.
+     *
+     * @param resourceName the name/path of to the classpath resource
+     * @param charset      the charset of the fixture file
+     * @return the stripped fixture contents
+     * @throws UncheckedURISyntaxException if the resource name/path is invalid as a URI
+     * @throws UncheckedIOException        if an I/O error occurs; see the implNote in {@link #fixture(String, Charset)}
+     */
+    public static String fixtureStripTrailingWhitespace(String resourceName, Charset charset) {
+        return fixture(resourceName, charset).stripTrailing();
+    }
+
+    /**
      * This method only exists to permit testing it when building on JDK 11-16, since those throw UncheckedIOException
      * whereas JDK 17 throws an Error (see above implNote in {@link #fixture(String, Charset)}).
      *
