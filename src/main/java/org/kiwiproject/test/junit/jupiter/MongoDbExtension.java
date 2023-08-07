@@ -21,7 +21,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to use in Mongo unit/integration tests.
@@ -97,7 +96,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     private final DropTime dropTime;
 
     /**
-     * How to cleanup collections in test databases.
+     * How to clean up collections in test databases.
      */
     @Getter
     private final CleanupOption cleanupOption;
@@ -143,7 +142,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
      * dropped after all tests have run.
      * <p>
      * The {@link #NEVER} option can be used in conjunction with {@link CleanupOption#REMOVE_NEVER} if you are
-     * debugging a problematic test and you want to inspect the database after specific tests execute, or if you
+     * debugging a problematic test, and you want to inspect the database after specific tests execute, or if you
      * are managing the database manually before, during, and/or after test execution.
      */
     public enum DropTime {
@@ -313,7 +312,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
 
         // truncate collections (to avoid re-creating indexes)
         mongoDatabase.listCollectionNames()
-                .forEach((Consumer<String>) collection -> {
+                .forEach(collection -> {
                     LOG.debug("Cleaning up collection {}.{} -- using cleanup option: {}",
                             mongoDatabase.getName(), collection, option);
 

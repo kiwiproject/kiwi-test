@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * unless you change the log level for this class to WARN or higher.
  * <p>
  * Note that unknown property handling behavior depends on the configuration of the
- * {@link com.fasterxml.jackson.databind.ObjectMapper ObjectMapper}, specifically whether or not the
+ * {@link com.fasterxml.jackson.databind.ObjectMapper ObjectMapper}, specifically whether the
  * {@link com.fasterxml.jackson.databind.DeserializationFeature#FAIL_ON_UNKNOWN_PROPERTIES FAIL_ON_UNKNOWN_PROPERTIES}
  * de-serialization feature is enabled or not. It also depends on whether the {@code ignoreUnknown} property
  * has been set to true in {@link com.fasterxml.jackson.annotation.JsonIgnoreProperties JsonIgnoreProperties}.

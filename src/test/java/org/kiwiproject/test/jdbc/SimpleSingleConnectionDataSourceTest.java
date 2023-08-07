@@ -49,7 +49,7 @@ class SimpleSingleConnectionDataSourceTest {
 
         assertThat(thrown).isExactlyInstanceOf(RuntimeSQLException.class);
 
-        // The actual cause (as of the time I write this, is a org.h2.jdbc.JdbcSQLInvalidAuthorizationSpecException.
+        // The actual cause (as of the time I write this) is a org.h2.jdbc.JdbcSQLInvalidAuthorizationSpecException.
         // Since I do not want to be so specific to a vendor implementation, just check that there is a non-null cause.
         assertThat(thrown.getCause()).isNotNull();
     }

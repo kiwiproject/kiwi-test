@@ -21,6 +21,8 @@ import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.spi.JdbiPlugin;
+import org.jdbi.v3.core.statement.Binding;
+import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.transaction.TransactionException;
 import org.jdbi.v3.core.transaction.TransactionIsolationLevel;
 import org.jdbi.v3.core.transaction.UnableToManipulateTransactionIsolationLevelException;
@@ -194,6 +196,29 @@ class Jdbi3HelpersTest {
             assertThat(jdbiSqlLogger.getLoggerName()).isEqualTo(loggerName);
 
             verify(jdbi).setSqlLogger(jdbiSqlLogger);
+        }
+    }
+
+    @Nested
+    class JdbiSqlLogger {
+
+        @Test
+        void shouldLogExceptions() {
+            var jdbi = mock(Jdbi.class);
+            var loggerName = Jdbi3Helpers.class.getName();
+            var jdbiSqlLogger = Jdbi3Helpers.configureSqlLogger(jdbi, loggerName);
+
+            //noinspection resource
+            var statementContext = mock(StatementContext.class);
+            when(statementContext.getRenderedSql()).thenReturn("select * from foo");
+            var binding = mock(Binding.class);
+            when(binding.toString()).thenReturn("[the binding]");
+            when(statementContext.getBinding()).thenReturn(binding);
+
+            var sqlException = new SQLException("bad SQL");
+
+            assertThatCode(() -> jdbiSqlLogger.logException(statementContext, sqlException))
+                    .doesNotThrowAnyException();
         }
     }
 

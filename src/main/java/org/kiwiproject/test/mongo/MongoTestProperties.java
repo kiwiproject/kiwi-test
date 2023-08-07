@@ -15,7 +15,6 @@ import static org.kiwiproject.base.KiwiStrings.splitOnCommas;
 import com.google.common.annotations.VisibleForTesting;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,12 +37,12 @@ import org.kiwiproject.net.KiwiUrls;
  * client URI.
  * <p>
  * Per MongoDB <a href="https://docs.mongodb.com/manual/reference/limits/#naming-restrictions">Naming Restrictions</a>,
- * "Database names cannot be empty and must have fewer than 64 characters". Thus the maximum length of database names
+ * "Database names cannot be empty and must have fewer than 64 characters". Thus, the maximum length of database names
  * is 63 characters. The generated test database names include the service/application and host name as well as either
  * the {@link #UNIT_TEST_ID} (by default) or {@link #UNIT_TEST_ID_SHORT} (when the name needs to be truncated). The name
  * always ends with the current time in millis. If the service/application name and host are long and including them
  * in their entirety would cause the generated test name to exceed the Mongo name length limit, then various techniques
- * to shorten the name are tried until the name is 63 characters or less.
+ * to shorten the name are tried until the name is 63 characters or fewer.
  */
 @Value
 public class MongoTestProperties {
@@ -257,7 +256,7 @@ public class MongoTestProperties {
         var lastNameSegment = databaseName.substring(index + 1);
 
         // Check the last segment is all digits and its length is at least 13 digits, since System.currentTimeMillis
-        // currently returns a 13 digit number, and will continue to do so until the year 2286. After that it will
+        // currently returns a 13-digit number, and will continue to do so until the year 2286. After that it will
         // be 14 digits long!
 
         return lastNameSegment.length() >= MIN_TIMESTAMP_LENGTH && NumberUtils.isDigits(lastNameSegment);

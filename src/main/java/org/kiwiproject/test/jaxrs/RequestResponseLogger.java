@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * This utility class is useful when you are testing REST calls through a Jersey {@link Client} and you want
  * to see the actual HTTP request or response details via the console.
  * <p>
- * The Jersey client API does not give you an easy way to see all of the headers, full URL or request body.
+ * The Jersey client API does not give you an easy way to see all the headers, full URL or request body.
  * This logging will also print out the raw response without having to read the entity.
  * <p>
  * Jersey's way to do this is by registering a {@link LoggingFeature} with the settings you want (e.g. verbosity,

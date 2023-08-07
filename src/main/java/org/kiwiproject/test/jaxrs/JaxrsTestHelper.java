@@ -347,7 +347,7 @@ public class JaxrsTestHelper {
      * @param response       the response to check
      * @param expectedEntity the expected response entity
      * @param <T>            the entity type
-     * @throws AssertionError if the if the response entity doesn't exist or isn't the expected object
+     * @throws AssertionError if the response entity doesn't exist or isn't the expected object
      * @see Response#getEntity()
      */
     public static <T> void assertResponseEntity(Response response, T expectedEntity) {

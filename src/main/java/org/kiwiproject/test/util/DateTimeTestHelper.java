@@ -16,7 +16,7 @@ import java.time.ZonedDateTime;
  * is less than a threshold.
  * <p>
  * The usage for the time difference assertions expects the start time to be recorded locally, e.g. within a
- * test before issuing a database update, and the end time to be be a timestamp assigned by a remote server. For
+ * test before issuing a database update, and the end time to be a timestamp assigned by a remote server. For
  * example, timestamp fields in a database that automatically update when a record is changed. Once a test receives
  * the updated object, in this example the object with the automatically updated timestamp field, that updated field
  * becomes the end time in the assertion methods in this test helper. Here is an example:
