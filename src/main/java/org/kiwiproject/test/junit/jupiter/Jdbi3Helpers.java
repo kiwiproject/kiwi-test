@@ -226,7 +226,7 @@ class Jdbi3Helpers {
 
         @Override
         public void logException(StatementContext context, SQLException ex) {
-            logger.trace("sql: {}, {} caused {}",
+            logger.trace("sql: {}, binding: {} caused {}",
                     context.getRenderedSql(),
                     lazy(() -> context.getBinding().toString()),
                     ex.getClass().getName(),
