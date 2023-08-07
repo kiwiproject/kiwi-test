@@ -2,7 +2,6 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -242,7 +241,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
                 .stream()
                 .filter(name -> isUnitTestDatabaseForThisService(name, props))
                 .filter(name -> databaseIsOlderThanThreshold(name, keepThresholdMillis))
-                .collect(toList());
+                .toList();
 
         LOG.info("Removing {} databases from prior test runs: {}", databasesToDrop.size(), databasesToDrop);
         databasesToDrop.forEach(this::cleanThenDropDatabase);
