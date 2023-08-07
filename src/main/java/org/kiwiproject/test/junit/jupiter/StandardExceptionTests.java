@@ -24,7 +24,7 @@ import java.util.List;
  *         return standardConstructorTestsFor(YourCustomException.class);
  *     }
  * </pre>
- * JUnit will then execute all of the dynamic tests.
+ * JUnit will then execute all the dynamic tests.
  * <p>
  * You can also use the methods that return a single {@link DynamicTest}.
  */

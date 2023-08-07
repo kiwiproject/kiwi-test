@@ -377,7 +377,7 @@ public class HealthCheckResultAssertions {
     }
 
     /**
-     * Asserts the health check result does not contain any of the the given keys in its details.
+     * Asserts the health check result does not contain any of the given keys in its details.
      *
      * @param keys the unexpected keys
      * @return this instance

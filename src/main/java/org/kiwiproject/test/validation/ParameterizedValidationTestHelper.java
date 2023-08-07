@@ -85,7 +85,7 @@ public class ParameterizedValidationTestHelper {
     }
 
     /**
-     * Creates a an empty list that can be used to indicate there are no expected constraint violation messages.
+     * Creates an empty list that can be used to indicate there are no expected constraint violation messages.
      * This is mainly for readability in tests.
      *
      * @return an immutable empty list

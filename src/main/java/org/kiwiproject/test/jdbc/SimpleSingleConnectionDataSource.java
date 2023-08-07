@@ -161,7 +161,7 @@ public class SimpleSingleConnectionDataSource implements DataSource, Closeable {
      * @param password the database password
      * @return the single Connection of this DataSource
      * @throws SQLException if the given username and password don't match the ones assigned to this instance
-     * @implNote Adapted from from Spring's {@code SingleConnectionDataSource}
+     * @implNote Adapted from Spring's {@code SingleConnectionDataSource}
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {

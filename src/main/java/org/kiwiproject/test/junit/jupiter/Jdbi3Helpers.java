@@ -229,6 +229,7 @@ class Jdbi3Helpers {
             logger.trace("sql: {}, {} caused {}",
                     context.getRenderedSql(),
                     lazy(() -> context.getBinding().toString()),
+                    ex.getClass().getName(),
                     ex);
         }
     }

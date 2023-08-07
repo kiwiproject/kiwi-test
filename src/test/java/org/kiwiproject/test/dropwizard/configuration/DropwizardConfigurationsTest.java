@@ -39,7 +39,7 @@ class DropwizardConfigurationsTest {
 
         @Test
         void shouldThrowExceptionWhenUnknownPath() {
-            // the factory doesn't know it's in a sub-directory
+            // the factory doesn't know it's in a subdirectory
             var path = Path.of(VALID_CONFIG);
 
             assertThatThrownBy(() ->
@@ -85,7 +85,7 @@ class DropwizardConfigurationsTest {
 
         @Test
         void shouldThrowExceptionWhenUnknownPath() {
-            // the factory doesn't know it's in a sub-directory
+            // the factory doesn't know it's in a subdirectory
             var path = Path.of(VALID_CONFIG).toString();
 
             assertThatThrownBy(() ->

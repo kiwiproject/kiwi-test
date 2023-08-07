@@ -90,7 +90,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
      * The test {@link MongoDatabase} created by this extension.
      * <p>
      * When drop time is {@link DropTime#AFTER_EACH AFTER_EACH} (the default), a new instance is created after each
-     * test. Therefore tests should always re-initialize the database, for example in a {@code @BeforeEach} method.
+     * test. Therefore, tests should always re-initialize the database, for example in a {@code @BeforeEach} method.
      */
     @Getter
     private MongoDatabase testDatabase;
@@ -162,7 +162,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
      * overall workflow.
      * <p>
      * Note that because this extension uses an in-memory server, dropping and re-creating the test database after each
-     * test is no different than dropping before each test, so only the after each option is provided.
+     * test is no different from dropping before each test, so only the after each option is provided.
      */
     public enum DropTime {
         AFTER_EACH, AFTER_ALL
@@ -185,7 +185,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
         if (dropTime == DropTime.AFTER_EACH) {
             dropAndRecreateTestDatabase();
             LOG.trace("@AfterEach: Database {} was dropped and re-created", testDatabaseName);
