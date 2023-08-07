@@ -1,9 +1,9 @@
 package org.kiwiproject.test.jaxrs;
 
+import jakarta.ws.rs.client.Client;
 import lombok.experimental.UtilityClass;
 import org.glassfish.jersey.logging.LoggingFeature;
 
-import javax.ws.rs.client.Client;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;

@@ -15,6 +15,10 @@ import static org.kiwiproject.test.validation.ParameterizedValidationTestHelper.
 import static org.kiwiproject.test.validation.ParameterizedValidationTestHelper.noExpectedMessages;
 import static org.kiwiproject.test.validation.ParameterizedValidationTestHelper.validationGroups;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Past;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,10 +32,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Past;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;

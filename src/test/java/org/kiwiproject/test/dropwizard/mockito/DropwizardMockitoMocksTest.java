@@ -7,9 +7,10 @@ import static org.mockito.Mockito.mock;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.base.VerifyException;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.setup.Environment;
+import jakarta.validation.Validation;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +19,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.kiwiproject.test.validation.ValidationTestHelper;
 import org.mockito.Mockito;
-
-import javax.validation.Validation;
 
 @DisplayName("DropwizardMockitoMocks")
 class DropwizardMockitoMocksTest {

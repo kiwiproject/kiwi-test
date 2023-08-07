@@ -12,6 +12,14 @@ import static org.kiwiproject.test.validation.ValidationTestHelper.assertViolati
 import static org.kiwiproject.test.validation.ValidationTestHelper.getValidator;
 import static org.kiwiproject.test.validation.ValidationTestHelper.newValidator;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Path;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.groups.Default;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
@@ -25,14 +33,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Path;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.groups.Default;
 import java.util.function.Consumer;
 
 @DisplayName("ValidationTestHelper")

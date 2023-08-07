@@ -7,6 +7,7 @@ import static org.kiwiproject.base.KiwiStrings.f;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import jakarta.ws.rs.core.Response;
 import lombok.Value;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.kiwiproject.jaxrs.KiwiResponses;
 import org.opentest4j.AssertionFailedError;
 
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;

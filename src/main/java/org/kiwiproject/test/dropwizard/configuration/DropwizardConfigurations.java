@@ -4,15 +4,15 @@ import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.test.constants.KiwiTestConstants.OBJECT_MAPPER;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Configuration;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.core.Configuration;
+import jakarta.validation.Validator;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.kiwiproject.test.constants.KiwiTestConstants;
 import org.kiwiproject.test.validation.ValidationTestHelper;
 
-import javax.validation.Validator;
 import java.io.File;
 import java.nio.file.Path;
 

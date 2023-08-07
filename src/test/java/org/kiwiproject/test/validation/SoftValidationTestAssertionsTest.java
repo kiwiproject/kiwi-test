@@ -1,5 +1,11 @@
 package org.kiwiproject.test.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 import lombok.Value;
 import org.assertj.core.api.SoftAssertions;
@@ -10,13 +16,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.Objects;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("SoftValidationTestAssertions")
 @ExtendWith(SoftAssertionsExtension.class)

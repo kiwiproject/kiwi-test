@@ -6,15 +6,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.collect.KiwiLists.first;
 
 import com.codahale.metrics.health.HealthCheck;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
-import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +28,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import java.util.List;
 
 @DisplayName("DropwizardAppTests")
@@ -37,7 +37,7 @@ class DropwizardAppTestsTest {
 
     @Getter
     @Setter
-    static class Config extends Configuration {
+    public static class Config extends Configuration {
         private String tagLine;
         private String answer;
     }
@@ -111,7 +111,7 @@ class DropwizardAppTestsTest {
             environment.lifecycle().manage(new Managed1());
             environment.lifecycle().manage(new Managed2());
 
-            environment.lifecycle().addLifeCycleListener(new MyLifeCycleListener());
+            environment.lifecycle().addEventListener(new MyLifeCycleListener());
             environment.lifecycle().addServerLifecycleListener(new MyServerLifecycleListener());
         }
     }

@@ -9,15 +9,14 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Verify;
+import io.dropwizard.core.setup.AdminEnvironment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.setup.AdminEnvironment;
-import io.dropwizard.setup.Environment;
+import jakarta.validation.Validator;
 import lombok.experimental.UtilityClass;
 import org.kiwiproject.test.validation.ValidationTestHelper;
 import org.mockito.Mockito;
-
-import javax.validation.Validator;
 
 /**
  * Creates Mockito mocks of Dropwizard application level objects.
