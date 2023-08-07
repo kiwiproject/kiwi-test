@@ -6,10 +6,10 @@ import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 import static org.kiwiproject.stream.IntStreams.indicesOf;
 import static org.kiwiproject.test.junit.ParameterizedTests.inputs;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.assertj.core.api.SoftAssertions;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

@@ -7,13 +7,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.collect.KiwiLists.first;
 
+import jakarta.ws.rs.core.Response;
 import lombok.experimental.UtilityClass;
 import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
 import org.kiwiproject.jaxrs.exception.ErrorMessage;
 import org.kiwiproject.jaxrs.exception.JaxrsException;
 import org.kiwiproject.jaxrs.exception.JaxrsExceptionMapper;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 

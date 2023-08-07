@@ -1,20 +1,20 @@
 package org.kiwiproject.test.validation;
 
-import lombok.experimental.UtilityClass;
-import org.assertj.core.api.SoftAssertions;
-import org.kiwiproject.base.KiwiStrings;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.kiwiproject.collect.KiwiLists.isNotNullOrEmpty;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import lombok.experimental.UtilityClass;
+import org.assertj.core.api.SoftAssertions;
+import org.kiwiproject.base.KiwiStrings;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Provides helper methods for making assertions on validation of objects using the Bean Validation API.

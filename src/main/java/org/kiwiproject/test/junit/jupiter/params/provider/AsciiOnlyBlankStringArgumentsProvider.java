@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * <p>
  * <strong>However</strong>, unlike {@link BlankStringArgumentsProvider}, this will only use characters that fall
  * in the ASCII character set. Unless it is absolutely necessary to test against ASCII only whitespace (for example, to
- * validate using the Bean Validation API's {@link javax.validation.constraints.NotBlank NotBlank} annotation), it is
+ * validate using the Bean Validation API's {@link jakarta.validation.constraints.NotBlank NotBlank} annotation), it is
  * recommended you use {@link BlankStringArgumentsProvider} instead.
  * <p>
  * Usage:

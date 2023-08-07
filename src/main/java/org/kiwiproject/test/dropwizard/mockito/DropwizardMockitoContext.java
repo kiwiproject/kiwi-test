@@ -3,16 +3,15 @@ package org.kiwiproject.test.dropwizard.mockito;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.core.setup.AdminEnvironment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.setup.AdminEnvironment;
-import io.dropwizard.setup.Environment;
+import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-
-import javax.validation.Validator;
 
 /**
  * Contains all the various top-level objects in a Dropwizard application.

@@ -1,13 +1,13 @@
 package org.kiwiproject.test.validation;
 
+import static java.util.stream.Collectors.toSet;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.assertj.core.api.SoftAssertions;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.Arrays;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
 
 /**
  * A helper class with methods for making AssertJ {@link SoftAssertions} when validating objects using the
