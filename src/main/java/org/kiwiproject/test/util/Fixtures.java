@@ -172,8 +172,8 @@ public class Fixtures {
     @VisibleForTesting
     static Throwable uncheckedIOExceptionOrOriginalError(Error error, String resourceName) {
         var cause = error.getCause();
-        if (nonNull(cause) && cause instanceof CharacterCodingException) {
-            return new UncheckedIOException("Error reading fixture: " + resourceName, (CharacterCodingException) cause);
+        if (nonNull(cause) && cause instanceof CharacterCodingException characterCodingException) {
+            return new UncheckedIOException("Error reading fixture: " + resourceName, characterCodingException);
         }
         return error;
     }

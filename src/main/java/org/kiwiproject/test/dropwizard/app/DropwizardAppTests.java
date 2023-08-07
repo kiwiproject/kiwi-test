@@ -1,6 +1,5 @@
 package org.kiwiproject.test.dropwizard.app;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import com.google.common.annotations.Beta;
@@ -63,8 +62,8 @@ public class DropwizardAppTests {
     public static List<Class<?>> registeredResourceClassesOf(JerseyEnvironment jersey) {
         return registeredResourceObjectsOf(jersey)
                 .stream()
-                .map(Object::getClass)
-                .collect(toList());
+                .<Class<?>>map(Object::getClass)
+                .toList();
     }
 
     /**
@@ -72,7 +71,7 @@ public class DropwizardAppTests {
      *
      * @param app the DropwizardAppExtension containing the Dropwizard app being tested
      * @param <C> the configuration type
-     * @return list containing registered resource objects
+     * @return set containing registered resource objects
      */
     public static <C extends Configuration> Set<Object> registeredResourceObjectsOf(DropwizardAppExtension<C> app) {
         return registeredResourceObjectsOf(app.getEnvironment().jersey());
@@ -82,7 +81,7 @@ public class DropwizardAppTests {
      * Find the resource objects registered in the given {@link JerseyEnvironment}.
      *
      * @param jersey the {@link JerseyEnvironment} associated with the Dropwizard app being tested
-     * @return list containing registered resource objects
+     * @return set containing registered resource objects
      * @implNote Dropwizard 2.0 added one more layer of indirection for resource endpoint classes; they are now
      * wrapper inside a {@link DropwizardResourceConfig.SpecificBinder} so this method needs to unwrap those and
      * add the wrapped objects to the returned set. To accomplish that, it has to perform some nastiness with the
@@ -141,7 +140,7 @@ public class DropwizardAppTests {
      * @return list of Managed objects
      */
     public static List<Managed> managedObjectsOf(LifecycleEnvironment lifecycle) {
-        return managedObjectStreamOf(lifecycle).collect(toList());
+        return managedObjectStreamOf(lifecycle).toList();
     }
 
     /**
@@ -195,7 +194,7 @@ public class DropwizardAppTests {
     public static List<Managed> managedObjectsOf(LifecycleEnvironment lifecycle, Predicate<Managed> predicate) {
         return managedObjectStreamOf(lifecycle)
                 .filter(predicate)
-                .collect(toList());
+                .toList();
     }
 
     /**
@@ -341,9 +340,10 @@ public class DropwizardAppTests {
      */
     @Beta
     public static List<Class<?>> lifeCycleListenerClassesOf(LifecycleEnvironment lifecycle) {
-        return lifeCycleListenersOf(lifecycle).stream()
-                .map(Object::getClass)
-                .collect(toList());
+        return lifeCycleListenersOf(lifecycle)
+                .stream()
+                .<Class<?>>map(Object::getClass)
+                .toList();
     }
 
     /**
@@ -397,11 +397,11 @@ public class DropwizardAppTests {
         var serverListeners = lifeCycleListenersOf(lifecycle).stream()
                 .filter(listener ->
                         listener.getClass().getName().equals(DROPWIZARD_PRIVATE_SERVER_LISTENER_CLASS_NAME))
-                .collect(toList());
+                .toList();
 
         return serverListeners.stream()
                 .map(listener -> KiwiReflection.getFieldValue(listener, "listener"))
                 .map(ServerLifecycleListener.class::cast)
-                .collect(toList());
+                .toList();
     }
 }

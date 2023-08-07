@@ -1,7 +1,6 @@
 package org.kiwiproject.test.util;
 
 import static com.google.common.base.Preconditions.checkState;
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.kiwiproject.collect.KiwiLists.second;
 
 import lombok.experimental.UtilityClass;
@@ -102,7 +101,7 @@ public class ServiceNames {
      */
     public static String findServiceOrEmulatorNameInPom(Path pomPath) throws IOException {
         try (var lineStream = Files.lines(pomPath)) {
-            var lines = lineStream.collect(toUnmodifiableList());
+            var lines = lineStream.toList();
             checkParentTagExists(lines);
             var artifactIds = findFirstTwoArtifactIdTags(lines);
             LOG.trace("First 2 lines with {} element: {}", ARTIFACT_ID_START_TAG, artifactIds);
@@ -130,7 +129,7 @@ public class ServiceNames {
                 .map(String::trim)
                 .filter(line -> line.startsWith(ARTIFACT_ID_START_TAG))
                 .limit(2)
-                .collect(toUnmodifiableList());
+                .toList();
     }
 
     /**

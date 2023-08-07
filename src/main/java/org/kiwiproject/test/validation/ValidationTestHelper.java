@@ -1,6 +1,5 @@
 package org.kiwiproject.test.validation;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.kiwiproject.collect.KiwiLists.isNotNullOrEmpty;
@@ -578,13 +577,13 @@ public class ValidationTestHelper {
     private static <T> List<String> collectActualMessages(Set<ConstraintViolation<T>> violations) {
         return violations.stream()
                 .map(ConstraintViolation::getMessage)
-                .collect(toList());
+                .toList();
     }
 
     private static List<String> collectMissingMessages(List<String> actualMessages, String... expectedMessages) {
         return Arrays.stream(expectedMessages)
                 .filter(value -> !actualMessages.contains(value))
-                .collect(toList());
+                .toList();
     }
 
     private static String buildFailureMessageForMissingMessages(List<String> actualMessages,
