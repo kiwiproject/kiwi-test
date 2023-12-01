@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 /**
- * Test utility for testing Hibernate-based code. This really makes sense when your tests are using a framework
+ * Test utility for testing Hibernate-based code. This is mainly useful when your tests are using a framework
  * that sets up a transactions before each test, executes the tests inside that transaction, and then rolls the
  * transactions back after each test. The methods here are useful to flush and clear the Hibernate {@link Session}
  * during test execution, otherwise Hibernate won't always automatically flush. In addition, you want to generally
