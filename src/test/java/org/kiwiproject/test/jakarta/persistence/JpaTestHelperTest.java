@@ -1,5 +1,6 @@
 package org.kiwiproject.test.jakarta.persistence;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
@@ -27,6 +28,15 @@ public class JpaTestHelperTest {
     void setUp() {
         entityManager = mock(EntityManager.class);
         helper = new JpaTestHelper(entityManager);
+    }
+
+    @Test
+    void shouldJoinTransaction() {
+        var joinedHelper = helper.joinTransaction();
+
+        assertThat(joinedHelper).isSameAs(helper);
+
+        verify(entityManager, only()).joinTransaction();
     }
 
     @Test
