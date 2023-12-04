@@ -19,7 +19,7 @@ import jakarta.persistence.EntityManager;
  * we only need to verify the expected method calls and assume JPA knows what it's doing.
  */
 @DisplayName("JpaTestHelper")
-public class JpaTestHelperTest {
+class JpaTestHelperTest {
 
     private JpaTestHelper helper;
     private EntityManager entityManager;
