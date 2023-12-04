@@ -9,7 +9,7 @@ import lombok.Getter;
 import jakarta.persistence.EntityManager;
 
 /**
- * Test utility for testing JPA-based code. This mainly makes sense when your tests are using a framework
+ * Test utility for testing JPA-based code. This is mainly useful when your tests are using a framework
  * that sets up a transaction before each test, executes the test inside that transaction, and then rolls
  * back the transaction after the test. The methods here are useful to flush and clear the {@link EntityManager}
  * during test execution, otherwise JPA (e.g., Hibernate) won't always automatically flush. In addition,
