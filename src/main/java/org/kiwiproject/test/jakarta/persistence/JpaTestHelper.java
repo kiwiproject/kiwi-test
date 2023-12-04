@@ -17,7 +17,7 @@ import jakarta.persistence.EntityManager;
  * the cache is cleared out,  for example after inserting test data but before performing a query to ensure
  * the test data is returned.
  * <p>
- * Make sure to join the existing transaction inside your test if necessary, and make sure the DAOs under
+ * You can also join the existing transaction inside your test if necessary, to make sure the DAOs under
  * test are using the same EntityManager! For example, inside a setup method:
  * <pre>
  * {@literal @}BeforeEach
