@@ -3,10 +3,8 @@ package org.kiwiproject.test.jakarta.persistence;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
 import com.google.common.annotations.Beta;
-
-import lombok.Getter;
-
 import jakarta.persistence.EntityManager;
+import lombok.Getter;
 
 /**
  * Test utility for testing JPA-based code. This is mainly useful when your tests are using a framework
@@ -14,10 +12,10 @@ import jakarta.persistence.EntityManager;
  * back the transaction after the test. The methods here are useful to flush and clear the {@link EntityManager}
  * during test execution, otherwise JPA (e.g., Hibernate) won't always automatically flush. In addition,
  * you want to generally clear the {@link EntityManager} before performing certain operations to ensure
- * the cache is cleared out,  for example after inserting test data but before performing a query to ensure
+ * the cache is cleared out, for example, after inserting test data but before performing a query to ensure
  * the test data is returned.
  * <p>
- * If needed you can also join the existing transaction inside your test, to make sure the DAOs under
+ * If needed, you can also join the existing transaction inside your test, to make sure the DAOs under
  * test are using the same EntityManager! For example, inside a setup method:
  * <pre>
  * {@literal @}BeforeEach
@@ -48,7 +46,7 @@ import jakarta.persistence.EntityManager;
  *      return SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
  *  }
  * </pre>
- * Then, you can inject this "shared" EntityManager directly into DAOs and tests and it will be
+ * Then, you can inject this "shared" EntityManager directly into DAOs and tests, and it will be
  * automatically used by the DAO and test code without needing to do any of the setup code above.
  */
 @Beta
@@ -74,7 +72,7 @@ public final class JpaTestHelper {
      * <p>
      * You should call this if you are handling transactions <em>manually</em> so that tests and the DAOs
      * all participate in the same transaction. If you are using another mechanism to handle transactions,
-     * for example using Spring and its Test Context infrastructure using a shared EntityManager, then
+     * for example, Spring and its Test Context infrastructure using a shared EntityManager, then
      * you may not need to call this.
      *
      * @return this instance, which allows chaining after the constructor
