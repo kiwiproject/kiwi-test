@@ -31,6 +31,9 @@
         <kiwi.version>3.2.0</kiwi.version>
         <kiwi-bom.version>2.0.6</kiwi-bom.version>
 
+        <!-- Versions for provided dependencies -->
+        <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
         <sonar.organization>kiwiproject</sonar.organization>
@@ -46,11 +49,17 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.kiwiproject</groupId>
                 <artifactId>kiwi</artifactId>
                 <version>${kiwi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistence-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -140,6 +149,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
