@@ -10,6 +10,14 @@
 
     <logger name="org.kiwiproject.test" level="TRACE"/>
 
+    <!-- This is required for LoggingComparisonListenerTest -->
+    <appender name="LoggingComparisonListenerTestAppender" class="org.kiwiproject.test.logback.InMemoryAppender"/>
+
+    <!-- This is required for LoggingComparisonListenerTest -->
+    <logger name="org.kiwiproject.test.xmlunit.LoggingComparisonListenerTest" level="WARN">
+        <appender-ref ref="LoggingComparisonListenerTestAppender"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>

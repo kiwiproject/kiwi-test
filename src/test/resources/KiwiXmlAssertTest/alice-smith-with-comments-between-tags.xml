@@ -1,0 +1,7 @@
+<person>
+    <first_name>Alice</first_name>
+    <last_name>Smith</last_name>
+    <age>42</age>
+    <!-- This is the country of birth. XMLUnit's ignoreComments does NOT ignore this and fails -->
+    <country>USA</country>
+</person>

@@ -33,6 +33,7 @@
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+        <xmlunit.version>2.9.1</xmlunit.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
@@ -228,6 +229,13 @@
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-assertj</artifactId>
+            <version>${xmlunit.version}</version>
             <scope>provided</scope>
         </dependency>
 
