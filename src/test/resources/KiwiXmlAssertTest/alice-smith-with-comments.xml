@@ -1,0 +1,12 @@
+<!-- a comment -->
+<!--
+    the default behavior does NOT ignore comments between elements, for example between opening
+    person tag and the first_name tag.
+ -->
+<person>
+    <first_name><!-- comment inside element -->Alice</first_name>
+    <last_name>Smith</last_name>
+    <age>42</age>
+    <country>USA</country>
+</person>
+        <!-- another comment -->

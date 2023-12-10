@@ -1,0 +1,14 @@
+<!-- This is Alice -->
+
+<person>
+    <first_name>Alice</first_name>
+
+    <last_name>Smith</last_name>
+
+    <age>42</age>
+
+    <country>USA</country>
+
+</person>
+
+        <!-- This is the end of Alice -->
