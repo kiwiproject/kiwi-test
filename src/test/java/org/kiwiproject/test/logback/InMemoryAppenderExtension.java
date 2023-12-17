@@ -3,6 +3,7 @@ package org.kiwiproject.test.logback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.Logger;
+import com.google.common.annotations.Beta;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
  * Uses {@link InMemoryAppender} to store logged messages, so that tests
  * can retrieve and verify them later.
  */
+@Beta
 public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final Class<?> loggerClass;

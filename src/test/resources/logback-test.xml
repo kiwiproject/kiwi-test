@@ -18,6 +18,14 @@
         <appender-ref ref="LoggingComparisonListenerTestAppender"/>
     </logger>
 
+    <!-- This is required for InMemoryAppenderTest -->
+    <appender name="InMemoryAppenderTestAppender" class="org.kiwiproject.test.logback.InMemoryAppender"/>
+
+    <!-- This is required for InMemoryAppenderTest -->
+    <logger name="org.kiwiproject.test.logback.InMemoryAppenderTest" level="DEBUG">
+        <appender-ref ref="InMemoryAppenderTestAppender"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
