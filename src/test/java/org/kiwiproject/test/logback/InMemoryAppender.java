@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
+import com.google.common.annotations.Beta;
 import lombok.Synchronized;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
  * <p>
  * <em>This is for testing purposes only, and is not at all intended for production use!</em>
  */
+@Beta
 public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
 
     private final AtomicInteger messageOrder;
