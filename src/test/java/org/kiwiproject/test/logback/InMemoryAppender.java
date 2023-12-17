@@ -1,7 +1,6 @@
 package org.kiwiproject.test.logback;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -9,6 +8,7 @@ import ch.qos.logback.core.AppenderBase;
 import lombok.Synchronized;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -63,12 +63,24 @@ public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
     }
 
     /**
+     * Return a copy of the internal event map.
+     * <p>
+     * The keys are the message order starting at one, and the values are the corresponding logging events.
+     *
+     * @return an unmodifiable copy of the event map
+     */
+    @SuppressWarnings("unused")
+    public Map<Integer, ILoggingEvent> eventMap() {
+        return Map.copyOf(eventMap);
+    }
+
+    /**
      * Retrieves a list of logging events ordered by ascending timestamp.
      *
      * @return the ordered list of logging events
      */
     public List<ILoggingEvent> orderedEvents() {
-        return orderedEventStream().collect(toList());
+        return orderedEventStream().toList();
     }
 
     /**
@@ -80,7 +92,7 @@ public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
     public List<String> orderedEventMessages() {
         return orderedEventStream()
                 .map(ILoggingEvent::getFormattedMessage)
-                .collect(toList());
+                .toList();
     }
 
     /**
