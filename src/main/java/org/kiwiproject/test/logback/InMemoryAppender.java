@@ -1,7 +1,6 @@
 package org.kiwiproject.test.logback;
 
 import static java.util.Comparator.comparing;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
@@ -20,6 +19,14 @@ import java.util.stream.Stream;
  * The events can be accessed, ordered, and cleared.
  * <p>
  * <em>This is for testing purposes only, and is not at all intended for production use!</em>
+ * <p>
+ * <h3>Migration from kiwi-beta</h3>
+ * If you are migrating from the InMemoryAppender in kiwi-beta, note that its
+ * {@code assertNumberOfLoggingEventsAndGet} method does not exist in this class.
+ * Instead, you can get the same behavior using {@link InMemoryAppenderAssertions}.
+ * Specifically, you can use {@link InMemoryAppenderAssertions#hasNumberOfLoggingEvents(int)}
+ * or {@link InMemoryAppenderAssertions#hasNumberOfLoggingEventsAndGet(int)} if you also
+ * need to get the list of events.
  */
 @Beta
 public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
@@ -33,17 +40,6 @@ public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
     public InMemoryAppender() {
         this.messageOrder = new AtomicInteger();
         this.eventMap = new ConcurrentHashMap<>();
-    }
-
-    /**
-     * Assert this appender has the expected number of logging events, and if the assertion succeeds, return a
-     * list containing those events.
-     */
-    @SuppressWarnings("unused")
-    public List<ILoggingEvent> assertNumberOfLoggingEventsAndGet(int expectedEventCount) {
-        var events = orderedEvents();
-        assertThat(events).hasSize(expectedEventCount);
-        return events;
     }
 
     /**
