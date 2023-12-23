@@ -16,6 +16,11 @@ import org.slf4j.LoggerFactory;
  * A JUnit 5 extension that allows testing messages logged using Logback.
  * Uses {@link InMemoryAppender} to store logged messages, so that tests
  * can retrieve and verify them later.
+ * <p>
+ * Please see the usage requirements in {@link #InMemoryAppenderExtension(Class)}
+ * and {@link #InMemoryAppenderExtension(Class, String)}, specifically
+ * because this extension requires that a {@link ch.qos.logback.core.Appender}
+ * exists at the time tests are executed.
  */
 @Beta
 public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachCallback {
@@ -34,6 +39,20 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * {@code com.acme.space.modulator.SpaceModulatorServiceTest.class}, then the
      * appender <em>must</em> be named {@code SpaceModulatorServiceTestAppender}.
      * <p>
+     * This appender <em>must</em> exist, e.g., in your {@code logback-test.xml}
+     * configuration file.
+     * <p>
+     * For example, for a test named {@code MyAwesomeTest}, the
+     * {@code src/test/resources/logback-test.xml} must contain:
+     * <pre>
+     * &lt;appender name="MyAwesomeTestAppender"
+     *     class="org.kiwiproject.test.logback.InMemoryAppender"/&gt;
+     *
+     * &lt;logger name="com.acme.MyAwesomeTest" level="DEBUG"&gt;
+     *     &lt;appender-ref ref="MyAwesomeTestAppender"/&gt;
+     * &lt;/logger&gt;
+     * </pre>
+     * <p>
      * Note also the appender <em>must</em> be an {@link InMemoryAppender}.
      *
      * @param loggerClass the class of the test logger
@@ -46,6 +65,25 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * Create a new instance associated with the given Logback logger class
      * which has an appender of type {@link InMemoryAppender} with the name
      * {@code appenderName}.
+     * <p>
+     * This appender <em>must</em> exist, e.g., in your {@code logback-test.xml}
+     * configuration file.}
+     * <p>
+     * For example, for a test named {@code MyAwesomeTest}, the
+     * {@code src/test/resources/logback-test.xml} must contain:
+     * <pre>
+     * &lt;appender name="MyAppender"
+     *     class="org.kiwiproject.test.logback.InMemoryAppender"/&gt;
+     *
+     * &lt;logger name="com.acme.AnAwesomeTest" level="DEBUG"&gt;
+     *     &lt;appender-ref ref="MyAppender"/&gt;
+     * &lt;/logger&gt;
+     * </pre>
+     * <p>
+     * You then use {@code "MyAppender"} as the value for the
+     * {@code appenderName} argument.
+     * <p>
+     * Note also the appender <em>must</em> be an {@link InMemoryAppender}.
      *
      * @param loggerClass  the class of the test logger
      * @param appenderName the name of the {@link InMemoryAppender}

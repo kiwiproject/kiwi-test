@@ -29,6 +29,20 @@ public class InMemoryAppenderAssertions {
     }
 
     /**
+     * Begin assertions for an {@link InMemoryAppender}.
+     * <p>
+     * This method is an alias for {@link #assertThat(InMemoryAppender)}.
+     * It can be used to avoid conflicts with AssertJ's {@code assertThat}
+     * so that both can be used with static imports in the same test.
+     *
+     * @param appender the appender to assert against
+     * @return a new InMemoryAppenderAssertions instance
+     */
+    public static InMemoryAppenderAssertions assertThatAppender(InMemoryAppender appender) {
+        return assertThat(appender);
+    }
+
+    /**
      * Assert this appender has the expected number of logging events, and if the assertion succeeds, return a
      * list containing those events.
      *

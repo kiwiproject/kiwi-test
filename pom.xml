@@ -196,6 +196,12 @@
         </dependency>
 
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
             <scope>provided</scope>
@@ -237,14 +243,6 @@
             <artifactId>xmlunit-assertj</artifactId>
             <version>${xmlunit.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- test dependencies -->
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
