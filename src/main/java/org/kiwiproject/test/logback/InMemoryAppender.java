@@ -20,7 +20,7 @@ import java.util.stream.Stream;
  * <p>
  * <em>This is for testing purposes only, and is not at all intended for production use!</em>
  * <p>
- * <h3>Migration from kiwi-beta</h3>
+ * <strong>Migration from kiwi-beta:</strong>
  * If you are migrating from the InMemoryAppender in kiwi-beta, note that its
  * {@code assertNumberOfLoggingEventsAndGet} method does not exist in this class.
  * Instead, you can get the same behavior using {@link InMemoryAppenderAssertions}.
