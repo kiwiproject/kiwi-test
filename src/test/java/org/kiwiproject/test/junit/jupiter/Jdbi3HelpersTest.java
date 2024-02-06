@@ -167,7 +167,11 @@ class Jdbi3HelpersTest {
 
         @SuppressWarnings("unchecked")
         private OngoingStubbing<Object> whenWithHandleCalled() {
-            return when(jdbi.withHandle(any(HandleCallback.class)));
+            try {
+                return when(jdbi.withHandle(any(HandleCallback.class)));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
