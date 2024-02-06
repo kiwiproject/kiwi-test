@@ -1,11 +1,20 @@
 package org.kiwiproject.test.logback;
 
+import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.joran.spi.JoranException;
 import com.google.common.annotations.Beta;
+import com.google.common.io.Resources;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -27,6 +36,9 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
 
     private final Class<?> loggerClass;
     private final String appenderName;
+
+    // Use the default Logback test configuration file as our default value.
+    private String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
 
     @Getter
     @Accessors(fluent = true)
@@ -67,7 +79,7 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * {@code appenderName}.
      * <p>
      * This appender <em>must</em> exist, e.g., in your {@code logback-test.xml}
-     * configuration file.}
+     * configuration file.
      * <p>
      * For example, for a test named {@code MyAwesomeTest}, the
      * {@code src/test/resources/logback-test.xml} must contain:
@@ -91,6 +103,26 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     public InMemoryAppenderExtension(Class<?> loggerClass, String appenderName) {
         this.loggerClass = loggerClass;
         this.appenderName = appenderName;
+    }
+
+    /**
+     * The Logback configuration to use if the logging system needs to be reset.
+     * <p>
+     * For example:
+     * <pre>
+     * {@literal @}RegisterExtension
+     *  private final InMemoryAppenderExtension inMemoryAppenderExtension =
+     *          new InMemoryAppenderExtension(InMemoryAppenderTest.class)
+     *                  .withLogbackConfigFilePath("acme-logback-test.xml");
+     * </pre>
+     *
+     * @param logbackConfigFilePath
+     * @return this extension, so this can be chained after the constructor
+     * @see https://github.com/kiwiproject/kiwi-test/issues/457
+     */
+    public InMemoryAppenderExtension withLogbackConfigFilePath(String logbackConfigFilePath) {
+        this.logbackConfigFilePath = logbackConfigFilePath;
+        return this;
     }
 
     /**
@@ -121,15 +153,45 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * @param context the current extension context; never {@code null}
      */
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeEach(ExtensionContext context) throws Exception {
         var logbackLogger = (Logger) LoggerFactory.getLogger(loggerClass);
-        var rawAppender = logbackLogger.getAppender(appenderName);
+        var rawAppender = getAppender(logbackLogger);
 
         assertThat(rawAppender)
                 .describedAs("Expected an appender named '%s' for logger '%s' of type %s",
                         appenderName, loggerClass.getName(), InMemoryAppender.class.getName())
                 .isInstanceOf(InMemoryAppender.class);
         appender = (InMemoryAppender) rawAppender;
+    }
+
+    @Nullable
+    @SuppressWarnings("java:S106")
+    private Appender<ILoggingEvent> getAppender(Logger logbackLogger) throws JoranException {
+        var rawAppender = logbackLogger.getAppender(appenderName);
+
+        if (nonNull(rawAppender)) {
+            return rawAppender;
+        }
+
+        // Write to stdout since the logging system might be hosed...
+        System.out.printf(
+            "Appender %s not found on logger %s; attempt fix by resetting logging configuration using config: %s%n",
+                appenderName, loggerClass, logbackConfigFilePath);
+        System.out.println("You can customize the logging configuration using #withLogbackConfigFilePath");
+
+        // Reset the Logback logging system
+        var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.stop();
+
+        var joranConfigurator = new JoranConfigurator();
+        joranConfigurator.setContext(loggerContext);
+        var logbackConfigUrl = Resources.getResource(logbackConfigFilePath);
+        joranConfigurator.doConfigure(logbackConfigUrl);
+        loggerContext.start();
+
+        // Try again and return whatever we get. It should not be null after resetting, unless
+        // the reset failed, or the appender was not configured correctly.
+        return logbackLogger.getAppender(appenderName);
     }
 
     /**
