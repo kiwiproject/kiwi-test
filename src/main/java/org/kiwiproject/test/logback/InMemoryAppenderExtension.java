@@ -116,9 +116,9 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      *                  .withLogbackConfigFilePath("acme-logback-test.xml");
      * </pre>
      *
-     * @param logbackConfigFilePath
+     * @param logbackConfigFilePath the location of the custom Logback configuration file
      * @return this extension, so this can be chained after the constructor
-     * @see https://github.com/kiwiproject/kiwi-test/issues/457
+     * @see <a href="https://github.com/kiwiproject/kiwi-test/issues/457">Tests failing because Logback appenders don't exist (#457)</a>
      */
     public InMemoryAppenderExtension withLogbackConfigFilePath(String logbackConfigFilePath) {
         this.logbackConfigFilePath = logbackConfigFilePath;
