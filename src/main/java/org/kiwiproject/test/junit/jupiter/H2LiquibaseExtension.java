@@ -4,7 +4,7 @@ import static java.util.Objects.nonNull;
 
 import liquibase.command.CommandScope;
 import liquibase.command.core.UpdateCommandStep;
-import liquibase.command.core.helpers.DbUrlConnectionCommandStep;
+import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
@@ -129,7 +129,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
 
     private static void runLiquibaseUpdate(Database database, String changeLogLocation) throws CommandExecutionException {
         var updateCommand = new CommandScope(UpdateCommandStep.COMMAND_NAME)
-                .addArgumentValue(DbUrlConnectionCommandStep.DATABASE_ARG, database)
+                .addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, database)
                 .addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changeLogLocation);
         updateCommand.execute();
     }
