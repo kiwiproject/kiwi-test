@@ -161,8 +161,9 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     }
 
     @Nullable
+    @VisibleForTesting
     @SuppressWarnings("java:S106")
-    private Appender<ILoggingEvent> getAppender(Logger logbackLogger) {
+    Appender<ILoggingEvent> getAppender(Logger logbackLogger) {
         var rawAppender = logbackLogger.getAppender(appenderName);
 
         if (nonNull(rawAppender)) {
