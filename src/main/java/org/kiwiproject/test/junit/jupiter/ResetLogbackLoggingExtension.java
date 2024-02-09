@@ -1,6 +1,7 @@
 package org.kiwiproject.test.junit.jupiter;
 
-import ch.qos.logback.classic.ClassicConstants;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,12 +62,15 @@ import org.kiwiproject.test.logback.LogbackTestHelpers;
 public class ResetLogbackLoggingExtension implements AfterAllCallback {
 
     @Getter
-    @Builder.Default
-    private final String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
+    private String logbackConfigFilePath;
 
     @Override
     public void afterAll(ExtensionContext context) {
-        LogbackTestHelpers.resetLogback(logbackConfigFilePath);
+        if (isBlank(logbackConfigFilePath)) {
+            LogbackTestHelpers.resetLogback();
+        } else {
+            LogbackTestHelpers.resetLogback(logbackConfigFilePath);
+        }
         LOG.info("Logback was reset using configuration: {}", logbackConfigFilePath);
     }
 }

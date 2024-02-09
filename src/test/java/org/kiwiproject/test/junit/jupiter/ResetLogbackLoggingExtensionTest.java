@@ -2,7 +2,6 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.qos.logback.classic.ClassicConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,17 +9,15 @@ import org.junit.jupiter.api.Test;
 class ResetLogbackLoggingExtensionTest {
 
     @Test
-    void shouldConstructWithLogbackTestFileAsDefaultConfigLocation() {
+    void shouldConstructWithNullAsDefaultConfigLocation() {
         var extension = new ResetLogbackLoggingExtension();
-        assertThat(extension.getLogbackConfigFilePath())
-                .isEqualTo(ClassicConstants.TEST_AUTOCONFIG_FILE);
+        assertThat(extension.getLogbackConfigFilePath()).isNull();
     }
 
     @Test
-    void shouldBuildWithLogbackTestFileAsDefaultConfigLocation() {
+    void shouldBuildWithNullAsDefaultConfigLocation() {
         var extension = ResetLogbackLoggingExtension.builder().build();
-        assertThat(extension.getLogbackConfigFilePath())
-                .isEqualTo(ClassicConstants.TEST_AUTOCONFIG_FILE);
+        assertThat(extension.getLogbackConfigFilePath()).isNull();
     }
 
     @Test

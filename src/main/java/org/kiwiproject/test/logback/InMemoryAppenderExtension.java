@@ -1,9 +1,9 @@
 package org.kiwiproject.test.logback;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -33,9 +33,8 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     private final Class<?> loggerClass;
     private final String appenderName;
 
-    // Use the default Logback test configuration file as our default value.
     @Getter
-    private String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
+    private String logbackConfigFilePath;
 
     @Getter
     @Accessors(fluent = true)
@@ -177,7 +176,11 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
         System.out.println("You can customize the logging configuration using #withLogbackConfigFilePath");
 
         // Reset the Logback logging system
-        LogbackTestHelpers.resetLogback(logbackConfigFilePath);
+        if (isBlank(logbackConfigFilePath)) {
+            LogbackTestHelpers.resetLogback();
+        } else {
+            LogbackTestHelpers.resetLogback(logbackConfigFilePath);
+        }
 
         // Try again and return whatever we get. It should not be null after resetting, unless
         // the reset failed, or the appender was not configured correctly.
