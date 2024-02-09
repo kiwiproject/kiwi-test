@@ -1,7 +1,6 @@
 package org.kiwiproject.test.junit.jupiter;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
+import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.kiwiproject.test.logback.LogbackTestHelpers;
+import org.kiwiproject.test.logback.LogbackTestHelper;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to reset
@@ -66,11 +65,13 @@ public class ResetLogbackLoggingExtension implements AfterAllCallback {
 
     @Override
     public void afterAll(ExtensionContext context) {
-        if (isBlank(logbackConfigFilePath)) {
-            LogbackTestHelpers.resetLogback();
-        } else {
-            LogbackTestHelpers.resetLogback(logbackConfigFilePath);
-        }
-        LOG.info("Logback was reset using configuration: {}", logbackConfigFilePath);
+        getLogbackTestHelper().resetLogbackWithDefaultOrConfig(logbackConfigFilePath);
+        LOG.debug("Logback was reset using configuration: {} (if null, the Logback defaults are used)",
+                logbackConfigFilePath);
+    }
+
+    @VisibleForTesting
+    protected LogbackTestHelper getLogbackTestHelper() {
+        return new LogbackTestHelper();
     }
 }

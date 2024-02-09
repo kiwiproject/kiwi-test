@@ -1,13 +1,13 @@
 package org.kiwiproject.test.logback;
 
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -176,15 +176,16 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
         System.out.println("You can customize the logging configuration using #withLogbackConfigFilePath");
 
         // Reset the Logback logging system
-        if (isBlank(logbackConfigFilePath)) {
-            LogbackTestHelpers.resetLogback();
-        } else {
-            LogbackTestHelpers.resetLogback(logbackConfigFilePath);
-        }
+        getLogbackTestHelper().resetLogbackWithDefaultOrConfig(logbackConfigFilePath);
 
         // Try again and return whatever we get. It should not be null after resetting, unless
         // the reset failed, or the appender was not configured correctly.
         return logbackLogger.getAppender(appenderName);
+    }
+
+    @VisibleForTesting
+    protected LogbackTestHelper getLogbackTestHelper() {
+        return new LogbackTestHelper();
     }
 
     /**
