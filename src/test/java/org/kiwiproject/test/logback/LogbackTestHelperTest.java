@@ -1,5 +1,6 @@
 package org.kiwiproject.test.logback;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
@@ -38,5 +39,16 @@ class LogbackTestHelperTest {
         helper.resetLogbackWithDefaultOrConfig(configFile);
 
         verify(helper).resetLogback();
+    }
+
+    @Test
+    void shouldDelegateToLogbackTestHelpersWithFallback() {
+        // Verify the delegation without actually resetting Logback
+        // by passing in config files that don't exist.
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() ->
+                        new LogbackTestHelper().resetLogback("acme-test-logback.xml", "acme-logback.xml"))
+                .withMessage("Did not find any of the Logback configurations: [acme-test-logback.xml, acme-logback.xml]");
     }
 }
