@@ -38,9 +38,7 @@ import org.slf4j.LoggerFactory;
  * In case of failure, this test uses the ResetLogbackLoggingExtension to restore
  * the Logback logging configuration. However, since that extension simply uses
  * {@link LogbackTestHelpers}, it might not work if there is actually a bug and
- * is therefore a bit circular. But, since it uses {@link LogbackTestHelpers#resetLogback(String)}
- * with {@link ch.qos.logback.classic.ClassicConstants#TEST_AUTOCONFIG_FILE} as its
- * argument, instead of the no-arg method, it is slightly different from here.
+ * is therefore a bit circular.
  */
 @DisplayName("LogbackTestHelpers (Integration Test)")
 @ExtendWith(DropwizardExtensionsSupport.class)
