@@ -4,6 +4,7 @@ import ch.qos.logback.classic.ClassicConstants;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -56,10 +57,12 @@ import org.kiwiproject.test.logback.LogbackTestHelpers;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
+@SuppressWarnings("LombokGetterMayBeUsed")
 public class ResetLogbackLoggingExtension implements AfterAllCallback {
 
+    @Getter
     @Builder.Default
-    private String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
+    private final String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
 
     @Override
     public void afterAll(ExtensionContext context) {
