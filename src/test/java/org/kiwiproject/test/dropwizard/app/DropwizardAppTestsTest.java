@@ -27,12 +27,14 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
 
 import java.util.List;
 
 @DisplayName("DropwizardAppTests")
 @ExtendWith(SoftAssertionsExtension.class)
 @ExtendWith(DropwizardExtensionsSupport.class)
+@ExtendWith(ResetLogbackLoggingExtension.class)
 class DropwizardAppTestsTest {
 
     @Getter

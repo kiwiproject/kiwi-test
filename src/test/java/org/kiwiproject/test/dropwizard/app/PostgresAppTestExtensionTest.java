@@ -16,9 +16,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
 
 @DisplayName("PostgresAppTestExtension")
+@ExtendWith(ResetLogbackLoggingExtension.class)
 class PostgresAppTestExtensionTest {
 
     @Getter
