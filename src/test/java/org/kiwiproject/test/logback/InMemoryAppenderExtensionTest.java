@@ -35,6 +35,18 @@ class InMemoryAppenderExtensionTest {
     }
 
     @ClearBoxTest
+    void shouldReturnNewLogbackTestHelperInstances() {
+        var extension = new InMemoryAppenderExtension(InMemoryAppenderExtensionTest.class);
+
+        var helper1 = extension.getLogbackTestHelper();
+        var helper2 = extension.getLogbackTestHelper();
+        var helper3 = extension.getLogbackTestHelper();
+
+        assertThat(helper1).isNotSameAs(helper2);
+        assertThat(helper2).isNotSameAs(helper3);
+    }
+
+    @ClearBoxTest
     void shouldGetAppenderWhenExists() {
         var logbackLogger = mock(Logger.class);
         var appender = new InMemoryAppender();
