@@ -60,6 +60,12 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
 @SuppressWarnings("LombokGetterMayBeUsed")
 public class ResetLogbackLoggingExtension implements AfterAllCallback {
 
+    /**
+     * A custom location for the Logback configuration.
+     * <p>
+     * If this is not set, then the default Logback configuration files are used
+     * in the order {@code logback-test.xml} followed by {@code logback.xml}.
+     */
     @Getter
     private String logbackConfigFilePath;
 

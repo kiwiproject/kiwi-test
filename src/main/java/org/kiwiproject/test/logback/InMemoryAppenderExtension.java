@@ -102,15 +102,19 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     }
 
     /**
-     * The Logback configuration to use if the logging system needs to be reset.
+     * The custom Logback configuration to use if the logging system needs to be reset.
      * <p>
      * For example:
+     *
      * <pre>
      * {@literal @}RegisterExtension
      *  private final InMemoryAppenderExtension inMemoryAppenderExtension =
      *          new InMemoryAppenderExtension(InMemoryAppenderTest.class)
      *                  .withLogbackConfigFilePath("acme-logback-test.xml");
      * </pre>
+     *
+     * If this is not set, then the default Logback configuration files are used
+     * in the order {@code logback-test.xml} followed by {@code logback.xml}.
      *
      * @param logbackConfigFilePath the location of the custom Logback configuration file
      * @return this extension, so this can be chained after the constructor
