@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import ch.qos.logback.core.joran.spi.JoranException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import ch.qos.logback.core.joran.spi.JoranException;
 
 @DisplayName("UncheckedJoranException")
 class UncheckedJoranExceptionTest {
 
+    @SuppressWarnings("ThrowableNotThrown")
     @Test
     void shouldRequireCause() {
         assertAll(

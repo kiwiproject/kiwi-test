@@ -4,15 +4,14 @@ import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+import ch.qos.logback.classic.Logger;
 import com.codahale.metrics.health.HealthCheck;
-
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import lombok.extern.slf4j.Slf4j;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +22,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
 
 /**
  * This integration test uses DropwizardAppExtension which resets Logback when it
@@ -60,12 +57,12 @@ public class LogbackTestHelpersIntegrationTest {
     public static class MyApp extends Application<MyConfig> {
 
         @Override
-        public void run(MyConfig config, Environment environment) throws Exception {
+        public void run(MyConfig config, Environment environment) {
             // does nothing at all
 
             environment.healthChecks().register("noop", new HealthCheck() {
                 @Override
-                protected Result check() throws Exception {
+                protected Result check() {
                     return Result.healthy("Everything's fine here, how are you?");
                 }
             });

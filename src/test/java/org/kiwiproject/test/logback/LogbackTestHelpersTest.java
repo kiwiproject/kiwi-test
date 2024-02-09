@@ -3,12 +3,11 @@ package org.kiwiproject.test.logback;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import ch.qos.logback.core.joran.spi.JoranException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
-
-import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
  * Unit test for {@link LogbackTestHelpers}. This mainly tests invalid arguments
@@ -17,7 +16,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
  */
 @DisplayName("LogbackTestHelpers")
 @ExtendWith(ResetLogbackLoggingExtension.class)
-public class LogbackTestHelpersTest {
+class LogbackTestHelpersTest {
 
     @Test
     void shouldThrowIllegalArgument_WhenInvalidLogbackConfigPath() {

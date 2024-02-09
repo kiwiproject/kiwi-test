@@ -110,7 +110,7 @@ class Jdbi3DaoExtensionTest {
     }
 
     @Value
-    private static class TestTableValue {
+    public static class TestTableValue {
         String col1;
         int col2;
     }

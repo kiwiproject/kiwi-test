@@ -1,14 +1,11 @@
 package org.kiwiproject.test.logback;
 
-import com.google.common.io.Resources;
-
-import lombok.experimental.UtilityClass;
-
 import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
-
+import com.google.common.io.Resources;
+import lombok.experimental.UtilityClass;
 import org.slf4j.LoggerFactory;
 
 /**

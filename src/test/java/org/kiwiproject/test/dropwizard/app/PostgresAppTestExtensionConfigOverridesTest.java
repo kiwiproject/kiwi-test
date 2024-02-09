@@ -28,7 +28,7 @@ class PostgresAppTestExtensionConfigOverridesTest {
 
     @Getter
     @Setter
-    static class Config extends Configuration {
+    public static class Config extends Configuration {
         @Valid
         @NotNull
         @JsonProperty("database")
