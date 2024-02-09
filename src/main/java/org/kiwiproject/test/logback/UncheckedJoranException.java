@@ -36,7 +36,7 @@ public class UncheckedJoranException extends RuntimeException {
      * @return the {@link JoranException} which is the cause of this exception
      */
     @Override
-    public JoranException getCause() {
+    public synchronized JoranException getCause() {
         return (JoranException) super.getCause();
     }
 }
