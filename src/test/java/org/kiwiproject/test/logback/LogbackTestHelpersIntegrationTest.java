@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * This integration test uses DropwizardAppExtension which resets Logback when it
  * starts the test application class. It first verifies that there is no appender
  * for this class' Logger, and then uses {@link LogbackTestHelpers#resetLogback()}
- * to reset Loback to the default logging configuration. Finally, it ensures that
+ * to reset Logback to the default logging configuration. Finally, it ensures that
  * the InMemoryAppender was reset and that it receives the expected messages.
  * <p>
  * The tests are designed to execute in a specific order and use Jupiter's
@@ -40,14 +40,14 @@ import org.slf4j.LoggerFactory;
  * {@link LogbackTestHelpers}, it might not work if there is actually a bug and
  * is therefore a bit circular. But, since it uses {@link LogbackTestHelpers#resetLogback(String)}
  * with {@link ch.qos.logback.classic.ClassicConstants#TEST_AUTOCONFIG_FILE} as its
- * argument, instead of the no-arg method, it is slightly different than here.
+ * argument, instead of the no-arg method, it is slightly different from here.
  */
 @DisplayName("LogbackTestHelpers (Integration Test)")
 @ExtendWith(DropwizardExtensionsSupport.class)
 @ExtendWith(ResetLogbackLoggingExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Slf4j
-public class LogbackTestHelpersIntegrationTest {
+class LogbackTestHelpersIntegrationTest {
 
     private static final String APPENDER_NAME = "LogbackTestHelpersIntegrationTestAppender";
 
@@ -69,6 +69,7 @@ public class LogbackTestHelpersIntegrationTest {
         }
     }
 
+    @SuppressWarnings("unused")
     static final DropwizardAppExtension<MyConfig> APP_EXTENSION = new DropwizardAppExtension<>(MyApp.class);
 
     private Logger logbackLogger;
