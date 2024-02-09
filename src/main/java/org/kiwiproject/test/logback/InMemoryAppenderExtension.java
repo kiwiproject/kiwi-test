@@ -34,6 +34,7 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     private final String appenderName;
 
     // Use the default Logback test configuration file as our default value.
+    @Getter
     private String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
 
     @Getter
