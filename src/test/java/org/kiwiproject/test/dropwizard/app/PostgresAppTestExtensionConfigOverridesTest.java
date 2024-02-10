@@ -18,14 +18,17 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
 
 @DisplayName("PostgresAppTestExtension: ConfigOverrides")
+@ExtendWith(ResetLogbackLoggingExtension.class)
 class PostgresAppTestExtensionConfigOverridesTest {
 
     @Getter
     @Setter
-    static class Config extends Configuration {
+    public static class Config extends Configuration {
         @Valid
         @NotNull
         @JsonProperty("database")

@@ -3,15 +3,11 @@ package org.kiwiproject.test.logback;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.joran.spi.JoranException;
 import com.google.common.annotations.Beta;
-import com.google.common.io.Resources;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -37,8 +33,8 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     private final Class<?> loggerClass;
     private final String appenderName;
 
-    // Use the default Logback test configuration file as our default value.
-    private String logbackConfigFilePath = ClassicConstants.TEST_AUTOCONFIG_FILE;
+    @Getter
+    private String logbackConfigFilePath;
 
     @Getter
     @Accessors(fluent = true)
@@ -106,15 +102,19 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     }
 
     /**
-     * The Logback configuration to use if the logging system needs to be reset.
+     * The custom Logback configuration to use if the logging system needs to be reset.
      * <p>
      * For example:
+     *
      * <pre>
      * {@literal @}RegisterExtension
      *  private final InMemoryAppenderExtension inMemoryAppenderExtension =
      *          new InMemoryAppenderExtension(InMemoryAppenderTest.class)
      *                  .withLogbackConfigFilePath("acme-logback-test.xml");
      * </pre>
+     *
+     * If this is not set, then the default Logback configuration files are used
+     * in the order {@code logback-test.xml} followed by {@code logback.xml}.
      *
      * @param logbackConfigFilePath the location of the custom Logback configuration file
      * @return this extension, so this can be chained after the constructor
@@ -153,7 +153,7 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * @param context the current extension context; never {@code null}
      */
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         var logbackLogger = (Logger) LoggerFactory.getLogger(loggerClass);
         var rawAppender = getAppender(logbackLogger);
 
@@ -165,8 +165,9 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
     }
 
     @Nullable
+    @VisibleForTesting
     @SuppressWarnings("java:S106")
-    private Appender<ILoggingEvent> getAppender(Logger logbackLogger) throws JoranException {
+    Appender<ILoggingEvent> getAppender(Logger logbackLogger) {
         var rawAppender = logbackLogger.getAppender(appenderName);
 
         if (nonNull(rawAppender)) {
@@ -180,18 +181,16 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
         System.out.println("You can customize the logging configuration using #withLogbackConfigFilePath");
 
         // Reset the Logback logging system
-        var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        loggerContext.stop();
-
-        var joranConfigurator = new JoranConfigurator();
-        joranConfigurator.setContext(loggerContext);
-        var logbackConfigUrl = Resources.getResource(logbackConfigFilePath);
-        joranConfigurator.doConfigure(logbackConfigUrl);
-        loggerContext.start();
+        getLogbackTestHelper().resetLogbackWithDefaultOrConfig(logbackConfigFilePath);
 
         // Try again and return whatever we get. It should not be null after resetting, unless
         // the reset failed, or the appender was not configured correctly.
         return logbackLogger.getAppender(appenderName);
+    }
+
+    @VisibleForTesting
+    protected LogbackTestHelper getLogbackTestHelper() {
+        return new LogbackTestHelper();
     }
 
     /**

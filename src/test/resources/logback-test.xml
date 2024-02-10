@@ -26,6 +26,14 @@
         <appender-ref ref="InMemoryAppenderTestAppender"/>
     </logger>
 
+    <!-- This is required for LogbackTestHelpersIntegrationTest -->
+    <appender name="LogbackTestHelpersIntegrationTestAppender" class="org.kiwiproject.test.logback.InMemoryAppender"/>
+
+    <!-- This is required for LogbackTestHelpersIntegrationTest -->
+    <logger name="org.kiwiproject.test.logback.LogbackTestHelpersIntegrationTest" level="DEBUG">
+        <appender-ref ref="LogbackTestHelpersIntegrationTestAppender"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
