@@ -40,9 +40,11 @@ public class LogbackTestHelpers {
     }
 
     /**
-     * Reset the Logback logging system using the given configuration file or fallback configuration files.
+     * Reset the Logback logging system using the given configuration file.
+     * If the primary file does not exist, use the first fallback configuration
+     * file that exists. If the reset fails, an exception is thrown immediately.
      * <p>
-     * The fallback configurations are tried in the order they are provided.
+     * The fallback configurations are searched in the order they are provided.
      *
      * @param logbackConfigFile the location of the custom Logback configuration file
      * @param fallbackConfigFiles additional locations to check for Logback configuration files
