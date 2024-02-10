@@ -2,7 +2,6 @@ package org.kiwiproject.test.dropwizard.app;
 
 import static java.util.stream.Collectors.toSet;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import io.dropwizard.core.Configuration;
@@ -325,7 +324,6 @@ public class DropwizardAppTests {
      * @param <C> the configuration type
      * @return list of lifecycle listener classes
      */
-    @Beta
     public static <C extends Configuration> List<Class<?>> lifeCycleListenerClassesOf(
             DropwizardAppExtension<C> app) {
 
@@ -338,7 +336,6 @@ public class DropwizardAppTests {
      * @param lifecycle the {@link LifecycleEnvironment} associated with the Dropwizard app being tested
      * @return list of lifecycle listener classes
      */
-    @Beta
     public static List<Class<?>> lifeCycleListenerClassesOf(LifecycleEnvironment lifecycle) {
         return lifeCycleListenersOf(lifecycle)
                 .stream()
@@ -353,7 +350,6 @@ public class DropwizardAppTests {
      * @param <C> the configuration type
      * @return list of lifecycle listener objects
      */
-    @Beta
     public static <C extends Configuration> List<LifeCycle.Listener> lifeCycleListenersOf(
             DropwizardAppExtension<C> app) {
 
@@ -367,7 +363,6 @@ public class DropwizardAppTests {
      * @return list of lifecycle listener objects
      */
     @SuppressWarnings("unchecked")
-    @Beta
     public static List<LifeCycle.Listener> lifeCycleListenersOf(LifecycleEnvironment lifecycle) {
         return (List<LifeCycle.Listener>) KiwiReflection.getFieldValue(lifecycle, "lifecycleListeners");
     }
@@ -379,7 +374,6 @@ public class DropwizardAppTests {
      * @param <C> the configuration type
      * @return list of server lifecycle listener objects
      */
-    @Beta
     public static <C extends Configuration> List<ServerLifecycleListener> serverLifecycleListenersOf(
             DropwizardAppExtension<C> app) {
 
@@ -392,7 +386,6 @@ public class DropwizardAppTests {
      * @param lifecycle the {@link LifecycleEnvironment} associated with the Dropwizard app being tested
      * @return list of server lifecycle listener objects
      */
-    @Beta
     public static List<ServerLifecycleListener> serverLifecycleListenersOf(LifecycleEnvironment lifecycle) {
         var serverListeners = lifeCycleListenersOf(lifecycle).stream()
                 .filter(listener ->
