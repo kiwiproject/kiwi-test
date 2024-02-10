@@ -55,12 +55,13 @@ public class LogbackTestHelpers {
         checkArgument(isNoneBlank(fallbackConfigFiles), "fallbackConfigFiles must not contain blank locations");
 
         try {
+            var logbackConfigUrl = getFirstLogbackConfigOrThrow(logbackConfigFile, fallbackConfigFiles);
+
             var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
             loggerContext.stop();
 
             var joranConfigurator = new JoranConfigurator();
             joranConfigurator.setContext(loggerContext);
-            var logbackConfigUrl = getFirstLogbackConfigOrThrow(logbackConfigFile, fallbackConfigFiles);
             joranConfigurator.doConfigure(logbackConfigUrl);
             loggerContext.start();
         } catch (JoranException e) {
