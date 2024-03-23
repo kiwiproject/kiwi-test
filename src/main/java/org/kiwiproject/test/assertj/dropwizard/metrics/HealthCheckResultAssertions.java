@@ -1,17 +1,20 @@
 package org.kiwiproject.test.assertj.dropwizard.metrics;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.collect.KiwiMaps.isNullOrEmpty;
 import static org.kiwiproject.logging.LazyLogParameterSupplier.lazy;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.kiwiproject.base.KiwiStrings;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Provides for fluent {@link HealthCheck} tests using AssertJ assertions.
@@ -272,6 +275,41 @@ public class HealthCheckResultAssertions {
         Assertions.assertThat(result.getError())
                 .describedAs("Expected to have an error")
                 .isNotNull();
+    }
+
+    /**
+     * Asserts the health check has one or more details.
+     *
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasDetails() {
+        Assertions.assertThat(result.getDetails())
+                .describedAs("Expected at least one detail")
+                .isNotEmpty();
+        return this;
+    }
+
+    /**
+     * Asserts the health check has {@code expectedSize} details.
+     *
+     * @param expectedSize the expected number of details
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasDetailsWithSize(int expectedSize) {
+        var details = result.getDetails();
+
+        // details should never be null, but just in case Metrics ever changes that
+        var size = nullSafeGetSize(details);
+
+        Assertions.assertThat(details)
+                .describedAs("Expected %d details, but found %d", expectedSize, size)
+                .hasSize(expectedSize);
+        return this;
+    }
+
+    @VisibleForTesting
+    static int nullSafeGetSize(Map<?, ?> map) {
+        return isNull(map) ? 0 : map.size();
     }
 
     /**
