@@ -5,12 +5,15 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.kiwiproject.test.assertj.dropwizard.metrics.HealthCheckResultAssertions.assertThat;
+import static org.kiwiproject.test.assertj.dropwizard.metrics.HealthCheckResultAssertions.nullSafeGetSize;
 
 import com.codahale.metrics.health.HealthCheck;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.Singular;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kiwiproject.test.junit.jupiter.ClearBoxTest;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -453,6 +457,21 @@ class HealthCheckResultAssertionsTest {
                 var expectedSize = size + 1;
                 assertThatThrownBy(() -> assertThat(healthCheck).hasDetailsWithSize(expectedSize))
                         .hasMessageContaining("Expected %d details, but found %d", expectedSize, size);
+            }
+
+            @ClearBoxTest
+            void nullSafeGetSize_shouldReturnZeroForNullMaps() {
+                Assertions.assertThat(nullSafeGetSize(null)).isZero();
+            }
+
+            @ClearBoxTest
+            void nullSafeGetSize_shouldReturnMapSizeForNonNullMaps() {
+                assertAll(
+                        () -> Assertions.assertThat(nullSafeGetSize(Map.of())).isZero(),
+                        () -> Assertions.assertThat(nullSafeGetSize(Map.of("1", 1))).isOne(),
+                        () -> Assertions.assertThat(nullSafeGetSize(Map.of("1", 1, "2", 2))).isEqualTo(2),
+                        () -> Assertions.assertThat(nullSafeGetSize(Map.of("1", 1, "2", 2, "3", 3))).isEqualTo(3)
+                );
             }
         }
 

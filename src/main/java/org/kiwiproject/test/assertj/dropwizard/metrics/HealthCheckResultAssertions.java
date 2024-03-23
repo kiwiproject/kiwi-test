@@ -7,12 +7,14 @@ import static org.kiwiproject.collect.KiwiMaps.isNullOrEmpty;
 import static org.kiwiproject.logging.LazyLogParameterSupplier.lazy;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.kiwiproject.base.KiwiStrings;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Provides for fluent {@link HealthCheck} tests using AssertJ assertions.
@@ -297,12 +299,17 @@ public class HealthCheckResultAssertions {
         var details = result.getDetails();
 
         // details should never be null, but just in case Metrics ever changes that
-        var size = isNull(details) ? 0 : details.size();
+        var size = nullSafeGetSize(details);
 
         Assertions.assertThat(details)
                 .describedAs("Expected %d details, but found %d", expectedSize, size)
                 .hasSize(expectedSize);
         return this;
+    }
+
+    @VisibleForTesting
+    static int nullSafeGetSize(Map<?, ?> map) {
+        return isNull(map) ? 0 : map.size();
     }
 
     /**
