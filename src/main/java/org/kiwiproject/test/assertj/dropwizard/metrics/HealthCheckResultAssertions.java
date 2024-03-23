@@ -1,5 +1,6 @@
 package org.kiwiproject.test.assertj.dropwizard.metrics;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.collect.KiwiMaps.isNullOrEmpty;
@@ -272,6 +273,36 @@ public class HealthCheckResultAssertions {
         Assertions.assertThat(result.getError())
                 .describedAs("Expected to have an error")
                 .isNotNull();
+    }
+
+    /**
+     * Asserts the health check has one or more details.
+     *
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasDetails() {
+        Assertions.assertThat(result.getDetails())
+                .describedAs("Expected at least one detail")
+                .isNotEmpty();
+        return this;
+    }
+
+    /**
+     * Asserts the health check has {@code expectedSize} details.
+     *
+     * @param expectedSize the expected number of details
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasDetailsWithSize(int expectedSize) {
+        var details = result.getDetails();
+
+        // details should never be null, but just in case Metrics ever changes that
+        var size = isNull(details) ? 0 : details.size();
+
+        Assertions.assertThat(details)
+                .describedAs("Expected %d details, but found %d", expectedSize, size)
+                .hasSize(expectedSize);
+        return this;
     }
 
     /**

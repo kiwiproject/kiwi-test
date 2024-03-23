@@ -9,6 +9,7 @@ import static org.kiwiproject.test.assertj.dropwizard.metrics.HealthCheckResultA
 
 import com.codahale.metrics.health.HealthCheck;
 import lombok.Builder;
+import lombok.Setter;
 import lombok.Singular;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,12 +17,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @DisplayName("HealthCheckResultAssertions")
 class HealthCheckResultAssertionsTest {
@@ -42,9 +46,9 @@ class HealthCheckResultAssertionsTest {
         @Builder.Default
         private final boolean throwExceptionOnCheck = false;
 
-        // NOTE: @Singular always creates a non-null collection
-        @Singular
-        private final Map<String, Object> details;
+        @Singular(ignoreNullCollections = true)
+        @Setter  // to allow setting explicitly to null
+        private Map<String, Object> details;
 
         @Override
         protected Result check() throws Exception {
@@ -62,7 +66,7 @@ class HealthCheckResultAssertionsTest {
                 resultBuilder.unhealthy();
             }
 
-            details.forEach(resultBuilder::withDetail);
+            Optional.ofNullable(details).ifPresent(theDetails -> theDetails.forEach(resultBuilder::withDetail));
 
             return resultBuilder.build();
         }
@@ -385,6 +389,80 @@ class HealthCheckResultAssertionsTest {
                     .detail("author", "Douglas Adams")
                     .detail("pubYear", 1979)
                     .build();
+        }
+
+        @Nested
+        class HasDetails {
+
+            @ParameterizedTest
+            @ValueSource(ints = { 1, 5, 15 })
+            void shouldPass_WhenDetailsHasOneOrMoreEntries(int size) {
+                var details = createDetailsOfSize(size);
+                var mockHealthCheck = MockHealthCheck.builder().details(details).build();
+
+                assertThatCode(() ->
+                        assertThat(mockHealthCheck)
+                                .isHealthy()
+                                .hasDetails())
+                        .doesNotThrowAnyException();
+            }
+
+            @ParameterizedTest
+            @NullAndEmptySource
+            void shouldFail_WhenDetailsIsNullOrEmpty(Map<String, Object> details) {
+                var mockHealthCheck = MockHealthCheck.builder().build();
+                mockHealthCheck.setDetails(details);
+
+                assertThatThrownBy(() -> assertThat(mockHealthCheck).hasDetails())
+                        .hasMessageContaining("Expected at least one detail");
+            }
+        }
+
+        @Nested
+        class HasDetailsWithSize {
+
+            @ParameterizedTest
+            @ValueSource(ints = { 1, 5, 15 })
+            void shouldPass_WhenDetailsHasExpectedSize(int size) {
+                var details = createDetailsOfSize(size);
+                var mockHealthCheck = MockHealthCheck.builder().details(details).build();
+
+                assertThatCode(() ->
+                        assertThat(mockHealthCheck)
+                                .isHealthy()
+                                .hasDetailsWithSize(size))
+                        .doesNotThrowAnyException();
+            }
+
+            @ParameterizedTest
+            @NullAndEmptySource
+            void shouldFail_WhenDetailsIsNullOrEmpty(Map<String, Object> details) {
+                var mockHealthCheck = MockHealthCheck.builder().build();
+                mockHealthCheck.setDetails(details);
+
+                assertThatThrownBy(() -> assertThat(mockHealthCheck).hasDetailsWithSize(3))
+                        .hasMessageContaining("Expected 3 details, but found 0");
+            }
+
+            @ParameterizedTest
+            @ValueSource(ints = { 1, 5, 10 })
+            void shouldFail_WhenDetailsDoesNotHaveExpectedSize(int size) {
+                var details = createDetailsOfSize(size);
+                var healthCheck = MockHealthCheck.builder().details(details).build();
+
+                var expectedSize = size + 1;
+                assertThatThrownBy(() -> assertThat(healthCheck).hasDetailsWithSize(expectedSize))
+                        .hasMessageContaining("Expected %d details, but found %d", expectedSize, size);
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        private static Map<String, Object> createDetailsOfSize(int count) {
+            var entryList = IntStream.rangeClosed(1, count)
+                    .mapToObj(n -> Map.entry("key" + n, "value" + n))
+                    .toList();
+            Map.Entry<String, Object>[] entryArray = entryList.toArray(new Map.Entry[0]);
+            return Map.ofEntries(entryArray);
         }
 
         @Nested
