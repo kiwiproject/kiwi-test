@@ -4,10 +4,12 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.kiwiproject.test.assertj.dropwizard.metrics.HealthCheckResultAssertions.assertThat;
 import static org.kiwiproject.test.assertj.dropwizard.metrics.HealthCheckResultAssertions.nullSafeGetSize;
+import static org.kiwiproject.test.constants.KiwiTestConstants.JSON_HELPER;
 
 import com.codahale.metrics.health.HealthCheck;
 import lombok.Builder;
@@ -23,6 +25,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.junit.jupiter.ClearBoxTest;
+import org.kiwiproject.test.junit.jupiter.params.provider.MinimalBlankStringSource;
 
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -591,6 +594,116 @@ class HealthCheckResultAssertionsTest {
                                 .isHealthy()
                                 .hasDetail("foo", "bar"))
                         .hasMessageContaining("Expected detail not found");
+            }
+        }
+
+        @Nested
+        class HasDetailAtPath {
+
+            private HealthCheck.Result result;
+
+            @BeforeEach
+            void setUp() throws Exception {
+                var json = """
+                        {
+                            "timestamp": 1711234106709,
+                            "foods": {
+                                "fruits": {
+                                    "apple-jazz": {
+                                        "sku": "12345",
+                                        "color": "red",
+                                        "style": "Jazz",
+                                        "count": 12,
+                                        "unitPrice": 2.50
+                                    },
+                                    "orange-valencia": {
+                                        "sku": "76543",
+                                        "color": "orange",
+                                        "style": "Valencia",
+                                        "count": 6,
+                                        "unitPrice": 2.75
+                                    }
+                                },
+                                "snacks": {
+                                    "cookie-oreo-mint": {
+                                        "color": "Brown/Green",
+                                        "style": "Mint Oreos",
+                                        "count": 15,
+                                        "unitPrice": 5.99
+                                    }
+                                }
+                            },
+                            "officeSupply": {
+                                "paper-8x11": {
+                                    "color": "white",
+                                    "style": "500 sheets 8x11 printer paper",
+                                    "count": 10,
+                                    "unitPrice": 12.99,
+                                    "extraInfo": null
+                                }
+                            }
+                        }
+                        """;
+
+                var details = JSON_HELPER.toMap(json);
+                var mockHealthCheck = MockHealthCheck.builder().details(details).build();
+                result = mockHealthCheck.check();
+            }
+
+            @Test
+            void shouldPass_WhenDetailAtPathHasExpectedValue() {
+                assertAll(
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("timestamp", 1711234106709L))
+                                .doesNotThrowAnyException(),
+
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("foods.fruits.apple-jazz.color", "red"))
+                                .doesNotThrowAnyException(),
+
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("foods.fruits.apple-jazz.count", 12))
+                                .doesNotThrowAnyException(),
+
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("foods.fruits.orange-valencia.unitPrice", 2.75))
+                                .doesNotThrowAnyException(),
+
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("foods.snacks.cookie-oreo-mint.color", "Brown/Green"))
+                                .doesNotThrowAnyException(),
+
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("officeSupply.paper-8x11.unitPrice", 12.99))
+                                .doesNotThrowAnyException(),
+
+                        () -> assertThatCode(() ->
+                                assertThat(result).hasDetailAtPath("officeSupply.paper-8x11.extraInfo", null))
+                                .doesNotThrowAnyException()
+                );
+            }
+
+            @Test
+            void shouldFail_WhenDetailAtPath_DoesNotExistOrHaveExpectedValue() {
+                assertAll(
+                        () -> assertThatThrownBy(() ->
+                                assertThat(result)
+                                        .hasDetailAtPath("foods.fruits.kiwi.color", "green"))
+                                .hasMessageContaining("Expected detail at path 'foods.fruits.kiwi.color' to have value green, but was: null"),
+
+                        () -> assertThatThrownBy(() ->
+                                assertThat(result)
+                                        .hasDetailAtPath("foods.fruits.apple-jazz.count", 10))
+                                .hasMessageContaining("Expected detail at path 'foods.fruits.apple-jazz.count' to have value 10, but was: 12")
+                );
+            }
+
+            @ParameterizedTest
+            @MinimalBlankStringSource
+            void shouldThrowIllegalArgument_WhenGivenBlankPath(String path) {
+                assertThatIllegalArgumentException().isThrownBy(() ->
+                                assertThat(result).hasDetailAtPath(path, "green"))
+                        .withMessage("path must not be blank");
             }
         }
 
