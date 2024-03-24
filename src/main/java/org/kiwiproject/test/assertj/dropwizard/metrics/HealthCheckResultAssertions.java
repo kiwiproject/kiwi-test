@@ -2,15 +2,18 @@ package org.kiwiproject.test.assertj.dropwizard.metrics;
 
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
+import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotBlank;
 import static org.kiwiproject.base.KiwiStrings.f;
 import static org.kiwiproject.collect.KiwiMaps.isNullOrEmpty;
 import static org.kiwiproject.logging.LazyLogParameterSupplier.lazy;
+import static org.kiwiproject.test.constants.KiwiTestConstants.JSON_HELPER;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.kiwiproject.base.KiwiStrings;
 
 import java.util.Arrays;
@@ -390,6 +393,33 @@ public class HealthCheckResultAssertions {
         Assertions.assertThat(result.getDetails())
                 .describedAs("Expected detail not found")
                 .containsEntry(key, value);
+
+        return this;
+    }
+
+    /**
+     * Asserts the health check result has a detail at the specified path with the given value.
+     * <p>
+     * The path is dot-delimited, for example {@code error.exceptionType.description} represents
+     * a map containing an "error" key whose value is a map containing an "exceptionType", whose
+     * value is a map containing a "description" key.
+     *
+     * @param path  the path
+     * @param value the expected value; may be {@code null}
+     * @return this instance
+     * @implNote This uses {@link org.kiwiproject.json.JsonHelper#getPath(Object, String, Class)} to
+     * obtain the value at the specified path in the health check {@code Result}.
+     */
+    public HealthCheckResultAssertions hasDetailAtPath(String path, @Nullable Object value) {
+        checkArgumentNotBlank(path, "path must not be blank");
+
+        var targetClass = isNull(value) ? Object.class : value.getClass();
+        var actualValue = JSON_HELPER.getPath(result.getDetails(), path, targetClass);
+
+        Assertions.assertThat(actualValue)
+                .describedAs("Expected detail at path '%s' to have value %s, but was: %s",
+                        path, String.valueOf(value), String.valueOf(actualValue))
+                .isEqualTo(value);
 
         return this;
     }
