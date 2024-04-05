@@ -35,7 +35,7 @@ import javax.sql.DataSource;
  * <pre>
  * class SomeDatabaseTest {
  *
- *    {@literal @}H2LiquibaseExtension
+ *    {@literal @}RegisterExtension
  *     static final H2LiquibaseExtension H2_LIQUIBASE_EXTENSION =
  *             new H2LiquibaseExtension("test-migrations.xml");
  *
