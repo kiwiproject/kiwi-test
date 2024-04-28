@@ -4,7 +4,6 @@ import static java.util.Comparator.comparing;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-import com.google.common.annotations.Beta;
 import lombok.Synchronized;
 
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.stream.Stream;
  * or {@link InMemoryAppenderAssertions#hasNumberOfLoggingEventsAndGet(int)} if you also
  * need to get the list of events.
  */
-@Beta
 public class InMemoryAppender extends AppenderBase<ILoggingEvent> {
 
     private final AtomicInteger messageOrder;

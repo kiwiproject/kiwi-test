@@ -3,7 +3,6 @@ package org.kiwiproject.test.xmlunit;
 import static java.util.Objects.nonNull;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
-import com.google.common.annotations.Beta;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.TestInfo;
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @see ComparisonListener
  */
 @Slf4j
-@Beta
 public class LoggingComparisonListener implements ComparisonListener {
 
     private final String testName;

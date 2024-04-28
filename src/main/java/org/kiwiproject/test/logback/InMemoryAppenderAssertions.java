@@ -1,7 +1,6 @@
 package org.kiwiproject.test.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.google.common.annotations.Beta;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.List;
 /**
  * Provides AssertJ assertions for {@link InMemoryAppender}.
  */
-@Beta
 public class InMemoryAppenderAssertions {
 
     private final InMemoryAppender appender;
