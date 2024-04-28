@@ -2,7 +2,6 @@ package org.kiwiproject.test.xmlunit;
 
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
-import com.google.common.annotations.Beta;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.junit.jupiter.api.TestInfo;
 import org.xmlunit.assertj.CompareAssert;
@@ -20,7 +19,6 @@ import org.xmlunit.diff.ComparisonListener;
  * Or, you can use one of the convenience methods such as {@link #isIdenticalTo(Object)}
  * which are useful for some common comparison scenarios.
  */
-@Beta
 public class KiwiXmlAssert {
 
     private final Object o;

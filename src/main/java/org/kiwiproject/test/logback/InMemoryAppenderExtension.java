@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -27,7 +26,6 @@ import org.slf4j.LoggerFactory;
  * because this extension requires that a {@link ch.qos.logback.core.Appender}
  * exists at the time tests are executed.
  */
-@Beta
 public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachCallback {
 
     private final Class<?> loggerClass;

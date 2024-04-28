@@ -2,7 +2,6 @@ package org.kiwiproject.test.jakarta.persistence;
 
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
-import com.google.common.annotations.Beta;
 import jakarta.persistence.EntityManager;
 import lombok.Getter;
 
@@ -49,7 +48,6 @@ import lombok.Getter;
  * Then, you can inject this "shared" EntityManager directly into DAOs and tests, and it will be
  * automatically used by the DAO and test code without needing to do any of the setup code above.
  */
-@Beta
 public final class JpaTestHelper {
 
     /**
