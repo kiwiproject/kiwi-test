@@ -127,7 +127,7 @@ class FixturesTest {
     class FixtureStripLeadingWhitespace {
 
         @Test
-        void shouldStripLeadingWhitespace() {
+        void shouldStripLeadingbutNotTrailingWhitespace() {
             var fixture = Fixtures.fixtureStripLeadingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
             var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripLeading();
             assertThat(fixture).isEqualTo(expected);
@@ -139,20 +139,13 @@ class FixturesTest {
             var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8).stripLeading();
             assertThat(fixture).isEqualTo(expected);
         }
-
-        @Test
-        void shouldNotStripTrailingWhitespace() {
-            var fixture = Fixtures.fixtureStripLeadingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
-            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripLeading();
-            assertThat(fixture).isEqualTo(expected);
-        }
     }
 
     @Nested
     class FixtureStripTrailingWhitespace {
 
         @Test
-        void shouldStripTrailingWhitespace() {
+        void shouldStripTrailingButNotLeadingWhitespace() {
             var fixture = Fixtures.fixtureStripTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
             var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripTrailing();
             assertThat(fixture).isEqualTo(expected);
@@ -162,13 +155,6 @@ class FixturesTest {
         void shouldStripTrailingWhitespaceWithCharset() {
             var fixture = Fixtures.fixtureStripTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8);
             var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE, StandardCharsets.UTF_8).stripTrailing();
-            assertThat(fixture).isEqualTo(expected);
-        }
-
-        @Test
-        void shouldNotStripLeadingWhitespace() {
-            var fixture = Fixtures.fixtureStripTrailingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
-            var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripTrailing();
             assertThat(fixture).isEqualTo(expected);
         }
     }

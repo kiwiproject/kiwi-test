@@ -1,7 +1,6 @@
 package org.kiwiproject.test.dropwizard.app;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.collect.KiwiLists.first;
 
@@ -206,7 +205,7 @@ class DropwizardAppTestsTest {
 
     @Test
     void shouldReturnStreamOfLifeCycleObjects() {
-        var lifeCycles = DropwizardAppTests.lifeCycleStreamOf(APP).collect(toList());
+        var lifeCycles = DropwizardAppTests.lifeCycleStreamOf(APP).toList();
         assertLifeCycleObjects(lifeCycles);
     }
 
@@ -219,7 +218,7 @@ class DropwizardAppTestsTest {
                 .filter(managed -> NoOpManaged.class.isAssignableFrom(managed.getClass()))
                 .map(NoOpManaged.class::cast)
                 .map(NoOpManaged::mischiefManaged)
-                .collect(toSet());
+                .collect(toUnmodifiableSet());
 
         assertThat(mischiefManaged).containsOnly(true);
     }
@@ -242,7 +241,7 @@ class DropwizardAppTestsTest {
         var classNames = listeners.stream()
                 .map(Object::getClass)
                 .map(Class::getName)
-                .collect(toList());
+                .toList();
 
         softly.assertThat(classNames).contains(DropwizardAppTests.DROPWIZARD_PRIVATE_SERVER_LISTENER_CLASS_NAME);
     }

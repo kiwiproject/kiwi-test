@@ -1,6 +1,5 @@
 package org.kiwiproject.test.junit;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -141,7 +140,7 @@ class ParameterizedTestHelperTest {
                 .map(message -> message.split(lineSeparator))
                 .map(lines -> lines[0])
                 .map(String::trim)
-                .collect(toList());
+                .toList();
     }
 
     private static class Request {

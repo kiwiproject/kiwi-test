@@ -1,6 +1,5 @@
 package org.kiwiproject.test.validation;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -295,7 +294,7 @@ class ParameterizedValidationTestHelperTest {
     private static List<String> extractErrorMessageFrom(Throwable thrown) {
         return ((AssertJMultipleFailuresError) thrown).getFailures().stream()
                 .map(Throwable::getMessage)
-                .collect(toList());
+                .toList();
     }
 
     @Data

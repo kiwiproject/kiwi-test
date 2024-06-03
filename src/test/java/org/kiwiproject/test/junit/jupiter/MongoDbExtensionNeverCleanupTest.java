@@ -97,8 +97,8 @@ class MongoDbExtensionNeverCleanupTest {
     @Order(1)
     @Tag("firstTest")
     void shouldListCollections() {
-        var mongoDatabase = client.getDatabase(TEST_PROPERTIES.getDatabaseName());
-        assertThat(newArrayList(mongoDatabase.listCollectionNames().iterator())).isEmpty();
+        var theMongoDatabase = client.getDatabase(TEST_PROPERTIES.getDatabaseName());
+        assertThat(newArrayList(theMongoDatabase.listCollectionNames().iterator())).isEmpty();
     }
 
     @Test

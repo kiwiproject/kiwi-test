@@ -13,16 +13,16 @@ class AsciiOnlyBlankStringArgumentsProviderTest {
     @ParameterizedTest
     @ArgumentsSource(AsciiOnlyBlankStringArgumentsProvider.class)
     void shouldProvideBlankArguments(String blankString) {
-        assertThat(blankString).isBlank();
-
-        if (nonNull(blankString)) {
-            assertOnlyAsciiCharactersIn(blankString);
-        }
+        assertProvidesBlankArguments(blankString);
     }
 
     @ParameterizedTest
     @AsciiOnlyBlankStringSource
     void shouldProvideBlankArgumentsUsingAnnotation(String blankString) {
+        assertProvidesBlankArguments(blankString);
+    }
+
+    private void assertProvidesBlankArguments(String blankString) {
         assertThat(blankString).isBlank();
 
         if (nonNull(blankString)) {
