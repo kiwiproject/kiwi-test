@@ -13,16 +13,16 @@ class MinimalBlankStringArgumentsProviderTest {
     @ParameterizedTest
     @ArgumentsSource(MinimalBlankStringArgumentsProvider.class)
     void shouldProvideBlankArguments(String blankString) {
-        assertThat(blankString).isBlank();
-
-        if (nonNull(blankString)) {
-            assertOnlyCharactersIn(blankString);
-        }
+        assertProvidesBlankArguments(blankString);
     }
 
     @ParameterizedTest
     @MinimalBlankStringSource
     void shouldProvideBlankArgumentsUsingAnnotation(String blankString) {
+        assertProvidesBlankArguments(blankString);
+    }
+
+    private void assertProvidesBlankArguments(String blankString) {
         assertThat(blankString).isBlank();
 
         if (nonNull(blankString)) {
