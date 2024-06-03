@@ -455,10 +455,10 @@ class HealthCheckResultAssertionsTest {
             @ValueSource(ints = { 1, 5, 10 })
             void shouldFail_WhenDetailsDoesNotHaveExpectedSize(int size) {
                 var details = createDetailsOfSize(size);
-                var healthCheck = MockHealthCheck.builder().details(details).build();
+                var mockHealthCheck = MockHealthCheck.builder().details(details).build();
 
                 var expectedSize = size + 1;
-                assertThatThrownBy(() -> assertThat(healthCheck).hasDetailsWithSize(expectedSize))
+                assertThatThrownBy(() -> assertThat(mockHealthCheck).hasDetailsWithSize(expectedSize))
                         .hasMessageContaining("Expected %d details, but found %d", expectedSize, size);
             }
 
@@ -515,10 +515,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldFail_WhenDetailsIsNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
 
                 assertThatThrownBy(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .isHealthy()
                                 .hasDetailsContainingKey("foo"))
                         .hasMessageContaining("Expected key not found in details");
@@ -548,10 +548,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldFail_WhenDetailsIsNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
 
                 assertThatThrownBy(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .isHealthy()
                                 .hasDetailsContainingKey("foo"))
                         .hasMessageContaining("Expected key not found in details");
@@ -587,10 +587,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldFail_WhenDetailsIsNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
 
                 assertThatThrownBy(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .isHealthy()
                                 .hasDetail("foo", "bar"))
                         .hasMessageContaining("Expected detail not found");
@@ -712,10 +712,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                var healthCheck = MockHealthCheck.builder().details(Map.of()).build();
+                var mockHealthCheck = MockHealthCheck.builder().details(Map.of()).build();
 
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .isHealthy()
                                 .hasEmptyDetails())
                         .doesNotThrowAnyException();
@@ -723,11 +723,11 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldFail_WhenDetailsAreNotEmpty() {
-                var healthCheck = MockHealthCheck.builder().details(Map.of("answer", 42)).build();
+                var mockHealthCheck = MockHealthCheck.builder().details(Map.of("answer", 42)).build();
 
 
                 assertThatThrownBy(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .isHealthy()
                                 .hasEmptyDetails())
                         .hasMessageContaining("Expected empty (non-null) details");
@@ -739,20 +739,20 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
 
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .hasNullDetails())
                         .doesNotThrowAnyException();
             }
 
             @Test
             void shouldFail_WhenDetailsAreNotNull() {
-                var healthCheck = MockHealthCheck.builder().detail("answer", 42).build();
+                var mockHealthCheck = MockHealthCheck.builder().detail("answer", 42).build();
 
                 assertThatThrownBy(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .hasNullDetails())
                         .hasMessageContaining("Expected null details");
             }
@@ -764,10 +764,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
 
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .isHealthy()
                                 .hasNullOrEmptyDetails())
                         .doesNotThrowAnyException();
@@ -775,10 +775,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                var healthCheck = newMockHealthCheckWithEmptyDetails();
+                var mockHealthCheck = newMockHealthCheckWithEmptyDetails();
 
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .isHealthy()
                                 .hasNullOrEmptyDetails())
                         .doesNotThrowAnyException();
@@ -786,10 +786,10 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldFail_WhenDetailsAreNotNullOrEmpty() {
-                var healthCheck = MockHealthCheck.builder().detail("answer", 42).build();
+                var mockHealthCheck = MockHealthCheck.builder().detail("answer", 42).build();
 
                 assertThatThrownBy(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .isHealthy()
                                 .hasNullOrEmptyDetails())
                         .hasMessageContaining("Expected null or empty details");
@@ -801,9 +801,9 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .isHealthy()
                                 .doesNotHaveDetailsContainingKey("someKey"))
                         .doesNotThrowAnyException();
@@ -811,9 +811,9 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                var healthCheck = newMockHealthCheckWithEmptyDetails();
+                var mockHealthCheck = newMockHealthCheckWithEmptyDetails();
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .isHealthy()
                                 .doesNotHaveDetailsContainingKey("someKey"))
                         .doesNotThrowAnyException();
@@ -844,9 +844,9 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreNull() {
-                var healthCheck = newHealthCheckWithNullDetails();
+                var theHealthCheck = newHealthCheckWithNullDetails();
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(theHealthCheck)
                                 .isHealthy()
                                 .doesNotHaveDetailsContainingKeys("someKey", "anotherKey", "yetAnotherKey"))
                         .doesNotThrowAnyException();
@@ -854,9 +854,9 @@ class HealthCheckResultAssertionsTest {
 
             @Test
             void shouldPass_WhenDetailsAreEmpty() {
-                var healthCheck = newMockHealthCheckWithEmptyDetails();
+                var mockHealthCheck = newMockHealthCheckWithEmptyDetails();
                 assertThatCode(() ->
-                        assertThat(healthCheck)
+                        assertThat(mockHealthCheck)
                                 .isHealthy()
                                 .doesNotHaveDetailsContainingKeys("someKey", "anotherKey", "yetAnotherKey"))
                         .doesNotThrowAnyException();

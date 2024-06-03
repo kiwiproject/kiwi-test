@@ -1,6 +1,6 @@
 package org.kiwiproject.test.dropwizard.app;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
@@ -101,7 +101,7 @@ public class DropwizardAppTests {
                 .filter(InstanceBinding.class::isInstance)
                 .map(InstanceBinding.class::cast)
                 .map(InstanceBinding::getService)
-                .collect(toSet());
+                .collect(toUnmodifiableSet());
 
         return Sets.union(instances, wrappedResourceObjects);
     }

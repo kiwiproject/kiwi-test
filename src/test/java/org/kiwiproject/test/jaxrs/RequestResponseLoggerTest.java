@@ -1,6 +1,5 @@
 package org.kiwiproject.test.jaxrs;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.collect.KiwiLists.first;
 import static org.kiwiproject.collect.KiwiLists.second;
@@ -81,7 +80,7 @@ class RequestResponseLoggerTest {
         assertThat(records).hasSize(2);
         assertThat(records).extracting(LogRecord::getLoggerName).containsOnly("MyLogger");
 
-        var messages = records.stream().map(LogRecord::getMessage).collect(toList());
+        var messages = records.stream().map(LogRecord::getMessage).toList();
         assertThat(first(messages)).describedAs(CHECK_CLIENT_LOGGING_FILTER).contains(SENDING_CLIENT_REQUEST);
         assertThat(second(messages)).describedAs(CHECK_CLIENT_LOGGING_FILTER).contains(CLIENT_RESPONSE_RECEIVED);
 
@@ -91,7 +90,7 @@ class RequestResponseLoggerTest {
                 .hasSize(4);
         var latestMessages = records.stream()
                 .skip(2)
-                .map(LogRecord::getMessage).collect(toList());
+                .map(LogRecord::getMessage).toList();
         assertThat(first(latestMessages)).describedAs(CHECK_CLIENT_LOGGING_FILTER).contains(SENDING_CLIENT_REQUEST);
         assertThat(second(latestMessages)).describedAs(CHECK_CLIENT_LOGGING_FILTER).contains(CLIENT_RESPONSE_RECEIVED);
     }
@@ -109,8 +108,8 @@ class RequestResponseLoggerTest {
         }
 
         @Override
-        public void publish(final LogRecord record) {
-            records.add(record);
+        public void publish(final LogRecord logRecord) {
+            records.add(logRecord);
         }
 
         @Override

@@ -1,6 +1,6 @@
 package org.kiwiproject.test.validation;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -105,7 +105,7 @@ public class SoftValidationTestAssertions {
     public <T> Set<ConstraintViolation<T>> assertPropertiesEachHaveOneViolation(T object, String... propertyNames) {
         return Arrays.stream(propertyNames)
                 .flatMap(propertyName -> assertOnePropertyViolation(object, propertyName).stream())
-                .collect(toSet());
+                .collect(toUnmodifiableSet());
     }
 
     /**
@@ -137,7 +137,7 @@ public class SoftValidationTestAssertions {
     public <T> Set<ConstraintViolation<T>> assertPropertiesEachHaveNoViolations(T object, String... propertyNames) {
         return Arrays.stream(propertyNames)
                 .flatMap(propertyName -> assertNoPropertyViolations(object, propertyName).stream())
-                .collect(toSet());
+                .collect(toUnmodifiableSet());
     }
 
     /**

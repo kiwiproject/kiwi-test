@@ -166,10 +166,7 @@ class MongoDbExtensionTest {
                 "yet-another-service_unit_test_localhost_1605410638221"
         })
         void shouldBeFalse_WhenDatabaseName_DoesNotContainTestDatabaseNameWithoutTimestamp(String databaseName) {
-            verifyTestPropertiesDatabaseName();
-
-            assertThat(MongoDbExtension.isUnitTestDatabaseForThisService(databaseName, testProperties))
-                    .isFalse();
+            assertNotUnitTestDatabaseForThisService(databaseName);
         }
 
         @ParameterizedTest
@@ -180,17 +177,17 @@ class MongoDbExtensionTest {
                 "customer_database"
         })
         void shouldBeFalse_WhenDatabaseName_IsNotInOurExpectedFormat(String databaseName) {
-            verifyTestPropertiesDatabaseName();
-
-            assertThat(MongoDbExtension.isUnitTestDatabaseForThisService(databaseName, testProperties))
-                    .isFalse();
+            assertNotUnitTestDatabaseForThisService(databaseName);
         }
 
-        private void verifyTestPropertiesDatabaseName() {
+        private void assertNotUnitTestDatabaseForThisService(String databaseName) {
             var testPropsDbName = testProperties.getDatabaseNameWithoutTimestamp();
             verify(testPropsDbName.equals("test-service_unit_test_localhost"),
                     "Expected testProperties database name (w/o timestamp) to be: test-service_unit_test_localhost but was: %s",
                     testPropsDbName);
+
+            assertThat(MongoDbExtension.isUnitTestDatabaseForThisService(databaseName, testProperties))
+                    .isFalse();
         }
     }
 
