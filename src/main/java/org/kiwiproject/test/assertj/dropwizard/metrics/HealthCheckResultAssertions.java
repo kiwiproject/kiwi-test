@@ -113,6 +113,20 @@ public class HealthCheckResultAssertions {
     }
 
     /**
+     * Asserts the health check result returns the given boolean value from {@link HealthCheck.Result#isHealthy}.
+     *
+     * @param value the expected value
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasHealthyValue(boolean value) {
+        Assertions.assertThat(result.isHealthy())
+                .describedAs("Expected result to return %b from isHealthy", value)
+                .isEqualTo(value);
+
+        return this;
+    }
+
+    /**
      * Asserts the health check result has the given message.
      *
      * @param message the expected message
