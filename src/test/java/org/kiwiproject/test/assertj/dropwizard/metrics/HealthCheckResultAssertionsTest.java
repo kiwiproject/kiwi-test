@@ -122,6 +122,29 @@ class HealthCheckResultAssertionsTest {
     }
 
     @Nested
+    class HasHealthyValue {
+
+        @ParameterizedTest
+        @ValueSource(booleans = { true, false })
+        void shouldPass_WhenReturnsExpectedValue(boolean healthy) {
+            var healthCheck = MockHealthCheck.builder().healthy(healthy).build();
+
+            assertThatCode(() -> assertThat(healthCheck).hasHealthyValue(healthy))
+                    .doesNotThrowAnyException();
+        }
+
+        @ParameterizedTest
+        @ValueSource(booleans = { true, false })
+        void shouldFail_WhenDoesNotReturnExpectedValue(boolean healthy) {
+            var healthCheck = MockHealthCheck.builder().healthy(!healthy).build();
+
+            assertThatThrownBy(() -> assertThat(healthCheck).hasHealthyValue(healthy))
+                    .isNotNull()
+                    .hasMessageContaining("Expected result to return %b from isHealthy", healthy);
+        }
+    }
+
+    @Nested
     class HasMessageMethods {
 
         private HealthCheck healthCheck;
