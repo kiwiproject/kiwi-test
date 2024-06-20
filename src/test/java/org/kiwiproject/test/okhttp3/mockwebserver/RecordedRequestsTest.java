@@ -156,7 +156,7 @@ class RecordedRequestsTest {
                 var future = executor.submit(callable);
                 await().atMost(Durations.FIVE_HUNDRED_MILLISECONDS).until(future::isDone);
 
-                assertThatThrownBy(() -> future.get())
+                assertThatThrownBy(future::get)
                         .cause()
                         .isExactlyInstanceOf(UncheckedInterruptedException.class)
                         .hasMessageEndingWith("I interrupt you!");
