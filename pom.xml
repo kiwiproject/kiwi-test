@@ -33,6 +33,10 @@
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+
+        <!-- This version must match the okhttp version in kiwi-bom. TODO: Consider adding this to kiwi-bom. -->
+        <ohttp3.mockwebserver.version>4.12.0</ohttp3.mockwebserver.version>
+
         <xmlunit.version>2.10.0</xmlunit.version>
 
         <!-- Sonar properties -->
@@ -186,6 +190,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${ohttp3.mockwebserver.version}</version>
             <scope>provided</scope>
         </dependency>
 

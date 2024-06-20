@@ -50,7 +50,7 @@ class KiwiXmlAssertTest {
                             .withTestName("custom-test-name")
                             .and(otherXml)
                             .areIdentical())
-                    .isExactlyInstanceOf(AssertionError.class);
+                    .isInstanceOf(AssertionError.class);
         }
 
         @Test
@@ -63,7 +63,7 @@ class KiwiXmlAssertTest {
                             .withTestNameFrom(testInfo)
                             .and(otherXml)
                             .areIdentical())
-                    .isExactlyInstanceOf(AssertionError.class);
+                    .isInstanceOf(AssertionError.class);
         }
     }
 
@@ -108,7 +108,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalTo(otherXml))
-                        .isExactlyInstanceOf(AssertionError.class);
+                        .isInstanceOf(AssertionError.class);
             }
         }
 
@@ -136,7 +136,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalToIgnoringWhitespace(otherXml))
-                        .isExactlyInstanceOf(AssertionError.class);
+                        .isInstanceOf(AssertionError.class);
             }
         }
 
@@ -165,7 +165,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalToIgnoringComments(otherXml))
-                        .isExactlyInstanceOf(AssertionError.class);
+                        .isInstanceOf(AssertionError.class);
             }
         }
 
@@ -189,7 +189,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalToIgnoringWhitespaceAndComments(otherXml))
-                        .isExactlyInstanceOf(AssertionError.class);
+                        .isInstanceOf(AssertionError.class);
             }
         }
     }
