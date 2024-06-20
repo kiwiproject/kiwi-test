@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
 import org.kiwiproject.base.UncheckedInterruptedException;
 
 import java.util.Optional;

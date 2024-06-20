@@ -34,8 +34,8 @@
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
 
-        <!-- This version must match the okhttp version in kiwi-bom. TODO: Consider adding this to kiwi-bom. -->
-        <ohttp3.mockwebserver.version>4.12.0</ohttp3.mockwebserver.version>
+        <!-- TODO: This is an ALPHA version!!! This is an EXPERIMENTAL branch only!!! Consider adding this to kiwi-bom. -->
+        <okhttp3.mockwebserver3.version>5.0.0-alpha.14</okhttp3.mockwebserver3.version>
 
         <xmlunit.version>2.10.0</xmlunit.version>
 
@@ -53,6 +53,14 @@
                 <version>${kiwi-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- Override version in kiwi-bom to ensure okhttp artifacts have same version
+                 TODO: Remove once okhttp and mockwebserver3 versions are in sync -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp3.mockwebserver3.version}</version>
             </dependency>
 
             <dependency>
@@ -195,8 +203,8 @@
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>mockwebserver</artifactId>
-            <version>${ohttp3.mockwebserver.version}</version>
+            <artifactId>mockwebserver3-junit5</artifactId>
+            <version>${okhttp3.mockwebserver3.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -14,18 +14,18 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
+import mockwebserver3.junit5.internal.MockWebServerExtension;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Durations;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.base.UncheckedInterruptedException;
-import org.kiwiproject.io.KiwiIO;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,17 +40,14 @@ import java.util.concurrent.TimeUnit;
 @DisplayName("RecordedRequests")
 class RecordedRequestsTest {
 
+    @RegisterExtension
+    static final MockWebServerExtension MOCK_WEB_SERVER_EXTENSION = new MockWebServerExtension();
+
     private MockWebServer server;
 
     @BeforeEach
-    void setUp() throws IOException {
-        server = new MockWebServer();
-        server.start();
-    }
-
-    @AfterEach
-    void tearDown() {
-        KiwiIO.closeQuietly(server);
+    void setUp(MockWebServer server) {
+        this.server = server;
     }
 
     @Nested
@@ -58,7 +55,7 @@ class RecordedRequestsTest {
 
         @Test
         void shouldReturnTheAvailableRequest() {
-            server.enqueue(new MockResponse().setResponseCode(200));
+            server.enqueue(new MockResponse(200));
 
             var path = randomPath();
             makeRequest(path);
@@ -81,7 +78,7 @@ class RecordedRequestsTest {
 
         @Test
         void shouldReturnTheAvailableRequest() {
-            server.enqueue(new MockResponse().setResponseCode(202));
+            server.enqueue(new MockResponse(202));
 
             var path = randomPath();
             makeRequest(path);
@@ -109,7 +106,7 @@ class RecordedRequestsTest {
 
         @Test
         void shouldFail_WhenAnyRequestIsAvailable() {
-            server.enqueue(new MockResponse().setResponseCode(202));
+            server.enqueue(new MockResponse(202));
 
             var path = randomPath();
             makeRequest(path);
@@ -126,7 +123,7 @@ class RecordedRequestsTest {
 
         @Test
         void shouldReturnTheAvailableRequest() {
-            server.enqueue(new MockResponse().setResponseCode(204));
+            server.enqueue(new MockResponse(204));
 
             var path = randomPath();
             makeRequest(path);

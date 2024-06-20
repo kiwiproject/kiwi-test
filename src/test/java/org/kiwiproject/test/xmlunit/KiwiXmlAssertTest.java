@@ -45,12 +45,16 @@ class KiwiXmlAssertTest {
             var xml = fixture("KiwiXmlAssertTest/alice-smith.xml");
             var otherXml = fixture("KiwiXmlAssertTest/alice-jones.xml");
 
+            // TODO: Should we revert this to use 'isExactlyInstanceOf' now that JUnit 4
+            //  is no longer present. See the "Gory Details" in the following PR for why
+            //  that matters: https://github.com/kiwiproject/kiwi-test/pull/499
+            //  For now, they have been changed to verify the tests pass.
             assertThatThrownBy(() ->
                     KiwiXmlAssert.assertThat(xml)
                             .withTestName("custom-test-name")
                             .and(otherXml)
                             .areIdentical())
-                    .isInstanceOf(AssertionError.class);
+                    .isExactlyInstanceOf(AssertionError.class);
         }
 
         @Test
@@ -63,7 +67,7 @@ class KiwiXmlAssertTest {
                             .withTestNameFrom(testInfo)
                             .and(otherXml)
                             .areIdentical())
-                    .isInstanceOf(AssertionError.class);
+                    .isExactlyInstanceOf(AssertionError.class);
         }
     }
 
@@ -108,7 +112,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalTo(otherXml))
-                        .isInstanceOf(AssertionError.class);
+                        .isExactlyInstanceOf(AssertionError.class);
             }
         }
 
@@ -136,7 +140,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalToIgnoringWhitespace(otherXml))
-                        .isInstanceOf(AssertionError.class);
+                        .isExactlyInstanceOf(AssertionError.class);
             }
         }
 
@@ -165,7 +169,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalToIgnoringComments(otherXml))
-                        .isInstanceOf(AssertionError.class);
+                        .isExactlyInstanceOf(AssertionError.class);
             }
         }
 
@@ -189,7 +193,7 @@ class KiwiXmlAssertTest {
 
                 assertThatThrownBy(() ->
                         KiwiXmlAssert.assertThat(xml).isIdenticalToIgnoringWhitespaceAndComments(otherXml))
-                        .isInstanceOf(AssertionError.class);
+                        .isExactlyInstanceOf(AssertionError.class);
             }
         }
     }
