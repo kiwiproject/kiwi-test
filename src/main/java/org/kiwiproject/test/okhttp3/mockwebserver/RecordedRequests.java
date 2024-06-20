@@ -2,10 +2,10 @@ package org.kiwiproject.test.okhttp3.mockwebserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.kiwiproject.base.UncheckedInterruptedException;
 
 import java.util.Optional;
