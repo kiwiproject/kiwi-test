@@ -5,15 +5,24 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.kiwiproject.base.KiwiStrings.f;
+import static org.kiwiproject.test.okhttp3.mockwebserver.RecordedRequestAssertions.assertThatRecordedRequest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okhttp3.mockwebserver.SocketPolicy;
+import okhttp3.tls.HandshakeCertificates;
+import okhttp3.tls.HeldCertificate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,6 +30,7 @@ import org.kiwiproject.base.UncheckedInterruptedException;
 import org.kiwiproject.io.KiwiIO;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -28,6 +38,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
+
+import javax.net.ssl.SSLHandshakeException;
 
 @DisplayName("RecordedRequestAssertions")
 class RecordedRequestAssertionsTest {
@@ -51,7 +63,7 @@ class RecordedRequestAssertionsTest {
     }
 
     @Test
-    void shouldCreateUsingAssertThat() throws InterruptedException {
+    void shouldCreateUsingAssertThat() {
         server.enqueue(new MockResponse());
 
         var path = "/";
@@ -65,7 +77,7 @@ class RecordedRequestAssertionsTest {
     }
 
     @Test
-    void shouldPassSuccessfulGETRequests() throws InterruptedException {
+    void shouldPassSuccessfulGETRequests() {
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setHeader("Content-Type", "text/plain")
@@ -84,7 +96,7 @@ class RecordedRequestAssertionsTest {
         var recordedRequest = takeRequest();
 
         assertThatCode(() ->
-                    RecordedRequestAssertions.assertThatRecordedRequest(recordedRequest)
+                assertThatRecordedRequest(recordedRequest)
                         .isGET()
                         .isNotTls()
                         .hasTlsVersion(null)
@@ -102,13 +114,11 @@ class RecordedRequestAssertionsTest {
     @Nested
     class Bodies {
 
-        private String path;
         private String body;
         private RecordedRequest recordedRequest;
 
         @BeforeEach
         void setUp() {
-            path = "/users";
             body = """
                     {
                         "username": "alice",
@@ -117,14 +127,14 @@ class RecordedRequestAssertionsTest {
                     """;
 
             server.enqueue(new MockResponse().setResponseCode(201));
-            JdkHttpClients.post(httpClient, uri(path), body);
+            JdkHttpClients.post(httpClient, uri("/users"), body);
             recordedRequest = takeRequest();
         }
 
         @Test
         void shouldCheckRequestBody() {
             assertThatCode(() ->
-                        RecordedRequestAssertions.assertThatRecordedRequest(recordedRequest)
+                            assertThatRecordedRequest(recordedRequest)
                             .hasBodySize(body.length())
                             .hasBody(body)
                     ).doesNotThrowAnyException();
@@ -169,7 +179,7 @@ class RecordedRequestAssertionsTest {
             recordedRequest = takeRequest();
 
             assertThatCode(() ->
-                        RecordedRequestAssertions.assertThatRecordedRequest(recordedRequest).hasNoBody()
+                            assertThatRecordedRequest(recordedRequest).hasNoBody()
                     ).doesNotThrowAnyException();
         }
 
@@ -181,9 +191,11 @@ class RecordedRequestAssertionsTest {
                     """);
             recordedRequest = takeRequest();
 
-            assertThatThrownBy(() -> RecordedRequestAssertions.assertThatRecordedRequest(recordedRequest).hasNoBody())
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest).hasNoBody())
                     .isNotNull()
-                    .hasMessageContaining("Expected there not to be a request body but found: {}");
+                    .hasMessageContaining("""
+                            Expected there not to be a request body but found: { "foo": "bar" }
+                            """);
         }
     }
 
@@ -410,28 +422,169 @@ class RecordedRequestAssertionsTest {
     @Nested
     class RequestFailures {
 
+        private RecordedRequest recordedRequest;
+        private String message;
+        private ConnectException connectException;
+
+        @BeforeEach
+        void setUp() {
+            recordedRequest = mock(RecordedRequest.class);
+            message = "Failed to connect to localhost/[0:0:0:0:0:0:0:1]:59881";
+            connectException = new ConnectException(message);
+            when(recordedRequest.getFailure()).thenReturn(connectException);
+        }
+
         @Test
         void shouldCheckFailureMessage() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest).hasFailureMessage(message))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidFailureMessage() {
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest).hasFailureMessage("Connection refused"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected a failure with message: Connection refused");
+        }
+
+        @Test
+        void shouldCheckFailureMessageContains() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest).hasFailureMessageContaining(message))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidFailureMessageContains() {
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest).hasFailureMessage("TLS handshake failed"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected a failure with message: TLS handshake failed");
+        }
+
+        @Test
+        void shouldCheckFailureMessageStartingWith() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasFailureMessageStartingWith(message.substring(0, 5)))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidFailureMessageStartingWith() {
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest).hasFailureMessageStartingWith("TLS handshake failed"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected a failure with message that starts with: TLS handshake failed");
+        }
+
+        @Test
+        void shouldCheckFailureMessageEndingWith() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasFailureMessageEndingWith(message.substring(5)))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidFailureMessageEndingWith() {
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest).hasFailureMessageEndingWith("handshake failed"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected a failure with message that ends with: handshake failed");
+        }
+
+        @Test
+        void shouldCheckFailureCauseInstanceOf() {
+            var recordedRequestWithFailureCause = mock(RecordedRequest.class);
+            var exception = new IOException(connectException);
+            when(recordedRequestWithFailureCause.getFailure()).thenReturn(exception);
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasFailureCauseInstanceOf(connectException.getClass()))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidFailureCauseInstanceOf() {
+            var recordedRequestWithFailureCause = mock(RecordedRequest.class);
+            var exception = new IOException(connectException);
+            when(recordedRequestWithFailureCause.getFailure()).thenReturn(exception);
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasFailureCauseInstanceOf(SSLHandshakeException.class))
+                    .isNotNull()
+                    .hasMessageContaining("Expected request to have failure of type: javax.net.ssl.SSLHandshakeException");
+        }
+
+        // TODO Delete if can't figure out (and also delete the okhttp-tls test dependency)
+        @Disabled
+        @SuppressWarnings("all")
+        @Test
+        void temporaryHacking() {
+            var localhostCertificate = new HeldCertificate.Builder()
+                    .addSubjectAlternativeName("localhost")
+                    .build();
+            var serverCertificates = new HandshakeCertificates.Builder()
+                    .heldCertificate(localhostCertificate)
+                    .build();
+
+            server.useHttps(serverCertificates.sslSocketFactory(), false);
+
+            System.out.println("server.getProtocolNegotiationEnabled() = " + server.getProtocolNegotiationEnabled());
+
+
             server.enqueue(new MockResponse()
-                    .throttleBody(1, 1, TimeUnit.SECONDS)
-                    .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_REQUEST_BODY));
+                            .setBody("""
+                                    { "echo": "hello" }
+                                    """)
+//                    .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_REQUEST_BODY)
+                            .setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
+//                    .setSocketPolicy(SocketPolicy.FAIL_HANDSHAKE)
+            );
 
             String expectedMessage = null;
             try {
-                JdkHttpClients.put(httpClient, uri("/"), "{}");
+                var uri = uri("/");
+                System.out.println("uri = " + uri);
+
+                var clientCertificates = new HandshakeCertificates.Builder()
+                        .addTrustedCertificate(localhostCertificate.certificate())
+                        .build();
+                var client = new OkHttpClient.Builder()
+                        .sslSocketFactory(clientCertificates.sslSocketFactory(), clientCertificates.trustManager())
+                        .build();
+
+                RequestBody body = RequestBody.create("""
+                        { "message": "hello" }
+                        """, MediaType.get("application/json"));
+                Request request = new Request.Builder()
+                        .url(uri.toString())
+                        .put(body)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    System.out.println("Response status: " + response.code());
+                    System.out.println("Response body: " + response.body().string());
+                    System.out.println("Response protocol: " + response.protocol());
+                }
+
             } catch (Exception e) {
+                System.out.println("Request failed: " + e.getMessage());
+                System.out.println("Exception class: " + e.getClass().getName());
+
+                assertThat(e).isInstanceOf(IOException.class);
+
+                e.printStackTrace();
                 expectedMessage = e.getCause().getMessage();
             }
 
-            // TODO assert we have an expected message
+            var theRecordedRequest = takeRequest();
 
-            var recordedRequest = takeRequest();
+            var failure = theRecordedRequest.getFailure();
+            System.out.println("failure = " + failure);
 
             // TODO - why is the failure null?
-            //RecordedRequestAssertions.assertThat(recordedRequest).hasFailureMessage(expectedMessage);
+            //RecordedRequestAssertions.assertThat(theRecordedRequest).hasFailureMessage(expectedMessage);
     }
-
-        // TODO
     }
 
     private RecordedRequest takeRequest() {
