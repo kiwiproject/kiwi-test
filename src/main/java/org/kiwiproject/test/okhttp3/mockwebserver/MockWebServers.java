@@ -1,10 +1,9 @@
 package org.kiwiproject.test.okhttp3.mockwebserver;
 
 import lombok.experimental.UtilityClass;
+import okhttp3.mockwebserver.MockWebServer;
 
 import java.net.URI;
-
-import okhttp3.mockwebserver.MockWebServer;
 
 @UtilityClass
 public class MockWebServers {

@@ -8,6 +8,10 @@ import static org.kiwiproject.base.KiwiStrings.f;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.SocketPolicy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,11 +28,6 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
-
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-import okhttp3.mockwebserver.SocketPolicy;
 
 @DisplayName("RecordedRequestAssertions")
 class RecordedRequestAssertionsTest {
@@ -177,7 +176,9 @@ class RecordedRequestAssertionsTest {
         @Test
         void shouldCheckWhenHasBodyButNoneIsExpected() {
             server.enqueue(new MockResponse().setResponseCode(200));
-            JdkHttpClients.put(httpClient, uri(path), "{}");
+            JdkHttpClients.put(httpClient, uri(path), """
+                    { "foo": "bar" }
+                    """);
             recordedRequest = takeRequest();
 
             assertThatThrownBy(() -> RecordedRequestAssertions.assertThatRecordedRequest(recordedRequest).hasNoBody())
