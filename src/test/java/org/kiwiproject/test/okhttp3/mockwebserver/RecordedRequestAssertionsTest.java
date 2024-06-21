@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.kiwiproject.base.KiwiStrings.f;
+import static org.kiwiproject.test.okhttp3.mockwebserver.RecordedRequestAssertions.METHODS_ALLOWING_BODY;
 import static org.kiwiproject.test.okhttp3.mockwebserver.RecordedRequestAssertions.assertThatRecordedRequest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.base.UncheckedInterruptedException;
 import org.kiwiproject.io.KiwiIO;
 
@@ -151,6 +154,31 @@ class RecordedRequestAssertionsTest {
             assertThatThrownBy(() -> RecordedRequestAssertions.assertThat(recordedRequest) .hasBody(expectedBody))
                     .isNotNull()
                     .hasMessageContaining("Expected body as UTF-8 to be: " + expectedBody);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "CONNECT",
+                "GET",
+                "HEAD",
+                "OPTIONS",
+                "TRACE"
+        })
+        void shouldCheckMethodCanHaveBody(String method) {
+            var badRecordedRequest = mock(RecordedRequest.class);
+            when(badRecordedRequest.getMethod()).thenReturn(method);
+
+            assertAll(
+                    () -> assertThatThrownBy(() -> assertThatRecordedRequest(badRecordedRequest).hasBody("{}"))
+                            .isNotNull()
+                            .hasMessageContaining("Body not allowed for method %s. The request method should be one of %s",
+                                    method, METHODS_ALLOWING_BODY),
+
+                    () -> assertThatThrownBy(() -> assertThatRecordedRequest(badRecordedRequest).hasBodySize(42))
+                            .isNotNull()
+                            .hasMessageContaining("Body not allowed for method %s. The request method should be one of %s",
+                                    method, METHODS_ALLOWING_BODY)
+            );
         }
 
         @Test

@@ -9,10 +9,14 @@ import org.assertj.core.api.Assertions;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.function.Consumer;
 
 @CanIgnoreReturnValue
 public class RecordedRequestAssertions {
+
+    // reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+    static final List<String> METHODS_ALLOWING_BODY = List.of("DELETE", "PATCH", "POST", "PUT");
 
     private final RecordedRequest recordedRequest;
 
@@ -32,6 +36,7 @@ public class RecordedRequestAssertions {
     //  - Request Line:    https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1
     //  - Request Methods: https://datatracker.ietf.org/doc/html/rfc7231#section-4
     //  - PATCH method:    https://datatracker.ietf.org/doc/html/rfc5789
+    //  - Mozilla - HTTP request methods - https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 
     public RecordedRequestAssertions isGET() {
         return hasMethod("GET");
@@ -125,6 +130,8 @@ public class RecordedRequestAssertions {
     }
 
     public RecordedRequestAssertions hasBody(String body) {
+        checkMethodAllowsBody();
+
         var bodyBuffer = recordedRequest.getBody();
         var actualBodyUtf8 = bodyBuffer.readUtf8();
         Assertions.assertThat(actualBodyUtf8)
@@ -135,14 +142,22 @@ public class RecordedRequestAssertions {
     }
 
     public RecordedRequestAssertions hasBodySize(long size) {
-        // TODO - this only applies to POST/PUT/PATCH requests!!! put in javadoc
-        //  should we throw if the method is not one of the expected ones???
+        checkMethodAllowsBody();
 
         Assertions.assertThat(recordedRequest.getBodySize())
                 .describedAs("Expected body size: %d bytes", size)
                 .isEqualTo(size);
 
         return this;
+    }
+
+    private void checkMethodAllowsBody() {
+        var method = recordedRequest.getMethod();
+
+        Assertions.assertThat(method)
+                .describedAs("Body not allowed for method %s. The request method should be one of %s",
+                        method, METHODS_ALLOWING_BODY)
+                .isIn(METHODS_ALLOWING_BODY);
     }
 
     public RecordedRequestAssertions isNotTls() {
