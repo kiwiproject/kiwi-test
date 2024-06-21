@@ -2,6 +2,7 @@ package org.kiwiproject.test.okhttp3.mockwebserver;
 
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import okhttp3.TlsVersion;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.assertj.core.api.Assertions;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Consumer;
 
+@CanIgnoreReturnValue
 public class RecordedRequestAssertions {
 
     private final RecordedRequest recordedRequest;
@@ -88,9 +90,10 @@ public class RecordedRequestAssertions {
     }
 
     public RecordedRequestAssertions hasRequestUrl(String requestUrl) {
-        Assertions.assertThat(recordedRequest.getRequestUrl().toString())
+        Assertions.assertThat(recordedRequest.getRequestUrl())
                 .describedAs("Expected request URL to be: %s", requestUrl)
-                .isEqualTo(requestUrl);
+                .isNotNull()
+                .hasToString(requestUrl);
 
         return this;
     }
