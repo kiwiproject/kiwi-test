@@ -575,6 +575,7 @@ class RecordedRequestAssertionsTest {
 
                 e.printStackTrace();
                 expectedMessage = e.getCause().getMessage();
+                System.out.println("expectedMessage = " + expectedMessage);
             }
 
             var theRecordedRequest = takeRequest();
