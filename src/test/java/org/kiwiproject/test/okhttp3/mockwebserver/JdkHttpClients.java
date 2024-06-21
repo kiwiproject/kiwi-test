@@ -1,5 +1,6 @@
 package org.kiwiproject.test.okhttp3.mockwebserver;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -13,10 +14,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 @UtilityClass
 class JdkHttpClients {
 
-    static HttpResponse<String> get(HttpClient client, String uri) {
-        return get(client, URI.create(uri));
-    }
-
+    @CanIgnoreReturnValue
     static HttpResponse<String> get(HttpClient client, URI uri) {
         return send(client, HttpRequest.newBuilder()
                 .GET()
@@ -24,6 +22,7 @@ class JdkHttpClients {
                 .build());
     }
 
+    @CanIgnoreReturnValue
     static HttpResponse<String> post(HttpClient client, URI uri, String body) {
         return send(client, HttpRequest.newBuilder()
                 .POST(BodyPublishers.ofString(body))
@@ -31,6 +30,7 @@ class JdkHttpClients {
                 .build());
     }
 
+    @CanIgnoreReturnValue
     static HttpResponse<String> put(HttpClient client, URI uri, String body) {
         return send(client, HttpRequest.newBuilder()
                 .PUT(BodyPublishers.ofString(body))
@@ -38,6 +38,7 @@ class JdkHttpClients {
                 .build());
     }
 
+    @CanIgnoreReturnValue
     static HttpResponse<String> delete(HttpClient client, URI uri) {
         return send(client, HttpRequest.newBuilder()
                 .DELETE()
@@ -45,6 +46,7 @@ class JdkHttpClients {
                 .build());
     }
 
+    @CanIgnoreReturnValue
     static HttpResponse<String> send(HttpClient client, HttpRequest request) {
         try {
             return client.send(request, BodyHandlers.ofString());
