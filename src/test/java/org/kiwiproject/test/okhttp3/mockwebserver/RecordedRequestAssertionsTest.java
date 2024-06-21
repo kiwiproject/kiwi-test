@@ -106,7 +106,6 @@ class RecordedRequestAssertionsTest {
                         .hasNoFailure()
                         .hasFailure(failure -> assertThat(failure).isNull())
                         .hasNoBody()
-                        .hasBodySize(0)
                         .hasHeader("Accept", "text/plain")
                         .hasRequestUrl(uri)
                         .hasRequestLine(f("GET {} HTTP/1.1", path))
