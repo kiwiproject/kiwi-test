@@ -43,7 +43,7 @@ class MockWebServerAssertionsTest {
     }
 
     @Test
-    void shouldPassSuccessfulGETRequests() throws InterruptedException {
+    void shouldPassSuccessfulGETRequests() {
         server.enqueue(new MockResponse());
 
         var path = "/status";
