@@ -21,16 +21,15 @@ import okhttp3.mockwebserver.RecordedRequest;
 import okhttp3.mockwebserver.SocketPolicy;
 import okhttp3.tls.HandshakeCertificates;
 import okhttp3.tls.HeldCertificate;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.base.UncheckedInterruptedException;
-import org.kiwiproject.io.KiwiIO;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -47,22 +46,19 @@ import javax.net.ssl.SSLHandshakeException;
 @DisplayName("RecordedRequestAssertions")
 class RecordedRequestAssertionsTest {
 
+    @RegisterExtension
+    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+
     private MockWebServer server;
     private HttpClient httpClient;
 
     @BeforeEach
-    void setUp() throws IOException {
-        server = new MockWebServer();
-        server.start();
+    void setUp() {
+        server = mockWebServerExtension.server();
 
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(100))
                 .build();
-    }
-
-    @AfterEach
-    void tearDown() {
-        KiwiIO.closeQuietly(server);
     }
 
     @Test

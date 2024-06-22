@@ -5,13 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.kiwiproject.io.KiwiIO;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
@@ -19,22 +17,19 @@ import java.time.Duration;
 @DisplayName("MockWebServerAssertions")
 class MockWebServerAssertionsTest {
 
+    @RegisterExtension
+    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+
     private MockWebServer server;
     private HttpClient httpClient;
 
     @BeforeEach
-    void setUp() throws IOException {
-        server = new MockWebServer();
-        server.start();
+    void setUp() {
+        server = mockWebServerExtension.server();
 
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(100))
                 .build();
-    }
-
-    @AfterEach
-    void tearDown() {
-        KiwiIO.closeQuietly(server);
     }
 
     @Test
