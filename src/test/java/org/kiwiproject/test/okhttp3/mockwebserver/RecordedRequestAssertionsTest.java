@@ -10,19 +10,10 @@ import static org.kiwiproject.test.okhttp3.mockwebserver.RecordedRequestAssertio
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import okhttp3.mockwebserver.SocketPolicy;
-import okhttp3.tls.HandshakeCertificates;
-import okhttp3.tls.HeldCertificate;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -537,78 +528,6 @@ class RecordedRequestAssertionsTest {
                     .isNotNull()
                     .hasMessageContaining("Expected request to have failure of type: javax.net.ssl.SSLHandshakeException");
         }
-
-        // TODO Delete if can't figure out (and also delete the okhttp-tls test dependency)
-        @Disabled
-        @SuppressWarnings("all")
-        @Test
-        void temporaryHacking() {
-            var localhostCertificate = new HeldCertificate.Builder()
-                    .addSubjectAlternativeName("localhost")
-                    .build();
-            var serverCertificates = new HandshakeCertificates.Builder()
-                    .heldCertificate(localhostCertificate)
-                    .build();
-
-            server.useHttps(serverCertificates.sslSocketFactory(), false);
-
-            System.out.println("server.getProtocolNegotiationEnabled() = " + server.getProtocolNegotiationEnabled());
-
-
-            server.enqueue(new MockResponse()
-                            .setBody("""
-                                    { "echo": "hello" }
-                                    """)
-//                    .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_REQUEST_BODY)
-                            .setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
-//                    .setSocketPolicy(SocketPolicy.FAIL_HANDSHAKE)
-            );
-
-            String expectedMessage = null;
-            try {
-                var uri = uri("/");
-                System.out.println("uri = " + uri);
-
-                var clientCertificates = new HandshakeCertificates.Builder()
-                        .addTrustedCertificate(localhostCertificate.certificate())
-                        .build();
-                var client = new OkHttpClient.Builder()
-                        .sslSocketFactory(clientCertificates.sslSocketFactory(), clientCertificates.trustManager())
-                        .build();
-
-                RequestBody body = RequestBody.create("""
-                        { "message": "hello" }
-                        """, MediaType.get("application/json"));
-                Request request = new Request.Builder()
-                        .url(uri.toString())
-                        .put(body)
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    System.out.println("Response status: " + response.code());
-                    System.out.println("Response body: " + response.body().string());
-                    System.out.println("Response protocol: " + response.protocol());
-                }
-
-            } catch (Exception e) {
-                System.out.println("Request failed: " + e.getMessage());
-                System.out.println("Exception class: " + e.getClass().getName());
-
-                assertThat(e).isInstanceOf(IOException.class);
-
-                e.printStackTrace();
-                expectedMessage = e.getCause().getMessage();
-                System.out.println("expectedMessage = " + expectedMessage);
-            }
-
-            var theRecordedRequest = takeRequest();
-
-            var failure = theRecordedRequest.getFailure();
-            System.out.println("failure = " + failure);
-
-            // TODO - why is the failure null?
-            //RecordedRequestAssertions.assertThat(theRecordedRequest).hasFailureMessage(expectedMessage);
-    }
     }
 
     private RecordedRequest takeRequest() {
