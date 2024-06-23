@@ -33,10 +33,26 @@ public class RecordedRequestAssertions {
         this.recordedRequest = requireNotNull(recordedRequest);
     }
 
+    /**
+     * Starting point for fluent assertions on {@link RecordedRequest}.
+     *
+     * @param recordedRequest the {@link RecordedRequest} to assert upon
+     * @return this instance
+     */
     public static RecordedRequestAssertions assertThat(RecordedRequest recordedRequest) {
         return assertThatRecordedRequest(recordedRequest);
     }
 
+    /**
+     * Starting point for fluent assertions on {@link RecordedRequest}.
+     * <p>
+     * This method is provided as an alias of {@link #assertThat(RecordedRequest)} to avoid conflicts
+     * when statically importing AssertJ's {@code Assertions#assertThat}, and therefore allow both
+     * to be statically imported.
+     *
+     * @param recordedRequest the {@link RecordedRequest} to assert upon
+     * @return this instance
+     */
     public static RecordedRequestAssertions assertThatRecordedRequest(RecordedRequest recordedRequest) {
         return new RecordedRequestAssertions(recordedRequest);
     }
