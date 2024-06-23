@@ -11,6 +11,9 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+/**
+ * Testing utilities for making requests using the JDK's {@link HttpClient}.
+ */
 @UtilityClass
 class JdkHttpClients {
 

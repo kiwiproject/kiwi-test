@@ -10,6 +10,10 @@ import org.kiwiproject.io.KiwiIO;
 
 import java.io.IOException;
 
+/**
+ * A simple JUnit Jupiter extension that creates and starts a {@link MockWebServer}
+ * before <em>each</em> test, and shuts it down after <em>each</em> test.
+ */
 public class MockWebServerExtension implements BeforeEachCallback, AfterEachCallback {
 
     @Getter
