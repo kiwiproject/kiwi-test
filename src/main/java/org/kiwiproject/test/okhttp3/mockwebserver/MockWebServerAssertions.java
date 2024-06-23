@@ -8,6 +8,16 @@ import org.assertj.core.api.Assertions;
 
 import java.util.function.Consumer;
 
+/**
+ * Provides for fluent {@link MockWebServer} and {@link RecordedRequest} tests
+ * using AssertJ assertions.
+ * <p>
+ * All methods return 'this' to facilitate a fluent API via method chaining.
+ * <p>
+ * Note that MockWebServer (com.squareup.okhttp3:mockwebserver) and OkHttp
+ * dependencies must be available at runtime. OkHttp is a transitive dependency
+ * of mockwebserver, so you should only need to add mockwebserver.
+ */
 public class MockWebServerAssertions {
 
     private final MockWebServer mockWebServer;

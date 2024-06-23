@@ -12,6 +12,15 @@ import java.net.URI;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Provides for fluent {@link RecordedRequest} tests using AssertJ assertions.
+ * <p>
+ * All methods return 'this' to facilitate a fluent API via method chaining.
+ * <p>
+ * Note that MockWebServer (com.squareup.okhttp3:mockwebserver) and OkHttp
+ * dependencies must be available at runtime. OkHttp is a transitive dependency
+ * of mockwebserver, so you should only need to add mockwebserver.
+ */
 @CanIgnoreReturnValue
 public class RecordedRequestAssertions {
 
