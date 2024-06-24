@@ -63,42 +63,93 @@ public class RecordedRequestAssertions {
     //  - PATCH method:    https://datatracker.ietf.org/doc/html/rfc5789
     //  - Mozilla - HTTP request methods - https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 
+    /**
+     * Asserts the recorded request is a GET request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isGET() {
         return hasMethod("GET");
     }
 
+    /**
+     * Asserts the recorded request is a POST request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isPOST() {
         return hasMethod("POST");
     }
 
+    /**
+     * Asserts the recorded request is a PUT request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isPUT() {
         return hasMethod("PUT");
     }
 
+    /**
+     * Asserts the recorded request is a DELETE request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isDELETE() {
         return hasMethod("DELETE");
     }
 
+    /**
+     * Asserts the recorded request is a HEAD request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isHEAD() {
         return hasMethod("HEAD");
     }
 
+    /**
+     * Asserts the recorded request is a CONNECT request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isCONNECT() {
         return hasMethod("CONNECT");
     }
 
+    /**
+     * Asserts the recorded request is an OPTIONS request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isOPTIONS() {
         return hasMethod("OPTIONS");
     }
 
+    /**
+     * Asserts the recorded request is a TRACE request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isTRACE() {
         return hasMethod("TRACE");
     }
 
+    /**
+     * Asserts the recorded request is a PATCH request.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isPATCH() {
         return hasMethod("PATCH");
     }
 
+    /**
+     * Asserts the recorded request has the expected HTTP method.
+     *
+     * @param method the expected request method
+     * @return this instance
+     */
     public RecordedRequestAssertions hasMethod(String method) {
         Assertions.assertThat(recordedRequest.getMethod())
                 .describedAs("Expected method to be %s", method)
@@ -107,6 +158,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has the expected HTTP request line.
+     *
+     * @param requestLine the expected request line
+     * @return this instance
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages">HTTP Messages</a>
+     */
     public RecordedRequestAssertions hasRequestLine(String requestLine) {
         Assertions.assertThat(recordedRequest.getRequestLine())
                 .describedAs("Expected request line to be: %s", requestLine)
@@ -115,10 +173,22 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has the expected request URL.
+     *
+     * @param requestUrl the expected request URL (as a {@link URI})
+     * @return this instance
+     */
     public RecordedRequestAssertions hasRequestUrl(URI requestUrl) {
         return hasRequestUrl(requestUrl.toString());
     }
 
+    /**
+     * Asserts the recorded request has the expected request URL.
+     *
+     * @param requestUrl the expected request URL
+     * @return this instance
+     */
     public RecordedRequestAssertions hasRequestUrl(String requestUrl) {
         Assertions.assertThat(recordedRequest.getRequestUrl())
                 .describedAs("Expected request URL to be: %s", requestUrl)
@@ -128,6 +198,12 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has the expected path.
+     *
+     * @param path the expected path
+     * @return this instance
+     */
     public RecordedRequestAssertions hasPath(String path) {
         Assertions.assertThat(recordedRequest.getPath())
                 .describedAs("Expected path to be: %s", path)
@@ -136,6 +212,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has the expected header name and value.
+     *
+     * @param name  the expected HTTP header name
+     * @param value the expected HTTP header value
+     * @return this instance
+     */
     public RecordedRequestAssertions hasHeader(String name, Object value) {
         Assertions.assertThat(recordedRequest.getHeader(name))
                 .describedAs("Expected %s header to have value: %s", name, value)
@@ -144,6 +227,14 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request does not have a request body.
+     * <p>
+     * Only DELETE, PATCH, POST, and PUT may have a body.
+     *
+     * @return this instance
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">HTTP request methods</a>
+     */
     public RecordedRequestAssertions hasNoBody() {
         var bodyBuffer = recordedRequest.getBody();
         Assertions.assertThat(bodyBuffer.size())
@@ -154,6 +245,15 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has the expected body.
+     * <p>
+     * Only DELETE, PATCH, POST, and PUT may have a body.
+     *
+     * @param body the expected request body (assumes UTF-8 character encoding)
+     * @return this instance
+     * @see okio.Buffer#readUtf8()
+     */
     public RecordedRequestAssertions hasBody(String body) {
         checkMethodAllowsBody();
 
@@ -166,6 +266,12 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a body of the given size.
+     *
+     * @param size the expected body size
+     * @return this instance
+     */
     public RecordedRequestAssertions hasBodySize(long size) {
         checkMethodAllowsBody();
 
@@ -185,6 +291,11 @@ public class RecordedRequestAssertions {
                 .isIn(METHODS_ALLOWING_BODY);
     }
 
+    /**
+     * Asserts the recorded request is not TLS, i.e., is an HTTP request not HTTPS.
+     *
+     * @return this instance
+     */
     public RecordedRequestAssertions isNotTls() {
         Assertions.assertThat(recordedRequest.getTlsVersion())
                 .describedAs("Expected request not to use TLS")
@@ -193,6 +304,12 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request is TLS with the expected version.
+     *
+     * @param tlsVersion the expected TLS version
+     * @return this instance
+     */
     public RecordedRequestAssertions hasTlsVersion(TlsVersion tlsVersion) {
         Assertions.assertThat(recordedRequest.getTlsVersion())
                 .describedAs("Expected TLS version to be %s", tlsVersion)
@@ -201,6 +318,19 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request does not have a failure, which is an {@link IOException}.
+     * <p>
+     * Note that usually an {@link IOException} is thrown by the code making the HTTP request.
+     * For example, if you set the {@link okhttp3.mockwebserver.SocketPolicy SocketPolicy} to
+     * {@link okhttp3.mockwebserver.SocketPolicy#DISCONNECT_AT_START DISCONNECT_AT_START} or
+     * {@link okhttp3.mockwebserver.SocketPolicy#DISCONNECT_DURING_REQUEST_BODY DISCONNECT_DURING_REQUEST_BODY},
+     * then the HTTP client code throws {@link IOException} but the {@link RecordedRequest}
+     * <em>usually</em> does not contain that failure.
+     *
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasNoFailure() {
         Assertions.assertThat(recordedRequest.getFailure())
                 .describedAs("Expected request not to have failure")
@@ -209,6 +339,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a failure with the given message.
+     *
+     * @param failureMessage the expected message from the {@link IOException}
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasFailureMessage(String failureMessage) {
         Assertions.assertThat(recordedRequest.getFailure())
                 .describedAs("Expected a failure with message: %s", failureMessage)
@@ -217,6 +354,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a failure whose message contains the given value.
+     *
+     * @param failureMessage the expected partial message from the {@link IOException}
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasFailureMessageContaining(String failureMessage) {
         Assertions.assertThat(recordedRequest.getFailure())
                 .describedAs("Expected a failure with message that contains: %s", failureMessage)
@@ -225,6 +369,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a failure whose message starts with the given value.
+     *
+     * @param failureMessage the expected partial message from the {@link IOException}
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasFailureMessageStartingWith(String failureMessage) {
         Assertions.assertThat(recordedRequest.getFailure())
                 .describedAs("Expected a failure with message that starts with: %s", failureMessage)
@@ -233,6 +384,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a failure whose message ends with the given value.
+     *
+     * @param failureMessage the expected partial message from the {@link IOException}
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasFailureMessageEndingWith(String failureMessage) {
         Assertions.assertThat(recordedRequest.getFailure())
                 .describedAs("Expected a failure with message that ends with: %s", failureMessage)
@@ -241,6 +399,13 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a failure ({@link IOException}) with the given cause.
+     *
+     * @param causeType the cause, obtained via {@link IOException#getCause()}
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasFailureCauseInstanceOf(Class<?> causeType) {
         Assertions.assertThat(recordedRequest.getFailure())
                 .describedAs("Expected request to have failure of type: %s", causeType.getName())
@@ -249,6 +414,14 @@ public class RecordedRequestAssertions {
         return this;
     }
 
+    /**
+     * Asserts the recorded request has a failure that satisfies assertions
+     * provided by the {@code failureConsumer}.
+     *
+     * @param failureConsumer the {@link Consumer} containing the assertions on the recorded request failure.
+     * @return this instance
+     * @see RecordedRequest#getFailure()
+     */
     public RecordedRequestAssertions hasFailure(Consumer<IOException> failureConsumer) {
         failureConsumer.accept(recordedRequest.getFailure());
 
