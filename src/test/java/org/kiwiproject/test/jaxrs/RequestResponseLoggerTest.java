@@ -114,10 +114,12 @@ class RequestResponseLoggerTest {
 
         @Override
         public void flush() {
+            // no-op
         }
 
         @Override
         public void close() throws SecurityException {
+            // no-op
         }
     }
 }
