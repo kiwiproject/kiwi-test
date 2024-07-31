@@ -1,12 +1,23 @@
 package org.kiwiproject.test.jdbc;
 
+import org.kiwiproject.base.KiwiDeprecated;
 import org.kiwiproject.base.KiwiPreconditions;
+import org.kiwiproject.base.KiwiDeprecated.Severity;
 
 import java.sql.SQLException;
 
 /**
  * Unchecked exception that wraps a {@link SQLException}.
+ *
+ * @deprecated replaced by UncheckedSQLException in kiwi 4.2.0
  */
+@Deprecated(since = "3.6.0", forRemoval = true)
+@KiwiDeprecated(
+    removeAt = "4.0.0",
+    replacedBy = "org.kiwiproject.jdbc.UncheckedSQLException",
+    reference = "https://github.com/kiwiproject/kiwi-test/issues/508",
+    usageSeverity = Severity.SEVERE
+)
 public class RuntimeSQLException extends RuntimeException {
 
     /**
