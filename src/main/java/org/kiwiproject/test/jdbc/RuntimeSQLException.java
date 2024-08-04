@@ -1,8 +1,8 @@
 package org.kiwiproject.test.jdbc;
 
 import org.kiwiproject.base.KiwiDeprecated;
-import org.kiwiproject.base.KiwiPreconditions;
 import org.kiwiproject.base.KiwiDeprecated.Severity;
+import org.kiwiproject.base.KiwiPreconditions;
 
 import java.sql.SQLException;
 
@@ -11,6 +11,7 @@ import java.sql.SQLException;
  *
  * @deprecated replaced by UncheckedSQLException in kiwi 4.2.0
  */
+@SuppressWarnings("DeprecatedIsStillUsed")
 @Deprecated(since = "3.6.0", forRemoval = true)
 @KiwiDeprecated(
     removeAt = "4.0.0",

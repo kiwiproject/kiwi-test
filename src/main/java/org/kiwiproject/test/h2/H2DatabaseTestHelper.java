@@ -4,13 +4,14 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
 import org.h2.jdbcx.JdbcDataSource;
-import org.kiwiproject.test.jdbc.RuntimeSQLException;
+import org.kiwiproject.jdbc.UncheckedSQLException;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 /**
  * Utilities for H2 databases.
@@ -33,7 +34,7 @@ public class H2DatabaseTestHelper {
      *
      * @return a {@link H2FileBasedDatabase} that represents the new database
      * @throws IllegalStateException if the database directory could not be created
-     * @throws RuntimeSQLException   if any other error occurs
+     * @throws UncheckedSQLException   if any other error occurs
      * @see System#getProperty(String)
      */
     public static H2FileBasedDatabase buildH2FileBasedDatabase() {
@@ -55,7 +56,7 @@ public class H2DatabaseTestHelper {
      * @param h2DatabaseDirectory the directory where the database resides
      * @return a {@link DataSource} that can be used to connect to the H2 database
      * @throws IllegalStateException if the database directory could not be created
-     * @throws RuntimeSQLException   if any other error occurs
+     * @throws UncheckedSQLException   if any other error occurs
      */
     public static DataSource buildH2DataSource(File h2DatabaseDirectory) {
         try {
@@ -84,7 +85,7 @@ public class H2DatabaseTestHelper {
             LOG.trace("Successfully created test_table");
             return dataSource;
         } catch (SQLException e) {
-            throw new RuntimeSQLException(e);
+            throw new UncheckedSQLException(e);
         }
     }
 
