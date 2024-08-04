@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.kiwiproject.jdbc.UncheckedSQLException;
 import org.kiwiproject.test.junit.jupiter.H2FileBasedDatabaseExtension;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+
+import javax.sql.DataSource;
 
 @DisplayName("SimpleSingleConnectionDataSource")
 class SimpleSingleConnectionDataSourceTest {
@@ -47,7 +49,7 @@ class SimpleSingleConnectionDataSourceTest {
 
         var thrown = catchThrowable(() -> new SimpleSingleConnectionDataSource(url, "bad_user"));
 
-        assertThat(thrown).isExactlyInstanceOf(RuntimeSQLException.class);
+        assertThat(thrown).isExactlyInstanceOf(UncheckedSQLException.class);
 
         // The actual cause (as of the time I write this) is a org.h2.jdbc.JdbcSQLInvalidAuthorizationSpecException.
         // Since I do not want to be so specific to a vendor implementation, just check that there is a non-null cause.
@@ -75,7 +77,7 @@ class SimpleSingleConnectionDataSourceTest {
             try {
                 return dataSource.getConnection();
             } catch (SQLException e) {
-                throw new RuntimeSQLException(e);
+                throw new UncheckedSQLException(e);
             }
         }
 
@@ -126,7 +128,7 @@ class SimpleSingleConnectionDataSourceTest {
             try {
                 return dataSource.getConnection(username, password);
             } catch (SQLException e) {
-                throw new RuntimeSQLException(e);
+                throw new UncheckedSQLException(e);
             }
         }
     }

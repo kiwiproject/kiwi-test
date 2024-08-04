@@ -6,8 +6,8 @@ import static org.kiwiproject.base.KiwiStrings.f;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.kiwiproject.jdbc.UncheckedSQLException;
 
-import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Objects;
 import java.util.logging.Logger;
+
+import javax.sql.DataSource;
 
 /**
  * A very simple implementation of {@link DataSource} intended to be used only during tests. As its name
@@ -120,7 +122,7 @@ public class SimpleSingleConnectionDataSource implements DataSource, Closeable {
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
-            throw new RuntimeSQLException(f("Error getting Connection for URL {} and username {}", url, username), e);
+            throw new UncheckedSQLException(f("Error getting Connection for URL {} and username {}", url, username), e);
         }
     }
 
