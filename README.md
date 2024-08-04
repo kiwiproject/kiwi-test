@@ -14,5 +14,5 @@ Almost all the dependencies in the POM have _provided_ scope, so that we don't b
 This downside to this is that you must specifically add any required dependencies to your own POM in order to use a
 specific feature in Kiwi Test.
 
-The only required dependencies are guava, kiwi, and slf4j-api. Note that kiwi also marks most dependencies as
+The only required dependencies are guava, kiwi, and slf4j-api. Note that kiwi-test also marks most dependencies as
 _provided_ scope, so in some cases you might need to add additional dependencies.  
