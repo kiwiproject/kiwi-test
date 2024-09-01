@@ -169,7 +169,7 @@ class RecordedRequestsTest {
     }
 
     private static String randomPath() {
-        return "/" + RandomStringUtils.randomAlphabetic(10);
+        return "/" + RandomStringUtils.secure().nextAlphabetic(10);
     }
 
     private void makeRequest(String path) {
