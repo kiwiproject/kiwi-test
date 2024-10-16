@@ -6,12 +6,12 @@ import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.ass
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoDocumentsAndInsertSecondDocument;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoTestDatabaseExists;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertTestDatabaseExists;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertTestDatabaseExistsWhenTestHasTag;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.buildMongoTestProperties;
-import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.startInMemoryMongoServer;
+import static org.kiwiproject.test.junit.jupiter.MongoTestContainerHelpers.startedMongoDBContainer;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import de.bwaldvogel.mongo.MongoServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,20 +19,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.test.mongo.MongoTestProperties;
-
-import java.net.InetSocketAddress;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DisplayName("MongoDbExtension: Drop Database @BeforeEach")
+@Testcontainers(disabledWithoutDocker = true)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MongoDbExtensionDropBeforeEachTest {
 
-    private static final MongoServer MONGO_SERVER = startInMemoryMongoServer();
-    private static final InetSocketAddress INET_SOCKET_ADDRESS = MONGO_SERVER.getLocalAddress();
-    private static final MongoTestProperties TEST_PROPERTIES = buildMongoTestProperties(INET_SOCKET_ADDRESS);
+    @Container
+    static final MongoDBContainer MONGODB = startedMongoDBContainer();
+
+    private static final MongoTestProperties TEST_PROPERTIES = buildMongoTestProperties(MONGODB);
 
     private static MongoClient client;
 
@@ -52,13 +57,14 @@ class MongoDbExtensionDropBeforeEachTest {
     @BeforeEach
     void setUp() {
         // the extension's @BeforeEach runs before ours, so we should *never* see the test database here
-        assertNoTestDatabaseExists(client);
+        assertNoTestDatabaseExists(client, TEST_PROPERTIES);
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown(TestInfo testInfo) {
         // we are dropping *before* tests, so we *should* see the databases after each test
-        assertTestDatabaseExists(client, TEST_PROPERTIES);
+        // (but only after a document has been inserted)
+        assertTestDatabaseExistsWhenTestHasTag(client, TEST_PROPERTIES, testInfo, "dbShouldExistAfter");
     }
 
     @AfterAll
@@ -76,12 +82,14 @@ class MongoDbExtensionDropBeforeEachTest {
 
     @Test
     @Order(2)
+    @Tag("dbShouldExistAfter")
     void shouldInsertSomething() {
         assertNoDocumentsAndInsertFirstDocument(client, TEST_PROPERTIES);
     }
 
     @Test
     @Order(3)
+    @Tag("dbShouldExistAfter")
     void shouldInsertSomethingElse() {
         assertNoDocumentsAndInsertSecondDocument(client, TEST_PROPERTIES);
     }

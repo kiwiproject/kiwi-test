@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.kiwiproject.collect.KiwiLists.first;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoDocumentsAndInsertFirstDocument;
-import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertNoTestDatabaseExists;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertTestDatabaseExists;
+import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.assertTestDatabaseExistsWhenTestHasTag;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.buildMongoTestProperties;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.docToInsertFirst;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.docToInsertSecond;
@@ -16,13 +16,12 @@ import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.fin
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.getMongoDatabase;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.getTestCollection;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.insertSecondDocument;
-import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.startInMemoryMongoServer;
+import static org.kiwiproject.test.junit.jupiter.MongoTestContainerHelpers.startedMongoDBContainer;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import de.bwaldvogel.mongo.MongoServer;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -37,16 +36,19 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.test.mongo.MongoTestProperties;
-
-import java.net.InetSocketAddress;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DisplayName("MongoDbExtension: Never Cleanup Collections")
+@Testcontainers(disabledWithoutDocker = true)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MongoDbExtensionNeverCleanupTest {
 
-    private static final MongoServer MONGO_SERVER = startInMemoryMongoServer();
-    private static final InetSocketAddress INET_SOCKET_ADDRESS = MONGO_SERVER.getLocalAddress();
-    private static final MongoTestProperties TEST_PROPERTIES = buildMongoTestProperties(INET_SOCKET_ADDRESS);
+    @Container
+    static final MongoDBContainer MONGODB = startedMongoDBContainer();
+
+    private static final MongoTestProperties TEST_PROPERTIES = buildMongoTestProperties(MONGODB);
 
     private static MongoClient client;
 
@@ -68,17 +70,14 @@ class MongoDbExtensionNeverCleanupTest {
 
     @BeforeEach
     void setUp(TestInfo testInfo) {
-        if (testInfo.getTags().contains("firstTest")) {
-            assertNoTestDatabaseExists(client);
-        } else {
-            assertTestDatabaseExists(client, TEST_PROPERTIES);
-            mongoDatabase = getMongoDatabase(client, TEST_PROPERTIES);
-        }
+        assertTestDatabaseExistsWhenTestHasTag(client, TEST_PROPERTIES, testInfo, "dbShouldExistBefore");
+
+        mongoDatabase = getMongoDatabase(client, TEST_PROPERTIES);
     }
 
     @AfterEach
-    void tearDown() {
-        assertTestDatabaseExists(client, TEST_PROPERTIES);
+    void tearDown(TestInfo testInfo) {
+        assertTestDatabaseExistsWhenTestHasTag(client, TEST_PROPERTIES, testInfo, "dbShouldExistAfter");
     }
 
     @AfterAll
@@ -95,7 +94,6 @@ class MongoDbExtensionNeverCleanupTest {
 
     @Test
     @Order(1)
-    @Tag("firstTest")
     void shouldListCollections() {
         var theMongoDatabase = client.getDatabase(TEST_PROPERTIES.getDatabaseName());
         assertThat(newArrayList(theMongoDatabase.listCollectionNames().iterator())).isEmpty();
@@ -103,12 +101,15 @@ class MongoDbExtensionNeverCleanupTest {
 
     @Test
     @Order(2)
+    @Tag("dbShouldExistAfter")
     void shouldInsertSomething() {
         assertNoDocumentsAndInsertFirstDocument(client, TEST_PROPERTIES);
     }
 
     @Test
     @Order(3)
+    @Tag("dbShouldExistBefore")
+    @Tag("dbShouldExistAfter")
     void shouldSeeDocumentsFromPreviousTestAndInsertSomethingElse() {
         var collection = getTestCollection(mongoDatabase);
         var documents = findAllDocuments(collection);
@@ -122,6 +123,8 @@ class MongoDbExtensionNeverCleanupTest {
 
     @Test
     @Order(4)
+    @Tag("dbShouldExistBefore")
+    @Tag("dbShouldExistAfter")
     void shouldSeeDocumentsFromPreviousTests() {
         var collection = getTestCollection(mongoDatabase);
         var documents = findAllDocuments(collection);
@@ -136,6 +139,8 @@ class MongoDbExtensionNeverCleanupTest {
 
     @Test
     @Order(5)
+    @Tag("dbShouldExistBefore")
+    @Tag("dbShouldExistAfter")
     void shouldSeeDocumentsFromPreviousTestsAndDeleteOneDocument() {
         var collection = getTestCollection(mongoDatabase);
         var documents = findAllDocuments(collection);
@@ -149,6 +154,8 @@ class MongoDbExtensionNeverCleanupTest {
 
     @Test
     @Order(6)
+    @Tag("dbShouldExistBefore")
+    @Tag("dbShouldExistAfter")
     void shouldSeeRemainingDocumentsFromPreviousTests() {
         var collection = getTestCollection(mongoDatabase);
         var documents = findAllDocuments(collection);

@@ -7,12 +7,16 @@ import de.bwaldvogel.mongo.ServerVersion;
 import org.bson.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Map;
 import java.util.Optional;
 
 @DisplayName("MongoServerExtension")
+@EnabledIf(
+        value = "org.kiwiproject.test.junit.jupiter.MongoServerExtensionTestHelpers#anyServerVersionSupportsWireVersion7",
+        disabledReason = "Must support wire version 7 or higher")
 class MongoServerExtensionTest {
 
     @RegisterExtension

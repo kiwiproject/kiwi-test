@@ -3,14 +3,12 @@ package org.kiwiproject.test.junit.jupiter;
 import static com.google.common.base.Verify.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.buildMongoTestProperties;
-import static org.kiwiproject.test.junit.jupiter.MongoDbExtensionTestHelpers.startInMemoryMongoServer;
+import static org.kiwiproject.test.junit.jupiter.MongoTestContainerHelpers.newMongoDBContainer;
 
 import com.mongodb.client.MongoClient;
-import de.bwaldvogel.mongo.MongoServer;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.bson.Document;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,26 +19,26 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @DisplayName("MongoDbExtension")
 @ExtendWith(SoftAssertionsExtension.class)
+@Testcontainers(disabledWithoutDocker = true)
 class MongoDbExtensionTest {
 
-    private MongoServer mongoServer;
+    @Container
+    static final MongoDBContainer MONGODB = newMongoDBContainer();
+
     private MongoTestProperties testProperties;
 
     @BeforeEach
     void setUp() {
-        mongoServer = startInMemoryMongoServer();
-        testProperties = buildMongoTestProperties(mongoServer.getLocalAddress());
-    }
-
-    @AfterEach
-    void tearDown() {
-        mongoServer.shutdownNow();
+        testProperties = buildMongoTestProperties(MONGODB);
     }
 
     @Test
@@ -274,7 +272,7 @@ class MongoDbExtensionTest {
 
             var databaseNames = MongoDbExtensionTestHelpers.databaseNames(mongoClient);
             assertThat(databaseNames)
-                    .containsExactlyInAnyOrder(customerDatabaseName, orderDatabaseName, marketingDatabaseName);
+                    .contains(customerDatabaseName, orderDatabaseName, marketingDatabaseName);
         }
 
         @Test
