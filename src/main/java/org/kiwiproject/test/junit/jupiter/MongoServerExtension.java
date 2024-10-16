@@ -20,6 +20,12 @@ import org.kiwiproject.test.mongo.MongoServerTests;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
+ * <strong>WARNING:</strong> <em>As of kiwi-test 3.7.0, this extension will fail when using Mongo
+ * driver version 5.2.0 or higher, as it requires minimum Mongo server 4.0 and wire version 7.
+ * It will not work unless the <a href="https://github.com/bwaldvogel/mongo-java-server">mongo-java-server</a>
+ * library fixes <a href="https://github.com/bwaldvogel/mongo-java-server/issues/233">this issue</a>
+ * and creates a new release that supports wire version 7.</em>
+ * <p>
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} that starts an in-memory
  * {@link MongoServer} once before all tests have run, and which shuts it down once after all tests have run.
  * An alternative for testing against "real" MongoDB instances is the {@link MongoDbExtension}.
@@ -59,6 +65,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback, AfterEachCallback {
 
+//    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_3_6;
     private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_3_6;
 
     /**
