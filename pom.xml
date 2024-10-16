@@ -256,6 +256,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- test dependencies -->
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

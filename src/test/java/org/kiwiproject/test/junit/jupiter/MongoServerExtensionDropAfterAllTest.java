@@ -14,11 +14,15 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.test.junit.jupiter.MongoServerExtension.DropTime;
 
 @DisplayName("MongoServerExtension: Drop Database @AfterAll")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnabledIf(
+        value = "org.kiwiproject.test.junit.jupiter.MongoServerExtensionTestHelpers#anyServerVersionSupportsWireVersion7",
+        disabledReason = "Must support wire version 7 or higher")
 class MongoServerExtensionDropAfterAllTest {
 
     @RegisterExtension

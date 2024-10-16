@@ -7,13 +7,12 @@ import com.google.common.collect.ImmutableList;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import lombok.experimental.UtilityClass;
 import org.bson.Document;
+import org.junit.jupiter.api.TestInfo;
 import org.kiwiproject.test.mongo.MongoTestProperties;
+import org.testcontainers.containers.MongoDBContainer;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 
 @UtilityClass
@@ -21,23 +20,41 @@ class MongoDbExtensionTestHelpers {
 
     public static final String TEST_COLLECTION_NAME = "test_collection";
 
-    static MongoServer startInMemoryMongoServer() {
-        var mongoServer = new MongoServer(new MemoryBackend());
-        mongoServer.bind();
-        return mongoServer;
+    public static final int STANDARD_MONGODB_PORT = 27_017;
+
+    static MongoTestProperties buildMongoTestProperties(MongoDBContainer mongoContainer) {
+        var host = mongoContainer.getHost();
+        var port = mongoContainer.getMappedPort(STANDARD_MONGODB_PORT);
+        return buildMongoTestProperties(host, port);
     }
 
-    static MongoTestProperties buildMongoTestProperties(InetSocketAddress serverAddress) {
+    static MongoTestProperties buildMongoTestProperties(String hostName, int port) {
         return MongoTestProperties.builder()
-                .hostName(serverAddress.getHostName())
-                .port(serverAddress.getPort())
+                .hostName(hostName)
+                .port(port)
                 .serviceName("test-service")
                 .serviceHost("localhost")
                 .build();
     }
 
+    static void assertTestDatabaseExistsWhenTestHasTag(MongoClient client,
+                                                       MongoTestProperties testProperties,
+                                                       TestInfo testInfo,
+                                                       String tag) {
+
+        if (testInfo.getTags().contains(tag)) {
+            assertTestDatabaseExists(client, testProperties);
+        } else {
+            assertNoTestDatabaseExists(client, testProperties);
+        }
+    }
+
     static void assertTestDatabaseExists(MongoClient client, MongoTestProperties testProperties) {
-        assertThat(databaseNames(client)).containsExactly(testProperties.getDatabaseName());
+        assertThat(databaseNames(client)).contains(testProperties.getDatabaseName());
+    }
+
+    static void assertNoTestDatabaseExists(MongoClient client, MongoTestProperties testProperties) {
+        assertThat(databaseNames(client)).doesNotContain(testProperties.getDatabaseName());
     }
 
     static void assertNoTestDatabaseExists(MongoClient client) {
@@ -68,7 +85,7 @@ class MongoDbExtensionTestHelpers {
 
         insertFirstDocument(testCollection);
         assertThat(testCollection.countDocuments()).isOne();
-        assertThat(databaseNames(client)).containsExactly(testProperties.getDatabaseName());
+        assertThat(databaseNames(client)).contains(testProperties.getDatabaseName());
     }
 
     static void insertFirstDocument(MongoCollection<Document> testCollection) {
@@ -87,7 +104,7 @@ class MongoDbExtensionTestHelpers {
 
         insertSecondDocument(testCollection);
         assertThat(testCollection.countDocuments()).isOne();
-        assertThat(databaseNames(client)).containsExactly(testProperties.getDatabaseName());
+        assertThat(databaseNames(client)).contains(testProperties.getDatabaseName());
     }
 
     static MongoDatabase getMongoDatabase(MongoClient client, MongoTestProperties testProperties) {
