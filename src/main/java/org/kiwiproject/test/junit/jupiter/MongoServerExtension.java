@@ -65,7 +65,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback, AfterEachCallback {
 
-//    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_3_6;
     private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_3_6;
 
     /**
