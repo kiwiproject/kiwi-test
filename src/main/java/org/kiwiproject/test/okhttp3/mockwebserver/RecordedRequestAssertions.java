@@ -30,7 +30,7 @@ public class RecordedRequestAssertions {
     private final RecordedRequest recordedRequest;
 
     private RecordedRequestAssertions(RecordedRequest recordedRequest) {
-        this.recordedRequest = requireNotNull(recordedRequest);
+        this.recordedRequest = requireNotNull(recordedRequest, "recordedRequest must not be null");
     }
 
     /**

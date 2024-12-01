@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Contains test assertions for {@link RecordedRequest} when using {@link MockWebServer}.
+ * Contains utilities for working with {@link RecordedRequest} when using {@link MockWebServer}.
  */
 @UtilityClass
 @Slf4j
