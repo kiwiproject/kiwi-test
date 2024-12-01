@@ -2,6 +2,7 @@ package org.kiwiproject.test.okhttp3.mockwebserver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.kiwiproject.base.KiwiStrings.f;
@@ -50,6 +51,19 @@ class RecordedRequestAssertionsTest {
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(100))
                 .build();
+    }
+
+    @Test
+    void shouldRequireNonNullRecordedRequest() {
+        assertAll(
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> RecordedRequestAssertions.assertThat(null).isGET())
+                        .withMessage("recordedRequest must not be null"),
+
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> RecordedRequestAssertions.assertThatRecordedRequest(null).isPOST())
+                        .withMessage("recordedRequest must not be null")
+        );
     }
 
     @Test
