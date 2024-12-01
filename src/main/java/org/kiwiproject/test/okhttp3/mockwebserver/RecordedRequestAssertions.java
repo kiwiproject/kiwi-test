@@ -38,6 +38,7 @@ public class RecordedRequestAssertions {
      *
      * @param recordedRequest the {@link RecordedRequest} to assert upon
      * @return this instance
+     * @throws IllegalArgumentException if {@code recordedRequest} is {@code null}
      */
     public static RecordedRequestAssertions assertThat(RecordedRequest recordedRequest) {
         return assertThatRecordedRequest(recordedRequest);
@@ -52,6 +53,7 @@ public class RecordedRequestAssertions {
      *
      * @param recordedRequest the {@link RecordedRequest} to assert upon
      * @return this instance
+     * @throws IllegalArgumentException if {@code recordedRequest} is {@code null}
      */
     public static RecordedRequestAssertions assertThatRecordedRequest(RecordedRequest recordedRequest) {
         return new RecordedRequestAssertions(recordedRequest);
