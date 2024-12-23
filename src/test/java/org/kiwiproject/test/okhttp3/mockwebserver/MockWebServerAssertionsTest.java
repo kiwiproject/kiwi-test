@@ -56,7 +56,7 @@ class MockWebServerAssertionsTest {
     }
 
     @Test
-    void shouldAllowCheckingMultipeRecordedRequests() {
+    void shouldAllowCheckingMultipleRecordedRequests() {
         server.enqueue(new MockResponse());
         server.enqueue(new MockResponse().setResponseCode(201));
 
