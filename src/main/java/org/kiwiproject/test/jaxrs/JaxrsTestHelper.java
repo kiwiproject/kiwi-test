@@ -165,9 +165,9 @@ public class JaxrsTestHelper {
      * Asserts that {@code response} is a 201 Created response with the {@code Location} header having a location path
      * ending with {@code locationEndingWith}.
      * <p>
-     * Use this method when you only have a <em>relative</em> location path (e.g. "/object/42") instead of
-     * {@link #assertCreatedResponseWithLocation(Response, String)}, which requires a location to match exactly: i.e.
-     * "http://localhost:4949/object/42"
+     * Use this method when you only have a <em>relative</em> location path (e.g., {@code "/object/42"}) instead of
+     * {@link #assertCreatedResponseWithLocation(Response, String)}, which requires a location to match exactly, i.e.,
+     * {@code "http://localhost:4949/object/42"}
      *
      * @param response           the response to check
      * @param locationEndingWith the expected substring at the end of the {@code Location} header
