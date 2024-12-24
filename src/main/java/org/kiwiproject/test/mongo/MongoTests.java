@@ -14,8 +14,8 @@ import java.net.InetAddress;
  * {@link MongoTestProperties} instance to the extension.
  * <p>
  * Most of the methods in this class are factory methods that create a {@link MongoTestProperties}.
- * for a given service, i.e. a Dropwizard service that uses MongoDB as its datastore. The factory
- * methods either accept a service name directly, or attempt to resolve the service name from a
+ * For a given service, i.e., a Dropwizard service that uses MongoDB as its datastore. The factory
+ * methods either accept a service name directly or attempt to resolve the service name from a
  * Maven POM file using {@link ServiceNames}.
  */
 @UtilityClass
@@ -30,7 +30,7 @@ public class MongoTests {
 
     /**
      * Create a {@link MongoTestProperties} using the given MongoDB host, the default Mongo port, and
-     * resolving the service name from the pom.xml file in the current working directory (".").
+     * resolving the service name from the pom.xml file in the current working directory ({@code "."}).
      *
      * @param mongoHost the host where the MongoDB instance is located
      * @return a new {@link MongoTestProperties} instance
@@ -69,7 +69,7 @@ public class MongoTests {
      * using the given service name.
      *
      * @param mongoHost the host where the MongoDB instance is located
-     * @param mongoPort the port on which the MongoDB instance is listening
+     * @param mongoPort the port the MongoDB instance is listening to
      * @return a new {@link MongoTestProperties} instance
      */
     @SuppressWarnings("UnusedReturnValue")
@@ -82,7 +82,7 @@ public class MongoTests {
      * service name from the pom.xml file in the given root path.
      *
      * @param mongoHost the host where the MongoDB instance is located
-     * @param mongoPort the port on which the MongoDB instance is listening
+     * @param mongoPort the port the MongoDB instance is listening to
      * @param rootPath  the root path of the project, where the Maven pom.xml is located
      * @return a new {@link MongoTestProperties} instance
      */
@@ -96,7 +96,7 @@ public class MongoTests {
      * given service name.
      *
      * @param mongoHost   the host where the MongoDB instance is located
-     * @param mongoPort   the port on which the MongoDB instance is listening
+     * @param mongoPort   the port the MongoDB instance is listening to
      * @param serviceName the service name to use as part of the test database name
      * @return a new {@link MongoTestProperties} instance
      */

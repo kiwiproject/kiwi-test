@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A Jackson {@link DeserializationProblemHandler} that logs at WARN level whenever a property with an unknown name is
- * encountered. This can aid in debugging de-serialization problems during tests. It also logs a more comprehensive
- * warning message at INFO level, and if you have a lot of unknown property errors there will be a lot of logging
+ * encountered. This can aid in debugging deserialization problems during tests. It also logs a more comprehensive
+ * warning message at INFO level. If you have a lot of unknown property errors, there will be a lot of logging
  * unless you change the log level for this class to WARN or higher.
  * <p>
  * Note that unknown property handling behavior depends on the configuration of the
@@ -57,8 +57,8 @@ public class LoggingDeserializationTestHandler extends DeserializationProblemHan
     }
 
     /**
-     * Returns the total count of ALL unknown properties encountered; in other words if the same unknown property
-     * is encountered 10 times, and a second unknown property is encountered 5 times, this method will return 15.
+     * Returns the total count of ALL unknown properties encountered; in other words, if the same unknown property
+     * is encountered 10 times, and a second unknown property is encountered five times, this method will return 15.
      * This is not likely to be all that useful, other than to provide a general sense for the number of unknown
      * properties. It will be more useful when running a single unit test.
      *

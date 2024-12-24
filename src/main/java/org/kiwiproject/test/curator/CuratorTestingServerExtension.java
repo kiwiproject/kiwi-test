@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  *  static final CuratorTestingServerExtension ZK_TEST_SERVER = new CuratorTestingServerExtension();
  * </pre>
  * The above finds the first open port above 1024 and uses that port for the testing server. You can also
- * specify a port to start the testing server on, but if that port is not open an exception will be thrown.
+ * specify a port to start the testing server on, but if that port is not open, an exception will be thrown.
  * <p>
  * One important thing to note is that because this uses {@link BeforeAllCallback}, any tests that use
  * {@link org.junit.jupiter.api.Nested Nested} will cause the {@link BeforeAllCallback#beforeAll(ExtensionContext)}
@@ -43,10 +43,10 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * If you need the Curator {@link TestingServer} to start <em>immediately</em> instead of waiting for the normal
  * JUnit Jupiter lifecycle, you can use one of the {@link #newStartingImmediately()} factory methods. You might need
- * to start immediately in situations where there are other components (e.g. other extensions or code in a test)
+ * to start immediately in situations where there are other components (e.g., other extensions or code in a test)
  * that relies on a ZooKeeper server to be running when instantiated. When starting immediately, this extension
  * should be the first one registered, so that it starts the testing server before other code attempts to connect to
- * it. Also note we consider starting the testing server immediately to be the exception, not the general case, and
+ * it. Also note, we consider starting the testing server immediately to be the exception, not the general case, and
  * should generally be considered as a last resort.
  */
 @Slf4j

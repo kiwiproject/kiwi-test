@@ -30,14 +30,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * {@link MongoServer} once before all tests have run, and which shuts it down once after all tests have run.
  * An alternative for testing against "real" MongoDB instances is the {@link MongoDbExtension}.
  * <p>
- * By default, the in-memory test database will be dropped and re-created after each test so that each individual
+ * By default, the in-memory test database will be dropped and re-created after each test so that each
  * test can start with an empty database. If you need to retain the database between tests, construct an instance
  * with the {@link DropTime#AFTER_ALL} option. The database will not be dropped or modified in any way before or
  * after tests when this option is used. This is most useful in integration test scenarios in which tests are executed
  * in a specific order and build upon the results of previous tests.
  * <p>
- * This extension also creates a test database with a unique name that can be used in tests, and provides accessors
- * to enable tests to obtain various objects such as the connection string, the test database name, a
+ * This extension also creates a test database with a unique name that can be used in tests. It provides accessors
+ * to enable tests to get various objects such as the connection string, the test database name, a
  * {@link MongoDatabase} for the test database, a {@link MongoClient}, and more.
  * <p>
  * By default, the in-memory Mongo server will be set to the 3.6 flavor of Mongo.  If you need to use the 3.0 version of
@@ -76,7 +76,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     /**
      * Returns the Mongo connection string for the started {@link MongoServer}, e.g. {@code mongodb://localhost:34567}.
      * It does <em>not</em> include the test database name, since this extension does not preclude creating other
-     * databases, for example a scenario in which the class under test integrates data from multiple MongoDB
+     * databases, for example, a scenario in which the class under test integrates data from multiple MongoDB
      * databases.
      */
     @Getter
@@ -96,13 +96,13 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
      * The test {@link MongoDatabase} created by this extension.
      * <p>
      * When drop time is {@link DropTime#AFTER_EACH AFTER_EACH} (the default), a new instance is created after each
-     * test. Therefore, tests should always re-initialize the database, for example in a {@code @BeforeEach} method.
+     * test. Therefore, tests should always re-initialize the database, for example, in a {@code @BeforeEach} method.
      */
     @Getter
     private MongoDatabase testDatabase;
 
     /**
-     * A {@link MongoClient} that can be used in tests. This should never be closed by tests, as this client is
+     * A {@link MongoClient} that can be used in tests. Tests should never close this, as this client is
      * opened before all tests, and closed after all tests have executed.
      */
     @Getter
@@ -164,7 +164,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     /**
      * When to drop the test databases. The extension default is {@link DropTime#AFTER_EACH}, so that each test has
      * a fresh database to test against. You can also drop the database after all tests have been run, which can be
-     * useful in certain integration test scenarios with ordered tests, for example when each test is a part of an
+     * useful in certain integration test scenarios with ordered tests, for example, when each test is a part of an
      * overall workflow.
      * <p>
      * Note that because this extension uses an in-memory server, dropping and re-creating the test database after each

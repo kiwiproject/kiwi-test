@@ -83,10 +83,10 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
 
     /**
      * Start the embedded Postgres extension and initialize a test DataSource that connects to it. This test
-     * DataSource should be used in your tests to obtain a Connection.
+     * DataSource should be used in your tests to get a Connection.
      *
      * @param context the extension context
-     * @throws Exception if any error occurs initializing the embedded Postgres or connecting to it
+     * @throws Exception if any error occurs while initializing the embedded Postgres or connecting to it
      */
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {

@@ -26,10 +26,11 @@ import org.kiwiproject.base.KiwiThrowables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
+import javax.sql.DataSource;
 
 /**
  * Shared code for use by the JDBI 3 extension classes.
@@ -41,7 +42,7 @@ class Jdbi3Helpers {
     /**
      * Currently supports only Postgres and H2.
      *
-     * @implNote This uses {@link H2DatabasePlugin} directly in order to get the H2 plugin class name because
+     * @implNote This uses {@link H2DatabasePlugin} directly to get the H2 plugin class name because
      * it is in <a href="https://mvnrepository.com/artifact/org.jdbi/jdbi3-core">jdbi3-core</a>, whereas
      * other plugins are outside core and require a separate dependency. For example, the Postgres plugin resides
      * in <a href="https://mvnrepository.com/artifact/org.jdbi/jdbi3-postgres">jdbi3-postgres</a>, so we use
@@ -251,7 +252,7 @@ class Jdbi3Helpers {
      * Attempt to get the transaction isolation level for the given Handle.
      *
      * @return a Pair with the transaction isolation level or the Exception that occurred
-     * trying to obtain the isolation level (exactly one will be null, the other non-null)
+     * trying to get the isolation level (exactly one will be null, the other non-null)
      */
     static Pair<TransactionIsolationLevel, Exception> getTransactionIsolationLevel(Handle handle) {
         try {
@@ -279,7 +280,7 @@ class Jdbi3Helpers {
      * Attempt to get the autoCommit setting of the given Handle's JDBC Connection.
      *
      * @return a Pair with the autoCommit value or the Exception that occurred
-     * trying to obtain the autoCommit value (exactly one will be null, the other non-null)
+     * trying to get the autoCommit value (exactly one will be null, the other non-null)
      */
     static Pair<Boolean, Exception> getAutoCommit(Handle handle) {
         try {
@@ -295,10 +296,10 @@ class Jdbi3Helpers {
      * <p>
      * Exceptions are logged at WARN level to help diagnose problems. Note that if errors occur rolling
      * back and/or closing the Handle (and thus the underlying JDBC Connection), other tests may
-     * fail in unexpected ways. For example, if a single Connection is used for all tests (e.g. for
+     * fail in unexpected ways. For example, if a single Connection is used for all tests (e.g., for
      * performance reasons) and a test (accidentally?) enables autoCommit when using Postgres, the rollback
      * will fail. In this situation, data that has been auto-committed will be seen by the remaining tests
-     * which may cause unexpected assertion failures, e.g. a test sees more data than it expects to see.
+     * which may cause unexpected assertion failures, e.g., a test sees more data than it expects to see.
      */
     static void rollbackAndClose(Handle handle, Logger logger) {
         logger.trace("Tearing down after JDBI test");

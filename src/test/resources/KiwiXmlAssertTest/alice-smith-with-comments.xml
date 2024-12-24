@@ -1,6 +1,6 @@
 <!-- a comment -->
 <!--
-    the default behavior does NOT ignore comments between elements, for example between opening
+    the default behavior does NOT ignore comments between elements, for example, between opening
     person tag and the first_name tag.
  -->
 <person>

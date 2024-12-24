@@ -10,7 +10,7 @@ import org.jdbi.v3.core.statement.Update;
 public class Jdbi3GeneratedKeys {
 
     /**
-     * Extract the value of the generated key named "id" as a Long.
+     * Extract the value of the generated key named "id" as a {@code Long}.
      *
      * @param update the {@link Update} object
      * @return the Long value of the generated key
@@ -21,7 +21,7 @@ public class Jdbi3GeneratedKeys {
     }
 
     /**
-     * Extract the value of the generated key with the given {@code fieldName} as a Long.
+     * Extract the value of the generated key with the given {@code fieldName} as a {@code Long}.
      *
      * @param update    the {@link Update} object
      * @param fieldName the name of the generated key field

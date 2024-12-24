@@ -18,7 +18,7 @@ class H2FileBasedDatabaseExtensionUtilitiesTest {
 
         // Make Sonar happy and cover the catch block
         @Test
-        void shouldThrowUncheckedIOExeption_WhenPathIsNotValid() {
+        void shouldThrowUncheckedIOException_WhenPathIsNotValid() {
             var p = Path.of("/this/does/not/exist");
             assertThatThrownBy(() -> H2FileBasedDatabaseExtension.deleteOrThrowUnchecked(p))
                     .isExactlyInstanceOf(UncheckedIOException.class)

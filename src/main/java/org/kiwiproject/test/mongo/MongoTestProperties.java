@@ -101,7 +101,7 @@ public class MongoTestProperties {
      * Use the fluent builder as an alternative to this constructor.
      *
      * @param hostName          the host where MongoDB is located
-     * @param port              the port that MongoDB is listening on
+     * @param port              the port that MongoDB is listening to
      * @param serviceName       the name of the service/application being tested
      * @param serviceHost       the host of the service/application being tested
      * @param serviceHostDomain how to handle domains in the given {@code serviceHost}
@@ -148,13 +148,13 @@ public class MongoTestProperties {
         var now = System.currentTimeMillis();
         var dbName = f(DEFAULT_DB_NAME_TEMPLATE, serviceName, serviceHost, now);
 
-        // If name exceeds the limit of 63 characters, try removing the subdomain from hostname
+        // If the name exceeds the limit of 63 characters, try removing the subdomain from hostname
         if (nameExceedsMongoLength(dbName)) {
             var subDomain = KiwiUrls.extractSubDomainNameFrom(serviceHost).orElse("");
             dbName = f(DEFAULT_DB_NAME_TEMPLATE, serviceName, subDomain, now);
         }
 
-        // If name still exceeds the limit, try removing the entire hostname
+        // If the name still exceeds the limit, try removing the entire hostname
         if (nameExceedsMongoLength(dbName)) {
             dbName = f(DB_NAME_TEMPLATE, serviceName, now);
         }
@@ -235,9 +235,9 @@ public class MongoTestProperties {
 
     /**
      * Do a basic check whether the given database name contains either {@link #UNIT_TEST_ID} or
-     * {@link #UNIT_TEST_ID_SHORT}, which is a pretty good indicator that the database name was created
-     * by this class. If the name contains either of those, then also check for a timestamp as the last
-     * part in the name following the last underscore, i.e. find the last underscore and check if the remainder
+     * {@link #UNIT_TEST_ID_SHORT}, which is a pretty good indicator that this class created the database name.
+     * If the name contains either of those, then also check for a timestamp as the last
+     * part in the name following the last underscore, i.e., find the last underscore and check if the remainder
      * of the name contains only digits.
      *
      * @param databaseName the database name to check

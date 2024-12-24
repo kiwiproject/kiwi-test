@@ -40,7 +40,7 @@ class RandomDoubleArgumentsProvider implements ArgumentsProvider, AnnotationCons
     }
 
     /**
-     * @implNote In order to get a random double up to and including the max, we have to pick an arbitrarily
+     * @implNote To get a random double up to and including the max, we have to pick an arbitrarily
      * small number above the max so that {@link ThreadLocalRandom#nextDouble(double, double)} will at least
      * come pretty close to the max, even if it never generates exactly the max.
      */

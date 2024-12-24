@@ -422,7 +422,7 @@ public class HealthCheckResultAssertions {
      * @param value the expected value; may be {@code null}
      * @return this instance
      * @implNote This uses {@link org.kiwiproject.json.JsonHelper#getPath(Object, String, Class)} to
-     * obtain the value at the specified path in the health check {@code Result}.
+     * get the value at the specified path in the health check {@code Result}.
      */
     public HealthCheckResultAssertions hasDetailAtPath(String path, @Nullable Object value) {
         checkArgumentNotBlank(path, "path must not be blank");

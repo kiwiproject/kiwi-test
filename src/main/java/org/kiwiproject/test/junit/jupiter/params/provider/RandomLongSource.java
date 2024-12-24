@@ -36,7 +36,7 @@ public @interface RandomLongSource {
      * @implNote When set to {@link Long#MAX_VALUE}, the maximum is actually {@code (Long.MAX_VALUE - 1)} since
      * {@link java.util.concurrent.ThreadLocalRandom#nextLong(long, long) nextLong} has an exclusive upper bound, and
      * without resorting to using {@link java.math.BigInteger} we cannot ever get to {@link Long#MAX_VALUE}. We assume
-     * that if you really need the maximum value in a test, you can just write a test for that specific case.
+     * that if you really need the maximum value in a test, you can write a test for that specific case.
      */
     long max() default Long.MAX_VALUE;
 

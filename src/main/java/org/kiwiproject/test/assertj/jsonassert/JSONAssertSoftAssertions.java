@@ -13,7 +13,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  * Currently only wraps the {@link JSONAssert#assertEquals(String, JSONArray, JSONCompareMode)} method.
  * <p>
  * Note that you need the org.skyscreamer:jsonassert dependency and its dependencies, which as of this writing
- * consists of com.vaadin.external.google:android-json. Basically you need to {@code org.json} classes like
+ * consists of com.vaadin.external.google:android-json. You need to import {@code org.json} classes like
  * {@link org.json.JSONObject} and {@link JSONException}.
  */
 public class JSONAssertSoftAssertions {

@@ -142,7 +142,7 @@ class ParameterizedValidationTestHelperTest {
         }
 
         @Test
-        void shouldThrow_WhenSomeExpectedMesages_AreNotCorrect() {
+        void shouldThrow_WhenSomeExpectedMessages_AreNotCorrect() {
             var lastNames = inputs("Smith", "Ng", "X", "Vader", "");
             var expectedMessages = expectedMessagesLists(
                     expectedMessages("must not be blank"),  // incorrect
@@ -170,11 +170,11 @@ class ParameterizedValidationTestHelperTest {
                     .contains("[\"must not be blank\"]");
 
             // NOTE:
-            // We are omitting assertion on the value below, since the order is not deterministic, i.e. sometimes
+            // We are omitting assertion on the value below, since the order is not deterministic, i.e., sometimes
             // it will be:
             //   length must be between 2 and 100, must not be blank
             //
-            // and other times it will be
+            // and other times it will be:
             //   must not be blank, length must be between 2 and 100
             //
             assertThat(second(errors))

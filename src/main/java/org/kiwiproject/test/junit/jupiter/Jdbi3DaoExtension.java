@@ -17,9 +17,10 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to easily test JDBI 3-based DAOs in
@@ -29,7 +30,7 @@ import java.util.List;
  * (1) a {@link DataSource}, (2) a JDBI {@link ConnectionFactory}, or
  * (3) the JDBC URL, username, and password.
  * <p>
- * Before each test, sets up a transaction. After each test completes, rolls the transaction back.
+ * Before each test, sets up a transaction. After each test completes, roll the transaction back.
  * <p>
  * Using the builder, you can optionally specify {@link JdbiPlugin} instances to install. Note that this extension
  * always installs the {@link org.jdbi.v3.sqlobject.SqlObjectPlugin SqlObjectPlugin}.

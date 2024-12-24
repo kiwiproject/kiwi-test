@@ -54,7 +54,7 @@ public class RecordedRequests {
     /**
      * Get the next available {@link RecordedRequest} or return {@code null}.
      * <p>
-     * Unlike {@link MockWebServer#takeRequest()}, does not block. Instead, waits
+     * Unlike {@link MockWebServer#takeRequest()}, this method does not block. Instead, it waits
      * a brief amount of time (10 milliseconds) for the next request. And unlike
      * {@link MockWebServer#takeRequest(long, TimeUnit)}, converts a checked
      * InterruptedException to an {@link UncheckedInterruptedException} so that

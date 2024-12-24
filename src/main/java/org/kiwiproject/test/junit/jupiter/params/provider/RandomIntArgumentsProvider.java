@@ -28,7 +28,7 @@ class RandomIntArgumentsProvider implements ArgumentsProvider, AnnotationConsume
     /**
      * {@inheritDoc}
      *
-     * @implNote In order to allow for a max including {@link Integer#MAX_VALUE}, we are generating {@code long}
+     * @implNote To allow for a max including {@link Integer#MAX_VALUE}, we are generating {@code long}
      * values in the range [min, max + 1] using {@link ThreadLocalRandom#nextLong(long, long)}. The reason is that
      * all the {@code nextXxx(origin, bound)} methods are inclusive of the {@code origin} but <em>exclusive</em>
      * of the {@code bound}, therefore we cannot get to {@link Integer#MAX_VALUE} using

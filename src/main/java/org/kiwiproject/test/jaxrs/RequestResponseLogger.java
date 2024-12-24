@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * The Jersey client API does not give you an easy way to see all the headers, full URL or request body.
  * This logging will also print out the raw response without having to read the entity.
  * <p>
- * Jersey's way to do this is by registering a {@link LoggingFeature} with the settings you want (e.g. verbosity,
+ * Jersey's way to do this is by registering a {@link LoggingFeature} with the settings you want (e.g., verbosity,
  * logging level, entity size). Unfortunately, this feature requires a {@code java.util.logging Logger} so we are
  * creating a temporary one just for the feature.
  */

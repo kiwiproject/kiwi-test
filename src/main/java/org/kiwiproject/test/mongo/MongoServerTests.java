@@ -43,7 +43,7 @@ public class MongoServerTests {
      * <p>
      * Example: {@code mongodb://localhost:45678}
      *
-     * @param mongoServer the MongoServer instance, used to obtain the host and port
+     * @param mongoServer the MongoServer instance, used to get the host and port
      * @return the connection string
      */
     public static String getConnectionString(MongoServer mongoServer) {
