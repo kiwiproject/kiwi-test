@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+import okio.Buffer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.base.UncheckedInterruptedException;
+import org.kiwiproject.test.constants.KiwiTestConstants;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -182,11 +184,81 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckBody_WhenSatisfiesConsumer() {
+            assertThatCode(() ->
+                    assertThatRecordedRequest(recordedRequest)
+                            .hasBodySatisfying(theBody -> {
+                                assertThat(theBody).contains("alice");
+                                assertThat(theBody).contains("peaches");
+                            })).doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckBody_WhenDoesNotSatisfyConsumer() {
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest)
+                            .hasBodySatisfying(theBody -> {
+                                assertThat(theBody).contains("alice");
+                                assertThat(theBody).contains("apples");
+                            }))
+                    .hasMessageContaining("Expecting")
+                    .hasMessageContaining("alice")
+                    .hasMessageContaining("peaches");
+        }
+
+        @Test
         void shouldCheckInvalidBodySize() {
             assertThatThrownBy(() -> RecordedRequestAssertions.assertThat(recordedRequest).hasBodySize(2_567))
                     .isNotNull()
                     .hasMessageContaining("Expected body size: 2567 byte");
         }
+
+        @Test
+        void shouldCheckHasJsonBodyWithEntity() {
+            var expectedEntity = new UserCredentials("alice", "peaches");
+            assertThatCode(() ->
+                    assertThatRecordedRequest(recordedRequest).hasJsonBodyWithEntity(expectedEntity)
+            ).doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckHasJsonBodyWithEntity_WithCustomObjectMapper() {
+            var expectedEntity = new UserCredentials("alice", "peaches");
+            var objectMapper = KiwiTestConstants.OBJECT_MAPPER;
+            assertThatCode(() ->
+                    assertThatRecordedRequest(recordedRequest).hasJsonBodyWithEntity(expectedEntity, objectMapper)
+            ).doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckHasJsonBodyWithEntity_WhenDoesNotMatchExpectedEntity() {
+            var expectedEntity = new UserCredentials("alice", "oranges");
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest).hasJsonBodyWithEntity(expectedEntity))
+                    .hasMessageContaining("Expecting actual")
+                    .hasMessageContaining(new UserCredentials("alice", "peaches").toString())
+                    .hasMessageContaining("to be equal to")
+                    .hasMessageContaining(expectedEntity.toString())
+            ;
+        }
+
+        @Test
+        void shouldCheckHasJsonBodyWithEntity_WhenBodyIsNotJson() {
+            var badRecordedRequest = mock(RecordedRequest.class);
+            when(badRecordedRequest.getMethod()).thenReturn("POST");
+
+            var buffer = mock(Buffer.class);
+            when(badRecordedRequest.getBody()).thenReturn(buffer);
+            when(buffer.readUtf8()).thenReturn("this is not json");
+
+            var expectedEntity = new UserCredentials("alice", "peaches");
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(badRecordedRequest).hasJsonBodyWithEntity(expectedEntity))
+                    .hasMessageContaining("Body content expected to be JSON");
+        }
+    }
+
+    record UserCredentials(String username, String password) {
     }
 
     @Nested
@@ -541,6 +613,37 @@ class RecordedRequestAssertionsTest {
                     .hasFailureCauseInstanceOf(SSLHandshakeException.class))
                     .isNotNull()
                     .hasMessageContaining("Expected request to have failure of type: javax.net.ssl.SSLHandshakeException");
+        }
+    }
+
+    @Nested
+    class HasPath {
+
+        @Test
+        void shouldPass_WhenGivenTemplateAndValidArguments() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            var assertions = RecordedRequestAssertions.assertThat(recordedRequest);
+
+            assertThatCode(() -> assertions.hasPath("/users/{}", 42))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldFailsWhenGiven_TemplateAndInvalidArguments() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            var assertions = RecordedRequestAssertions.assertThat(recordedRequest);
+
+            assertThatThrownBy(() -> assertions.hasPath("/users/{}", 84))
+                    .isNotNull()
+                    .hasMessageContaining("Expected path to be: /users/84");
         }
     }
 

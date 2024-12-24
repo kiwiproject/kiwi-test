@@ -1,11 +1,16 @@
 package org.kiwiproject.test.okhttp3.mockwebserver;
 
+import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
+import static org.kiwiproject.base.KiwiStrings.f;
+import static org.kiwiproject.test.constants.KiwiTestConstants.JSON_HELPER;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import okhttp3.TlsVersion;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.assertj.core.api.Assertions;
+import org.kiwiproject.json.JsonHelper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -215,6 +220,21 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has the expected path.
+     * <p>
+     * Uses {@link org.kiwiproject.base.KiwiStrings#f(String, Object...)}
+     * to produce the expected path from the template and arguments.
+     *
+     * @param pathTemplate the template to use when constructing the expected path
+     * @param arguments    the arguments for the template
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasPath(String pathTemplate, Object... arguments) {
+        var expectedPath = f(pathTemplate, arguments);
+        return hasPath(expectedPath);
+    }
+
+    /**
      * Asserts the recorded request has the expected header name and value.
      *
      * @param name  the expected HTTP header name
@@ -264,6 +284,74 @@ public class RecordedRequestAssertions {
         Assertions.assertThat(actualBodyUtf8)
                 .describedAs("Expected body as UTF-8 to be: %s", body)
                 .isEqualTo(body);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a body that satisfies assertions in the given consumer.
+     *
+     * @param bodyConsumer a {@link Consumer} containing one or more assertions on the request body
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasBodySatisfying(Consumer<String> bodyConsumer) {
+        checkMethodAllowsBody();
+
+        var bodyBuffer = recordedRequest.getBody();
+        var actualBodyUtf8 = bodyBuffer.readUtf8();
+        bodyConsumer.accept(actualBodyUtf8);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a JSON body that deserializes to the given entity.
+     *
+     * @param entity the expected request entity
+     * @return this instance
+     * @implNote uses {@link org.kiwiproject.test.constants.KiwiTestConstants#JSON_HELPER KiwiTestConstants#JSON_HELPER}
+     * to deserialize JSON. You can use the overloaded methods if you need more control over the JSON deserialization.
+     * @see #hasJsonBodyWithEntity(Object, ObjectMapper)
+     * @see #hasJsonBodyWithEntity(Object, JsonHelper)
+     */
+    public RecordedRequestAssertions hasJsonBodyWithEntity(Object entity) {
+        return hasJsonBodyWithEntity(entity, JSON_HELPER);
+    }
+
+    /**
+     * Asserts the recorded request has a JSON body that deserializes to the given entity.
+     *
+     * @param entity       the expected request entity
+     * @param objectMapper the Jackson {@link ObjectMapper} to use for deserializing JSON
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasJsonBodyWithEntity(Object entity, ObjectMapper objectMapper) {
+        return hasJsonBodyWithEntity(entity, new JsonHelper(objectMapper));
+    }
+
+    /**
+     * Asserts the recorded request has a JSON body that deserializes to the given entity.
+     *
+     * @param entity     the expected request entity
+     * @param jsonHelper the {@link JsonHelper} to use for deserializing JSON
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasJsonBodyWithEntity(Object entity, JsonHelper jsonHelper) {
+        checkMethodAllowsBody();
+        checkArgumentNotNull(entity, "entity must not be null");
+
+        var bodyBuffer = recordedRequest.getBody();
+        var actualBodyUtf8 = bodyBuffer.readUtf8();
+
+        var jsonDetectionResult = jsonHelper.detectJson(actualBodyUtf8);
+        Assertions.assertThat(jsonDetectionResult.isJson())
+                .describedAs("Body content expected to be JSON")
+                .isTrue();
+
+        var actualEntity = jsonHelper.toObject(actualBodyUtf8, entity.getClass());
+        Assertions.assertThat(actualEntity)
+                .usingRecursiveComparison()
+                .isEqualTo(entity);
 
         return this;
     }
