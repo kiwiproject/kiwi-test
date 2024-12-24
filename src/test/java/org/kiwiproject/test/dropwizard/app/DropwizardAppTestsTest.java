@@ -149,7 +149,7 @@ class DropwizardAppTestsTest {
 
     @Test
     void shouldReturnManagedObjectsUsingPredicate() {
-        assertThat(DropwizardAppTests.managedObjectsOf(APP, managed -> managed instanceof Managed2))
+        assertThat(DropwizardAppTests.managedObjectsOf(APP, Managed2.class::isInstance))
                 .hasAtLeastOneElementOfType(Managed2.class)
                 .doesNotHaveAnyElementsOfTypes(Managed1.class);
     }
