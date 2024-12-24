@@ -155,6 +155,16 @@ public class PostgresAppTestExtension<T extends Configuration> implements Before
         var liquibasePreparer = LiquibasePreparer.forClasspathLocation(migrationClasspathLocation);
         postgres = EmbeddedPostgresExtension.preparedDatabase(liquibasePreparer);
 
+        var postgresConfigOverrides = buildPostgresConfigOverrides(dataSourceFactoryPropertyName);
+        var combinedConfigOverrides = ArrayUtils.addAll(postgresConfigOverrides, configOverrides);
+
+        app = new DropwizardAppExtension<>(
+                appClass,
+                ResourceHelpers.resourceFilePath(configFileName),
+                combinedConfigOverrides);
+    }
+
+    private ConfigOverride[] buildPostgresConfigOverrides(String dataSourceFactoryPropertyName) {
         var dbUserProperty = dataSourceFactoryPropertyName + ".user";
         var dbUrlProperty = dataSourceFactoryPropertyName + ".url";
         var dbDriverClassProperty = dataSourceFactoryPropertyName + ".driverClass";
@@ -165,13 +175,7 @@ public class PostgresAppTestExtension<T extends Configuration> implements Before
                         + "/" + postgres.getConnectionInfo().getDbName());
         var driverConfigOverride = ConfigOverride.config(dbDriverClassProperty, Driver.class.getName());
 
-        var postgresConfigOverrides = new ConfigOverride[]{userConfigOverride, urlConfigOverride, driverConfigOverride};
-        var combinedConfigOverrides = ArrayUtils.addAll(postgresConfigOverrides, configOverrides);
-
-        app = new DropwizardAppExtension<>(
-                appClass,
-                ResourceHelpers.resourceFilePath(configFileName),
-                combinedConfigOverrides);
+        return new ConfigOverride[] { userConfigOverride, urlConfigOverride, driverConfigOverride };
     }
 
     @Override
