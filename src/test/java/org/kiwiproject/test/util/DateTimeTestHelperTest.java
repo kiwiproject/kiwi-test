@@ -67,7 +67,7 @@ class DateTimeTestHelperTest {
                         .doesNotThrowAnyException();
             }
 
-            // This test doesn't actually check the log message; it only verifies that when this case occurs and the
+            // This test doesn't check the log message; it only verifies that when this case occurs and the
             // time difference is within tolerance, no exception is throw. Manual verification of the log message is the
             // only way to verify the actual log message right now.
             @ParameterizedTest

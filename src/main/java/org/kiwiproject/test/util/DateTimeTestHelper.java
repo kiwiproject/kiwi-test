@@ -12,13 +12,13 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
- * A test helper that makes assertions on date/time values, for example assertions that the elapsed time
+ * A test helper that makes assertions on date/time values, for example, assertions that the elapsed time
  * is less than a threshold.
  * <p>
- * The usage for the time difference assertions expects the start time to be recorded locally, e.g. within a
+ * The usage for the time difference assertions expects the start time to be recorded locally, e.g., within a
  * test before issuing a database update, and the end time to be a timestamp assigned by a remote server. For
  * example, timestamp fields in a database that automatically update when a record is changed. Once a test receives
- * the updated object, in this example the object with the automatically updated timestamp field, that updated field
+ * the updated object, the object with the automatically updated timestamp field, that updated field
  * becomes the end time in the assertion methods in this test helper. Here is an example:
  * <pre>
  * // inside a test method assuming there is a someUser object...
@@ -27,14 +27,14 @@ import java.time.ZonedDateTime;
  *
  * DateTimeTestHelper.assertTimeDifferenceWithinTolerance("updatedAt", beforeUpdate, updatedUser.getUpdatedAt());
  * </pre>
- * Why would you ever do this? In the above example it's just a sanity check to make sure we are updating the audit
+ * Why would you ever do this? In the above example it's just a check to make sure we are updating the audit
  * trail property {@code updatedAt}. And alas, too many times we've seen someone forget to do this (and that includes
- * ourselves of course).
+ * ourselves, of course).
  *
- * @implNote Time difference assertions are made on the absolute time difference, to account for the possibility that a
- * remote machine assigning timestamps (e.g. a database) might have a clock time that is not exactly in sync with the
- * machine running a test. We would hope they are all synchronized but have learned from experience not to always
- * trust this to be the case.
+ * @implNote Time difference assertions are made on the absolute time difference. This is to account for the
+ * possibility that a remote machine assigning timestamps (e.g., a database) might have a clock time that is not exactly
+ * in sync with the machine running a test. We would hope they are all synchronized but have learned from experience
+ * not to always trust this to be the case.
  */
 @Slf4j
 @UtilityClass

@@ -18,10 +18,11 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to easily test multiple JDBI 3-based
@@ -32,10 +33,10 @@ import java.util.Map;
  * (3) the JDBC URL, username, and password.
  * <p>
  * Before each test, sets up a transaction and attaches the specified DAOs to the JDBI {@link Handle}.
- * After each test completes, rolls the transaction back. <em>Note specifically that all the DAOs are executing within
+ * After each test completes, roll the transaction back. <em>Note specifically that all the DAOs are executing within
  * the same transaction.</em>
  * <p>
- * Tests should use the {@link #getDao(Class)} method to obtain the DAOs they want to interact with during each
+ * Tests should use the {@link #getDao(Class)} method to get the DAOs they want to interact with during each
  * test. Usually this will be called in a method annotated with {@link org.junit.jupiter.api.BeforeEach BeforeEach}
  * but can also be called in individual tests.
  * <p>
@@ -135,7 +136,7 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
         // NOTE: Handle#attach returns a proxy Class object that implements the given DAO type. For example, calling
         // handle.attach(com.acme.dao.PersonDao.class) returns an object whose class is something like
         // com.acme.dao.$Proxy23 which implements PersonDao. But we need to keep the original DAO types as
-        // the map keys, so we need to retain the DAO type in the final map, which is the reason for returning
+        // the map keys. So, we need to retain the DAO type in the final map, which is the reason for returning
         // a Pair containing the original DAO class and the attached DAO in the mapping operation. The
         // resulting map will contain a mapping from PersonDao.class to the DAO object that JDBI created and
         // which implements PersonDao.
@@ -165,7 +166,7 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
     }
 
     /**
-     * Tests can use this method to obtain the DAO they require.
+     * Tests can use this method to get the DAO they require.
      *
      * @param daoType the expected DAO type
      * @param <T>     the type of DAO

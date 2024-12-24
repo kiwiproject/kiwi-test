@@ -15,20 +15,20 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to reset
  * the Logback logging system after all tests have completed.
  * <p>
- * This is useful if something misbehaves, for example Dropwizard's
+ * This is useful if something misbehaves, for example, Dropwizard's
  * <a href="https://www.dropwizard.io/en/stable/manual/testing.html#integration-testing">DropwizardAppExtension</a> and
  * <a href="https://www.dropwizard.io/en/stable/manual/testing.html#testing-client-implementations">DropwizardClientExtension</a>
  * extensions both stop and detach all appenders after all tests complete! Both of those extensions
  * reset Logback in
  * <a href="https://github.com/dropwizard/dropwizard/blob/297870e3b4b43ea9fb19417dd90ed78151cf6f5d/dropwizard-testing/src/main/java/io/dropwizard/testing/DropwizardTestSupport.java#L244">DropwizardTestSupport</a>.
- * Once this happens, there is no logging output from subsequent tests (since there are no more appenders).
+ * Once this happens, there is no logging output from later tests (since there are no more appenders).
  * We consider this to be <em>bad</em>, since logging output is useful to track down causes if
  * there are other test failures. And, it's just not nice behavior to completely hijack logging!
  * <p>
  * You can use this extension in tests that are using misbehaving components to ensure that Logback
- * is reset after all tests complete, so that subsequent tests have log output.
+ * is reset after all tests complete, so that later tests have log output.
  * <p>
- * For example to use the default {@code logback-test.xml} as the logging configuration you
+ * For example, to use the default {@code logback-test.xml} as the logging configuration you
  * can just use {@code @ExtendWith} on the test class:
  * <pre>
  *  {@literal @}ExtendWith(DropwizardExtensionsSupport.class)

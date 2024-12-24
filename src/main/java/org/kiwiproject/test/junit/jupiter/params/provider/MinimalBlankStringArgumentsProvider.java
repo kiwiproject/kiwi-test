@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 /**
  * Creates an {@link ArgumentsProvider} that can feed a test method with multiple blank {@link String} objects for a
  * {@link org.junit.jupiter.params.ParameterizedTest ParameterizedTest}. This will generate a limited number of blank
- * strings including null and empty strings, and a few whitespace-only strings.
+ * strings including null and empty strings, and some whitespace-only strings.
  * <p>
  * Usage:
  * <pre>

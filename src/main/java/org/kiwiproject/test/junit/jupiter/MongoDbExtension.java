@@ -24,11 +24,11 @@ import java.util.Objects;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to use in Mongo unit/integration tests.
- * This extension must be registered at the class level since it implements {@link AfterAllCallback}, i.e. the field
+ * This extension must be registered at the class level since it implements {@link AfterAllCallback}, i.e., the field
  * should be declared as {@code static}.
  * <p>
  * This extension by default drops the test Mongo database after <em>all</em> tests have run but clears records from
- * collections after <em>each</em> test runs. The extension also by default cleans up (i.e. deletes) any test databases
+ * collections after <em>each</em> test runs. The extension also by default cleans up (i.e., delete) any test databases
  * older than 10 minutes when it runs.
  * <p>
  * You must supply a {@link org.kiwiproject.test.mongo.MongoTestProperties} instance which tells the extension which
@@ -42,13 +42,13 @@ import java.util.Objects;
  * <p>
  * Note also that if using an in-memory Mongo server (e.g.
  * <a href="https://mvnrepository.com/artifact/de.bwaldvogel/mongo-java-server">mongo-java-server</a>), then the
- * {@link DropTime} and {@link CleanupOption} only make sense during the execution of a single test class. For example
+ * {@link DropTime} and {@link CleanupOption} only make sense during the execution of a single test class. For example,
  * given a {@code SomethingUsingMongoTest} class containing a bunch of individual tests, these options can still be
- * used, but once JUnit has executed all the tests in the class, obviously the database and collections are destroyed
+ * used, but once JUnit has executed all the tests in the class, the database and collections are destroyed
  * when the in-memory server shuts down. An alternative to this extension for using an in-memory MongoDB is the
  * {@link MongoServerExtension}.
  * <p>
- * For example using a constructor:
+ * For example, using a constructor:
  * <pre>
  *  private static final MongoTestProperties MONGO_TEST_PROPERTIES = createMongoTestProperties();
  *
@@ -150,10 +150,10 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     /**
-     * How to handle records after each individual test. The extension default is {@link #REMOVE_RECORDS}, which will
+     * How to handle records after each test. The extension default is {@link #REMOVE_RECORDS}, which will
      * delete the records in existing collections in the test database, but not delete the collections themselves.
      * <p>
-     * The {@link #REMOVE_NEVER} option can be used if your test requires a specific order, e.g. an
+     * The {@link #REMOVE_NEVER} option can be used if your test requires a specific order, e.g., an
      * end-to-end integration test across multiple components that uses @{@link org.junit.jupiter.api.Order Order}
      * to specify the order in which tests execute and which needs to retain data between tests. It can also be used
      * in conjunction with {@link DropTime#NEVER} to debug problematic tests, so that the database state can be

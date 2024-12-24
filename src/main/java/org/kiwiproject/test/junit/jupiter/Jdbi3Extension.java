@@ -16,9 +16,10 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 /**
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} to easily test JDBI 3 DAOs using the
@@ -29,7 +30,7 @@ import java.util.List;
  * (1) a {@link DataSource}, (2) a JDBI {@link ConnectionFactory}, or
  * (3) the JDBC URL, username, and password.
  * <p>
- * Before each test, sets up a transaction. After each test completes, rolls the transaction back.
+ * Before each test, sets up a transaction. After each test completes, roll the transaction back.
  * <p>
  * <strong>NOTE: If the DAO under test creates its own {@link Handle}s, then you need to make sure that you always use
  * the <em>same connection</em> otherwise there will be transaction isolation issues. Prefer using the {@link Handle}
@@ -115,7 +116,7 @@ public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
     }
 
     /**
-     * Rolls back the transaction and closes the {@link Handle}.
+     * Rolls back the transaction and close the {@link Handle}.
      *
      * @param context the extension context
      * @see Handle#rollback()

@@ -36,7 +36,7 @@ public @interface RandomDoubleSource {
      * @implNote When set to {@link Double#MAX_VALUE}, the maximum is actually {@code (Double.MAX_VALUE - 1)} since
      * {@link java.util.concurrent.ThreadLocalRandom#nextDouble(double, double) nextDouble} has an exclusive upper
      * bound, and without resorting to using {@link java.math.BigDecimal} we can't ever get to {@link Double#MAX_VALUE}.
-     * We assume that if you really need the maximum value in a test, you can just write a test for that specific case.
+     * We assume that if you really need the maximum value in a test, you can write a test for that specific case.
      */
     double max() default Double.MAX_VALUE;
 

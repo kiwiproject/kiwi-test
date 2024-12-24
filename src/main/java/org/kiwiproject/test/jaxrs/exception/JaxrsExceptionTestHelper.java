@@ -60,7 +60,7 @@ public class JaxrsExceptionTestHelper {
     /**
      * Returns the first {@link ErrorMessage} in the given response.
      * <p>
-     * The response is expected to conform to the structure of a {@link JaxrsException}, i.e. it has a list of
+     * The response is expected to conform to the structure of a {@link JaxrsException}, i.e., it has a list of
      * {@link ErrorMessage} under the "errors" key in the JSON response entity.
      *
      * @param response a JAX-RS {@link OutboundJaxrsResponse} or {@code InboundJaxrsResponse} (not public)
@@ -75,7 +75,7 @@ public class JaxrsExceptionTestHelper {
     /**
      * Returns a list of the {@link ErrorMessage} objects in the given response.
      * <p>
-     * The response is expected to conform to the structure of a {@link JaxrsException}, i.e. it has a list of
+     * The response is expected to conform to the structure of a {@link JaxrsException}, i.e., it has a list of
      * {@link ErrorMessage} under the "errors" key in the JSON response entity.
      *
      * @param response a JAX-RS {@link OutboundJaxrsResponse} or {@code InboundJaxrsResponse} (not public)

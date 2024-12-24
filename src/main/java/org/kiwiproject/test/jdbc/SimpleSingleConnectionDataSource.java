@@ -33,18 +33,18 @@ import javax.sql.DataSource;
  * {@link Closeable} in addition to {@link DataSource}.
  * <p>
  * The single Connection is eagerly initialized during construction since the expected usage pattern is to create an
- * object before all tests run (e.g. using a JUnit {@code @BeforeAll}). Therefore, we keep things simple by eagerly
+ * object before all tests run (e.g., using a JUnit {@code @BeforeAll}). Therefore, we keep things simple by eagerly
  * initializing instead of waiting for the first {@code getConnection} call to occur.
  * <p>
  * To be very clear, this is intended to be used only during tests, and specifically in tests that execute within
  * a transaction that is rolled back once each test has executed. This ensures no data is actually stored in the
  * database making for faster tests (due to no commit overhead) and also permits testing simultaneously against
- * a shared database, for example a database setup for multiple developers or continuous integration servers to
+ * a shared database, for example, a database setup for multiple developers or continuous integration servers to
  * run tests against.
  * <p>
  * This simple implementation does not support all of the {@link DataSource} methods. See the docs for each method.
  *
- * @implNote This is heavily influenced from and some code copied from Spring's {@code SingleConnectionDataSource}
+ * @implNote This is heavily influenced from, and some code copied from, Spring's {@code SingleConnectionDataSource}
  * but is much simpler since we do not need it to be as generic as Spring's version. We mostly used the code
  * relating to the {@link InvocationHandler} that ignores calls to close a {@code Connection}, but are only handling
  * one method {@code close} that we want to intercept.
@@ -127,7 +127,7 @@ public class SimpleSingleConnectionDataSource implements DataSource, Closeable {
     }
 
     /**
-     * Closes the underlying single {@link Connection}. If any errors occur they are logged at WARN level but
+     * Closes the underlying single {@link Connection}. If any errors occur, they are logged at WARN level but
      * no exceptions are thrown.
      */
     @Override
@@ -249,7 +249,7 @@ public class SimpleSingleConnectionDataSource implements DataSource, Closeable {
 
     /**
      * Define a dynamic {@link Proxy} that suppresses any calls to {@link Connection#close()} on the
-     * single connection. We do not want anything actually closing this connection during a test's
+     * single connection. We do not want anything to actually close this connection during a test's
      * execution.
      *
      * @implNote Adapted from Spring's {@code SingleConnectionDataSource}.

@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 /**
  * This JUnit Jupiter extension provides a file-based H2 database and runs Liquibase migrations to allow testing
  * against a schema. The database is created and migrations are executed before all tests. The extension provides
- * an {@link H2FileBasedDatabase} for use by tests. It also provides for injection of the database into test
+ * an {@link H2FileBasedDatabase} for use by tests. It also allows injection of the database into test
  * lifecycle methods that declare a {@link H2FileBasedDatabase} annotated with {@link H2Database}.
  * <p>
  * When registering this extension, you must use a {@code static} field because both {@link BeforeAllCallback}
@@ -64,7 +64,7 @@ import javax.sql.DataSource;
  * since the transaction is rolled back. Each test therefore does not need to worry about cleaning up any data from
  * previous tests.
  * <p>
- * If you need to ensure only a single {@link java.sql.Connection Connection} is used during a test, e.g. when testing
+ * If you need to ensure only a single {@link java.sql.Connection Connection} is used during a test, e.g., when testing
  * multiple DAOs (Data Access Objects) in the same test which each fetch a database connection, consider creating a
  * {@link org.kiwiproject.test.jdbc.SimpleSingleConnectionDataSource SimpleSingleConnectionDataSource} inside your
  * tests and providing it to the DAOs.
@@ -86,7 +86,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
     private final String migrationClassPathLocation;
 
     /**
-     * The H2 file-based database for use by tests, e.g. to obtain the DataSource.
+     * The H2 file-based database for use by tests, e.g., to get the DataSource.
      */
     @Getter
     private H2FileBasedDatabase database;

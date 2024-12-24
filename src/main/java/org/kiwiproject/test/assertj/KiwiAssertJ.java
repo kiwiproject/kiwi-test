@@ -31,7 +31,7 @@ public class KiwiAssertJ {
     }
 
     /**
-     * Assert the given object is an instance of the given type, i.e. is the same type or a subtype of the given type.ª
+     * Assert the given object is an instance of the given type, i.e., is the same type or a subtype of the given type.ª
      * <p>
      * Returns the object cast to an instance of that type if the assertion passes, otherwise fails the test.
      *

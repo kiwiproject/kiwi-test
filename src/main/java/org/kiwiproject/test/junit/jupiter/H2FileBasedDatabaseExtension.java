@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 
 /**
  * JUnit Jupiter extension that creates a file-based H2 database before all tests and deletes it after all tests
- * have executed. It also provides for injection of the database into test lifecycle methods that declare
+ * have executed. It also allows injection of the database into test lifecycle methods that declare
  * a {@link H2FileBasedDatabase} annotated with {@link H2Database}.
  * <p>
  * You can register the extension via {@code ExtendWith} and then use parameter resolution with the {@link H2Database}

@@ -11,7 +11,7 @@ Kiwi Test is a simple library that contains a variety of testing utilities that 
 various projects.
 
 Almost all the dependencies in the POM have _provided_ scope, so that we don't bring in a ton of required dependencies.
-This downside to this is that you must specifically add any required dependencies to your own POM in order to use a
+This downside to this is that you must specifically add any required dependencies to your own POM to use a
 specific feature in Kiwi Test.
 
 The only required dependencies are guava, kiwi, and slf4j-api. Note that kiwi-test also marks most dependencies as

@@ -21,7 +21,7 @@ import java.nio.file.Path;
  * <p>
  * The default {@link ObjectMapper} when not specified is {@link KiwiTestConstants#OBJECT_MAPPER}.
  * The default {@link Validator} when not specified is the one returned by {@link ValidationTestHelper#getValidator()}.
- * The default property prefix is "dw.".
+ * The default property prefix is {@code "dw."}.
  *
  * @implNote There is a {@link io.dropwizard.configuration.JsonConfigurationFactory} in Dropwizard that can load
  * JSON-based configuration files. This is not currently implemented here, but could be if we ever think it is
@@ -68,7 +68,7 @@ public class DropwizardConfigurations {
      *
      * @param configClass           the class of the configuration to instantiate
      * @param validator             the validator to use when validating the configuration
-     * @param objectMapper          the object mapper to use when de-serializing the YAML configuration
+     * @param objectMapper          the object mapper to use when deserializing the YAML configuration
      * @param configurationFilePath the path to the YAML file that contains the configuration
      * @param <C>                   the type of the configuration class
      * @return a new configuration
@@ -85,7 +85,7 @@ public class DropwizardConfigurations {
      *
      * @param configClass           the class of the configuration to instantiate
      * @param validator             the validator to use when validating the configuration
-     * @param objectMapper          the object mapper to use when de-serializing the YAML configuration
+     * @param objectMapper          the object mapper to use when deserializing the YAML configuration
      * @param propertyPrefix        the system property name prefix used by overrides
      * @param configurationFilePath the path to the YAML file that contains the configuration
      * @param <C>                   the type of the configuration class
@@ -133,7 +133,7 @@ public class DropwizardConfigurations {
      *
      * @param configClass           the class of the configuration to instantiate
      * @param validator             the validator to use when validating the configuration
-     * @param objectMapper          the object mapper to use when de-serializing the YAML configuration
+     * @param objectMapper          the object mapper to use when deserializing the YAML configuration
      * @param configurationFilename the path to the YAML file that contains the configuration
      * @param <C>                   the type of the configuration class
      * @return a new configuration
@@ -150,7 +150,7 @@ public class DropwizardConfigurations {
      *
      * @param configClass           the class of the configuration to instantiate
      * @param validator             the validator to use when validating the configuration
-     * @param objectMapper          the object mapper to use when de-serializing the YAML configuration
+     * @param objectMapper          the object mapper to use when deserializing the YAML configuration
      * @param propertyPrefix        the system property name prefix used by overrides
      * @param configurationFilename the path to the YAML file that contains the configuration
      * @param <C>                   the type of the configuration class

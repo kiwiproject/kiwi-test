@@ -38,7 +38,7 @@ public class ParameterizedTestHelper {
     }
 
     /**
-     * Helper method that creates a list of expected results, mainly for readability in tests.
+     * Helper method that creates a list of expected results; this is mainly for readability in tests.
      *
      * @param results the values to use as expected results in a parameterized test
      * @param <R>     the result object type
@@ -54,12 +54,12 @@ public class ParameterizedTestHelper {
      * Given a list of input values, supply each one to the {@code mutator}, and (softly) assert that the result of
      * invoking the {@code resultSupplier} matches the expected value in {@code expectedResults}. The
      * {@code inputValues} and {@code expectedResults} are expected to be the same length and that they match at
-     * each index, i.e. that {@code expectedResults[N]} is the expected result when applying {@code inputValues[N]}
+     * each index, i.e., that {@code expectedResults[N]} is the expected result when applying {@code inputValues[N]}
      * as the input.
      * <p>
      * Example: Suppose you have a {@code Person} class that has a {@code setActiveFromString(String)} method and a
-     * {@code isActive()} method; the former is the input mutator function which accepts a String, and the latter is
-     * the result function which returns a boolean. You can then write a test like:
+     * {@code isActive()} method; the former is the input mutator function that accepts a String, and the latter is
+     * the result function that returns a boolean. You can then write a test like:
      * <pre>
      * {@literal @Test}
      *  void shouldAcceptActiveAsString(SoftAssertions softly) {
@@ -75,7 +75,7 @@ public class ParameterizedTestHelper {
      *
      * @param inputValues     the inputs
      * @param expectedResults the expected results
-     * @param mutator         the mutator function, e.g. a setter method
+     * @param mutator         the mutator function, e.g., a setter method
      * @param resultSupplier  result function
      * @param <T>             the input type
      * @param <R>             the result type
@@ -104,7 +104,7 @@ public class ParameterizedTestHelper {
     /**
      * Given a list of input values, supply each one to the {@code function}, and (softly) assert that the result of
      * invoking the function matches the expected value in {@code expectedResults}. The {@code inputValues} and
-     * {@code expectedResults} are expected to be the same length and that they match at each index, i.e. that
+     * {@code expectedResults} are expected to be the same length and that they match at each index, i.e., that
      * {@code expectedResults[N]} is the expected result when applying {@code inputValues[N]} as the input.
      * <p>
      * Example: Assuming there is a {@code SimpleMath} utility class with a {@code square} function that accepts an

@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * This utility class helps find service or emulator names from Maven POM files. It is useful only if you need to
- * get the service names, for example if resources such as databases follow a naming convention that includes the
+ * get the service names, for example, if resources such as databases follow a naming convention that includes the
  * service name. As a concrete example, {@code order-service_development} might be the order service database in
  * the development environment when the naming convention is {@code <service-name>_<environment>}.
  * <p>
@@ -22,7 +22,7 @@ import java.util.List;
  * and makes the following assumptions:</strong>
  * <ul>
  *     <li>
- *         If there is a subdirectory named service, look for pom.xml there first (i.e. service/pom.xml). Otherwise,
+ *         If there is a subdirectory named service, look for pom.xml there first (i.e., service/pom.xml). Otherwise,
  *         use the pom.xml at the top/root level directory as the Maven POM.
  *     </li>
  *     <li>
@@ -30,10 +30,10 @@ import java.util.List;
  *         assumed to contain the parent POM's {@code artifactId})
  *     </li>
  *     <li>
- *         Service artifact IDs end with "-service" (e.g. order-service)
+ *         Service artifact IDs end with "-service" (e.g., order-service)
  *     </li>
  *     <li>
- *         Emulator artifact IDs end with "-emulator" (e.g. third-party-payments-emulator)
+ *         Emulator artifact IDs end with "-emulator" (e.g., third-party-payments-emulator)
  *     </li>
  * </ul>
  * <em>If the above assumptions are not met, this class won't work as expected or will give really weird results.</em>

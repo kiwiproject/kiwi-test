@@ -127,7 +127,7 @@ class FixturesTest {
     class FixtureStripLeadingWhitespace {
 
         @Test
-        void shouldStripLeadingbutNotTrailingWhitespace() {
+        void shouldStripLeadingButNotTrailingWhitespace() {
             var fixture = Fixtures.fixtureStripLeadingWhitespace(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE);
             var expected = Fixtures.fixture(PANGRAM_LEADING_TRAILING_WHITESPACE_FIXTURE).stripLeading();
             assertThat(fixture).isEqualTo(expected);

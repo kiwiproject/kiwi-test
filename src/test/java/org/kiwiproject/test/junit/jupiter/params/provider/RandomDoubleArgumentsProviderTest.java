@@ -51,8 +51,7 @@ class RandomDoubleArgumentsProviderTest {
 
     /**
      * This test creates a provider that generates 1,000 doubles between a small range and repeats the test
-     * 10 times, in order to sanity check that we don't generate numbers outside the bounds with the
-     * small offset we add to the max.
+     * 10 times, to check that we don't generate numbers outside the bounds with the small offset we add to the max.
      */
     @RepeatedTest(10)
     void shouldProvideArgumentsWithinCustomBounds() {

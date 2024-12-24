@@ -83,7 +83,7 @@ public class DropwizardAppTests {
      * @return set containing registered resource objects
      * @implNote Dropwizard 2.0 added one more layer of indirection for resource endpoint classes; they are now
      * wrapped inside a {@link DropwizardResourceConfig.SpecificBinder}, so this method needs to unwrap those and
-     * add the wrapped objects to the returned set. To accomplish that, it has to perform some nastiness with the
+     * add the wrapped objects to the returned set. To achieve that, it has to perform some nastiness with the
      * {@link org.glassfish.jersey.internal.inject.Binding} returned by
      * {@link DropwizardResourceConfig.SpecificBinder#getBindings()}, specifically it must cast to
      * {@link InstanceBinding} to be able to get the "service" which is the actual object we want. This is

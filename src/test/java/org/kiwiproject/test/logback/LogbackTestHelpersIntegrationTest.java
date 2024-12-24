@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * The tests are designed to execute in a specific order and use Jupiter's
  * method ordering feature. The first test executes after DropwizardAppExtension
  * has reset Logback, so we expect the appender to be null. That test resets
- * Logback, after which all subsequent tests should get a non-null appender.
+ * Logback, after which all later tests should get a non-null appender.
  * <p>
  * In case of failure, this test uses the ResetLogbackLoggingExtension to restore
  * the Logback logging configuration. However, since that extension simply uses

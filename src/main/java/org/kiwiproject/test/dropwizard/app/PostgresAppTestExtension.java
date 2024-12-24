@@ -28,8 +28,8 @@ import org.postgresql.Driver;
  *     </li>
  *     <li>
  *         The application's {@link Configuration} class must have a Dropwizard
- *         {@link io.dropwizard.db.DataSourceFactory DataSourceFactory}. By default the property name is expected to
- *         be "database", i.e. the property will either have {@code @JsonProperty("database")} or be named "database",
+ *         {@link io.dropwizard.db.DataSourceFactory DataSourceFactory}. By default, the property name is expected to
+ *         be "database", i.e., the property will either have {@code @JsonProperty("database")} or be named "database",
  *         but you can change this using the alternate constructor.
  *      </li>
  *      <li>
@@ -57,7 +57,7 @@ import org.postgresql.Driver;
  *  type: simple
  * </pre>
  * Note that you do <strong>not</strong> need to declare a database property because this extension overrides the
- * required properties. But, you can add other custom properties to the configuration if desired:
+ * required properties. But you can add other custom properties to the configuration if desired:
  * <pre>
  * ---
  * server:
@@ -143,7 +143,7 @@ public class PostgresAppTestExtension<T extends Configuration> implements Before
      *                                      configuration file
      * @param appClass                      the Dropwizard application class
      * @param dataSourceFactoryPropertyName the name of the DataSourceFactory property in the Configuration class,
-     *                                      i.e. what is specified in the YAML configuration
+     *                                      i.e., what is specified in the YAML configuration
      * @param configOverrides               optional configuration override values
      */
     public PostgresAppTestExtension(String migrationClasspathLocation,

@@ -39,7 +39,7 @@ public class ValidationTestHelper {
 
     /**
      * Creates a new, default {@link Validator} instance using the default validator factory provided by the underlying
-     * bean validation implementation, for example the reference implementation Hibernate Validator.
+     * bean validation implementation, for example, the reference implementation Hibernate Validator.
      *
      * @return a new {@link Validator} instance
      */
@@ -285,8 +285,8 @@ public class ValidationTestHelper {
     }
 
     /**
-     * Performs an AssertJ soft assertion that there is exactly one constraint violation on the given object for the
-     * given {@code propertyName} using a default validator.
+     * Performs an AssertJ soft assertion that there is exactly one constraint violation on the given object for
+     * {@code propertyName} using a default validator.
      * <p>
      * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
      * constraint violations may or may not have the expected values. This is also the reason it returns a
@@ -438,7 +438,7 @@ public class ValidationTestHelper {
 
     /**
      * Performs an AssertJ soft assertion that there are exactly {@code numExpectedViolations} constraint violations
-     * on the given object for the given {@code propertyName} using a default validator.
+     * on the given object for {@code propertyName} using a default validator.
      * <p>
      * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
      * constraint violations may or may not have the expected values.
@@ -460,7 +460,7 @@ public class ValidationTestHelper {
 
     /**
      * Performs an AssertJ soft assertion that there are exactly {@code numExpectedViolations} constraint violations
-     * on the given object for the given {@code propertyName} using the specified validator.
+     * on the given object for {@code propertyName} using the specified validator.
      * <p>
      * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
      * constraint violations may or may not have the expected values.
@@ -526,7 +526,7 @@ public class ValidationTestHelper {
 
     /**
      * Performs an AssertJ soft assertion that the constraint violations match {@code expectedMessages} on the given
-     * object for the given {@code propertyName} using a default validator.
+     * object for {@code propertyName} using a default validator.
      * <p>
      * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
      * constraint violations may or may not have the expected values.
@@ -546,7 +546,7 @@ public class ValidationTestHelper {
 
     /**
      * Performs an AssertJ soft assertion that the constraint violations match {@code expectedMessages} on the given
-     * object for the given {@code propertyName} using the specified validator.
+     * object for {@code propertyName} using the specified validator.
      * <p>
      * Because this uses {@link SoftAssertions} and does not fail immediately, the returned set of
      * constraint violations may or may not have the expected values.

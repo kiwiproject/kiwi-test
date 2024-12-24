@@ -19,7 +19,7 @@ public final class HibernateTestHelper {
     private final SessionFactory sessionFactory;
 
     /**
-     * Create a new helper with the specfied session factory. Operations involving the session delegate to this
+     * Create a new helper with the specified session factory. Operations involving the session delegate to this
      * session factory.
      *
      * @param sessionFactory the {@link SessionFactory} this helper should use

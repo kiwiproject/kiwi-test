@@ -54,7 +54,7 @@ public class BlankStringArgumentsProvider implements ArgumentsProvider {
 
             // SPACE SEPARATOR characters (general category "Zs" of the Unicode specification)
             " ", // SPACE (U+0020
-            // U+00A0 (NO-BREAK SPACE) is explicitly **NOT** considered whitespace per Character JavaDocs
+            // U+00A0 (NO-BREAK SPACE) is **NOT** considered whitespace per Character Javadocs
             "\u1680", // OGHAM SPACE MARK
             "\u2000", // EN QUAD
             "\u2001", // EM QUAD
@@ -63,11 +63,11 @@ public class BlankStringArgumentsProvider implements ArgumentsProvider {
             "\u2004", // THREE-PER-EM SPACE
             "\u2005", // FOUR-PER-EM SPACE
             "\u2006", // SIX-PER-EM SPACE
-            // U+2007 (FIGURE SPACE) is explicitly **NOT** considered whitespace per Character JavaDocs
+            // U+2007 (FIGURE SPACE) is **NOT** considered whitespace per Character Javadocs
             "\u2008", // PUNCTUATION SPACE
             "\u2009", // THIN SPACE
             "\u200A", // HAIR SPACE
-            // U+202F (NARROW NO-BREAK-SPACE) is explicitly **NOT** considered whitespace per Character JavaDocs
+            // U+202F (NARROW NO-BREAK-SPACE) is **NOT** considered whitespace per Character Javadocs
             "\u205F", // MEDIUM MATHEMATICAL SPACE
             "\u3000", // IDEOGRAPHIC SPACE
 

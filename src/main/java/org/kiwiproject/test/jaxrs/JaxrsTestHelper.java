@@ -375,7 +375,7 @@ public class JaxrsTestHelper {
 
     /**
      * Asserts that the response contains an entity using {@link Response#getEntity()} that is <em>equal to</em>
-     * the {@code expectedEntity} using logical equality, e.g. using {@link Object#equals(Object)}.
+     * the {@code expectedEntity} using logical equality, e.g., using {@link Object#equals(Object)}.
      *
      * @param response       the response to check
      * @param expectedEntity the expected entity
@@ -394,7 +394,7 @@ public class JaxrsTestHelper {
      *
      * @param response the response to check
      * @return the response entity cast to a map
-     * @throws AssertionError if the response doesn't have an entity, or is not a map
+     * @throws AssertionError if the response doesn't have an entity or is not a map
      * @implNote This method performs an unchecked cast of the map entity to {@code Map<String, Object>} after verifying
      * the entity is a {@link Map} instance. Unexpected results and/or exceptions may occur if the map does not
      * contain only String keys.

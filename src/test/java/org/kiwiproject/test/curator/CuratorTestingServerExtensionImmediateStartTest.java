@@ -38,7 +38,7 @@ class CuratorTestingServerExtensionImmediateStartTest {
 
     /**
      * Simulates another extension that requires a ZooKeeper server. Since {@link org.apache.curator.test.TestingServer}
-     * doesn't expose any way to check its state (i.e. is it started or not), this gets the {@link CuratorFramework}
+     * doesn't expose any way to check its state (i.e., is it started or not), this gets the {@link CuratorFramework}
      * client from the {@link CuratorTestingServerExtension} and attempts to start it, blocking until connected (with
      * a timeout to ensure it stops if it cannot connect). This is an indirect way of determining whether the testing
      * server has started.

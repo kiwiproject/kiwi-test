@@ -53,7 +53,7 @@ public class ParameterizedValidationTestHelper {
     }
 
     /**
-     * Creates a list of the expected number of constraint violations. This is mainly for readability in tests.
+     * Creates a list containing the expected number of constraint violations. This is mainly for readability in tests.
      *
      * @param values the values to use as the number of expected constraint violations in a parameterized test
      * @return a mutable list containing the given values
@@ -100,7 +100,7 @@ public class ParameterizedValidationTestHelper {
      * @param groups the validation group classes
      * @return an array of the group {@link Class} objects
      * @implNote Aside from the readability aspect, this is a nifty little "trick" to "convert" a vararg into an
-     * array of objects of the same type
+     * array of objects having the same type
      */
     public static Class<?>[] validationGroups(Class<?>... groups) {
         return groups;
@@ -109,7 +109,7 @@ public class ParameterizedValidationTestHelper {
     /**
      * Given a list of input values, supply each one to {@code mutator}, and softly assert that the number of
      * constraint violations matches the numbers in {@code expectedViolations}. The {@code inputValues} and
-     * {@code expectedViolations} are expected to be the same length and to match at each index, i.e.
+     * {@code expectedViolations} are expected to be the same length and to match at each index, i.e.,
      * that {@code expectedViolations[N]} is the expected number of errors when applying {@code inputValues[N]}
      * as the input.
      * <p>
@@ -131,7 +131,7 @@ public class ParameterizedValidationTestHelper {
      * @param inputValues        the inputs
      * @param expectedViolations the expected number of violations corresponding to the inputs
      * @param object             the object to validate
-     * @param mutator            the mutator function, e.g. a setter method
+     * @param mutator            the mutator function, e.g., a setter method
      * @param groups             the group or list of groups targeted for validation (defaults to Default)
      * @param <T>                the input type
      * @param <U>                the object type
@@ -159,7 +159,7 @@ public class ParameterizedValidationTestHelper {
     /**
      * Given a list of input values, supply each one to {@code mutator}, and softly assert that the constraint
      * violation messages match those in {@code expectedViolationMessages}. The {@code inputValues} and
-     * {@code expectedViolations} are expected to be the same length and to match at each index, i.e.
+     * {@code expectedViolations} are expected to be the same length and to match at each index, i.e.,
      * that {@code expectedViolations[N]} contains the expected violation messages when applying
      * {@code inputValues[N]} as the input.
      * <p>
@@ -188,7 +188,7 @@ public class ParameterizedValidationTestHelper {
      * @param inputValues               the inputs
      * @param expectedViolationMessages the expected violation error messages corresponding to the inputs
      * @param object                    the object to validate
-     * @param mutator                   the mutator function, e.g. a setter method
+     * @param mutator                   the mutator function, e.g., a setter method
      * @param groups                    the group or list of groups targeted for validation (defaults to Default)
      * @param <T>                       the input type
      * @param <U>                       the object type
@@ -232,7 +232,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -257,7 +257,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -279,7 +279,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -301,7 +301,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -323,7 +323,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -345,7 +345,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -367,7 +367,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -389,7 +389,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -411,7 +411,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -433,7 +433,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -455,7 +455,7 @@ public class ParameterizedValidationTestHelper {
      *
      * @param propertyName the property to validate
      * @param object       the object to validate
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      */
@@ -479,7 +479,7 @@ public class ParameterizedValidationTestHelper {
      * @param propertyName the property to validate
      * @param object       the object to validate
      * @param enumClass    the type of the input {@link Enum}
-     * @param mutator      the mutator function, e.g. a setter method
+     * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
      * @param <E>          the enum type
