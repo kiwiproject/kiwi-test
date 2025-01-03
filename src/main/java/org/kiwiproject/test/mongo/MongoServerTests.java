@@ -16,12 +16,12 @@ public class MongoServerTests {
     /**
      * Start a new in-memory {@link MongoServer}.
      * <p>
-     * Defaults server version to Mongo 3.6
+     * Defaults server version to Mongo 4.0
      *
      * @return the started MongoServer instance
      */
     public static MongoServer startInMemoryMongoServer() {
-        return startInMemoryMongoServer(ServerVersion.MONGO_3_6);
+        return startInMemoryMongoServer(ServerVersion.MONGO_4_0);
     }
 
     /**
