@@ -18,7 +18,8 @@ class RuntimeSQLExceptionTest {
 
         assertThat(runtimeSQLEx)
                 .hasMessage("java.sql.SQLException: Illegal syntax or something like that...")
-                .hasCauseReference(sqlEx);
+                .cause()
+                .isSameAs(sqlEx);
     }
 
     @Test
@@ -28,6 +29,7 @@ class RuntimeSQLExceptionTest {
 
         assertThat(runtimeSQLEx)
                 .hasMessage("Statement error")
-                .hasCauseReference(sqlEx);
+                .cause()
+                .isSameAs(sqlEx);
     }
 }
