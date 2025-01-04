@@ -20,12 +20,6 @@ import org.kiwiproject.test.mongo.MongoServerTests;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * <strong>WARNING:</strong> <em>As of kiwi-test 3.7.0, this extension will fail when using Mongo
- * driver version 5.2.0 or higher, as it requires minimum Mongo server 4.0 and wire version 7.
- * It will not work unless the <a href="https://github.com/bwaldvogel/mongo-java-server">mongo-java-server</a>
- * library fixes <a href="https://github.com/bwaldvogel/mongo-java-server/issues/233">this issue</a>
- * and creates a new release that supports wire version 7.</em>
- * <p>
  * A JUnit Jupiter {@link org.junit.jupiter.api.extension.Extension Extension} that starts an in-memory
  * {@link MongoServer} once before all tests have run, and which shuts it down once after all tests have run.
  * An alternative for testing against "real" MongoDB instances is the {@link MongoDbExtension}.
@@ -40,8 +34,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * to enable tests to get various objects such as the connection string, the test database name, a
  * {@link MongoDatabase} for the test database, a {@link MongoClient}, and more.
  * <p>
- * By default, the in-memory Mongo server will be set to the 3.6 flavor of Mongo.  If you need to use the 3.0 version of
- * Mongo, then the {@link ServerVersion} can be passed into the constructor to set the version.
+ * By default, the in-memory Mongo server will be set to the 4.0 flavor of Mongo.  If you need to use the 3.6 version of
+ * Mongo, then the {@link ServerVersion} can be passed into the constructor to set the version. You will also need
+ * to make sure you are using a Mongo driver version before 5.2.0, which changes to require Mongo server 4.0 and
+ * wire version 7.
  * <p>
  * Usage:
  * <pre>
@@ -65,7 +61,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback, AfterEachCallback {
 
-    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_3_6;
+    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_4_0;
 
     /**
      * The in-memory {@link MongoServer} instance started by this extension.
@@ -123,7 +119,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     /**
      * Creates a new instance that will drop and re-create the test database after each test.
      * <p>
-     * The Mongo server will be set to the 3.6 version
+     * The Mongo server will be set to the 4.0 version
      */
     public MongoServerExtension() {
         this(DropTime.AFTER_EACH, DEFAULT_SERVER_VERSION);
@@ -132,7 +128,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     /**
      * Creates a new instance that will drop the test database using the given {@link DropTime}.
      * <p>
-     * The Mongo server will be set to the 3.6 version
+     * The Mongo server will be set to the 4.0 version
      *
      * @param dropTime when to drop the test database
      */
