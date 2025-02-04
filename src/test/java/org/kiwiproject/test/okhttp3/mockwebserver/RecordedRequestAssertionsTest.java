@@ -656,6 +656,6 @@ class RecordedRequestAssertionsTest {
     }
 
     private URI uri(String path) {
-        return MockWebServers.uri(server, path);
+        return mockWebServerExtension.uri(path);
     }
 }

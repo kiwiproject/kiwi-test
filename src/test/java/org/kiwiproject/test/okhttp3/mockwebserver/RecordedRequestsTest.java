@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.base.UncheckedInterruptedException;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -173,8 +172,7 @@ class RecordedRequestsTest {
                 .connectTimeout(Duration.ofMillis(100))
                 .build();
 
-        var url = server.url(path).toString();
-        var uri = URI.create(url);
+        var uri = mockWebServerExtension.uri(path);
 
         try {
             var request = HttpRequest.newBuilder().GET().uri(uri).build();
