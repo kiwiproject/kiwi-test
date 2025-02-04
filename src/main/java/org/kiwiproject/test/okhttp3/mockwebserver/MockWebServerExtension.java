@@ -14,6 +14,7 @@ import org.kiwiproject.io.KiwiIO;
 import org.kiwiproject.util.function.KiwiConsumers;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.function.Consumer;
 
 /**
@@ -22,9 +23,21 @@ import java.util.function.Consumer;
  */
 public class MockWebServerExtension implements BeforeEachCallback, AfterEachCallback {
 
+    /**
+     * The {@link MockWebServer} started by this extension.
+     */
     @Getter
     @Accessors(fluent = true)
     private final MockWebServer server;
+
+    /**
+     * The base {@link URI} of the {@link MockWebServer}.
+     * <p>
+     * This is available after the {@link MockWebServer} has been started.
+     */
+    @Getter
+    @Accessors(fluent = true)
+    private URI uri;
 
     private final Consumer<MockWebServer> serverCustomizer;
 
@@ -57,6 +70,7 @@ public class MockWebServerExtension implements BeforeEachCallback, AfterEachCall
     public void beforeEach(ExtensionContext context) throws IOException {
         serverCustomizer.accept(server);
         server.start();
+        uri = MockWebServers.uri(server);
     }
 
     @Override
