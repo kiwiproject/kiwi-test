@@ -77,4 +77,17 @@ public class MockWebServerExtension implements BeforeEachCallback, AfterEachCall
     public void afterEach(ExtensionContext context) {
         KiwiIO.closeQuietly(server);
     }
+
+    /**
+     * Get a {@link URI} with the give {@code path} that can be used to
+     * make calls to the {@link MockWebServer}.
+     * <p>
+     * This can be called after the {@link MockWebServer} has been started.
+     *
+     * @param path the path
+     * @return a new {@link URI}
+     */
+    public URI uri(String path) {
+        return uri.resolve(path);
+    }
 }

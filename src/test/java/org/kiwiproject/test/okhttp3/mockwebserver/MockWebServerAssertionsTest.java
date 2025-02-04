@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.time.Duration;
 
@@ -42,8 +41,7 @@ class MockWebServerAssertionsTest {
         server.enqueue(new MockResponse());
 
         var path = "/status";
-        var url = server.url(path).toString();
-        var uri = URI.create(url);
+        var uri = mockWebServerExtension.uri(path);
         JdkHttpClients.get(httpClient, uri);
 
         assertThatCode(() ->
@@ -61,13 +59,11 @@ class MockWebServerAssertionsTest {
         server.enqueue(new MockResponse().setResponseCode(201));
 
         var path1 = "/status";
-        var url1 = server.url(path1).toString();
-        var uri1 = URI.create(url1);
+        var uri1 = mockWebServerExtension.uri(path1);
         JdkHttpClients.get(httpClient, uri1);
 
         var path2 = "/create";
-        var url2 = server.url(path2).toString();
-        var uri2 = URI.create(url2);
+        var uri2 = mockWebServerExtension.uri(path2);
         var body = """
                     { "name": "Bob" }
                     """;
