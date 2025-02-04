@@ -19,13 +19,12 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Durations;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.base.UncheckedInterruptedException;
-import org.kiwiproject.io.KiwiIO;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,17 +39,14 @@ import java.util.concurrent.TimeUnit;
 @DisplayName("RecordedRequests")
 class RecordedRequestsTest {
 
+    @RegisterExtension
+    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+
     private MockWebServer server;
 
     @BeforeEach
-    void setUp() throws IOException {
-        server = new MockWebServer();
-        server.start();
-    }
-
-    @AfterEach
-    void tearDown() {
-        KiwiIO.closeQuietly(server);
+    void setUp() {
+        server = mockWebServerExtension.server();
     }
 
     @Nested
