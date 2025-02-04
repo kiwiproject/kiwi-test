@@ -16,6 +16,18 @@ import java.net.URI;
 public class MockWebServers {
 
     /**
+     * Get the "base" {@link URI} of the {@link MockWebServer} to which HTTP
+     * requests can be made. It can also be used to {@link URI#resolve(URI) resolve}
+     * other URIs relative to the base URI.
+     *
+     * @param server the {@link MockWebServer}
+     * @return a {@link URI}
+     */
+    public static URI uri(MockWebServer server) {
+        return uri(server, "");
+    }
+
+    /**
      * Create a {@link URI} which can be used to make HTTP (or HTTPS) requests
      * to the given {@link MockWebServer}.
      * <p>

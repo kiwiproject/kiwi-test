@@ -6,6 +6,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -27,6 +28,17 @@ class MockWebServersTest {
 
     @Nested
     class UriMethod {
+
+        @Test
+        void shouldGetBaseUriOfServer() {
+            var url = server.url("").toString();
+            var expectedUri = URI.create(url);
+            assertThat(MockWebServers.uri(server)).isEqualTo(expectedUri);
+        }
+    }
+
+    @Nested
+    class UriMethodWithPath {
 
         @ParameterizedTest
         @ValueSource(strings = { "", "/", "/status", "/status/", "/users/active" })
