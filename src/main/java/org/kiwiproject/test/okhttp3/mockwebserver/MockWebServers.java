@@ -38,6 +38,6 @@ public class MockWebServers {
      * @return a {@link URI} to connect to the server, with the given path
      */
     public static URI uri(MockWebServer server, String path) {
-        return URI.create(server.url(path).toString());
+        return server.url(path).uri();
     }
 }
