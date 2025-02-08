@@ -30,7 +30,29 @@ import java.util.function.Consumer;
 class MockWebServerExtensionTest {
 
     @Nested
-    class Constructors {
+    class NoArgsConstructor {
+
+        @Test
+        void shouldCreateServer() {
+            var extension = new MockWebServerExtension();
+
+            assertThat(extension.server()).isNotNull();
+        }
+    }
+
+    @Nested
+    class ConstructorWithServerCustomizer {
+
+        @Test
+        void shouldRequireNonNullCustomizer() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> new MockWebServerExtension(null))
+                    .withMessage("serverCustomizer must not be null");
+        }
+    }
+
+    @Nested
+    class AllArgsConstructor {
 
         @Test
         void shouldRequireNonNullServer() {
@@ -45,13 +67,6 @@ class MockWebServerExtensionTest {
             var server = new MockWebServer();
             assertThatCode(() -> new MockWebServerExtension(server, null))
                     .doesNotThrowAnyException();
-        }
-
-        @Test
-        void shouldCreateServer() {
-            var extension = new MockWebServerExtension();
-
-            assertThat(extension.server()).isNotNull();
         }
 
         @Test
