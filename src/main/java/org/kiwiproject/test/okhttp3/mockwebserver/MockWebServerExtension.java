@@ -56,7 +56,7 @@ public class MockWebServerExtension implements BeforeEachCallback, AfterEachCall
      * use the builder instead of this constructor.
      */
     public MockWebServerExtension() {
-        this(new MockWebServer(), KiwiConsumers.noOp());
+        this(KiwiConsumers.noOp());
     }
 
     /**
