@@ -17,14 +17,14 @@ import java.time.Duration;
 class MockWebServerAssertionsTest {
 
     @RegisterExtension
-    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+    private final MockWebServerExtension serverExtension = new MockWebServerExtension();
 
     private MockWebServer server;
     private HttpClient httpClient;
 
     @BeforeEach
     void setUp() {
-        server = mockWebServerExtension.server();
+        server = serverExtension.server();
 
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(100))
@@ -41,7 +41,7 @@ class MockWebServerAssertionsTest {
         server.enqueue(new MockResponse());
 
         var path = "/status";
-        var uri = mockWebServerExtension.uri(path);
+        var uri = serverExtension.uri(path);
         JdkHttpClients.get(httpClient, uri);
 
         assertThatCode(() ->
@@ -59,11 +59,11 @@ class MockWebServerAssertionsTest {
         server.enqueue(new MockResponse().setResponseCode(201));
 
         var path1 = "/status";
-        var uri1 = mockWebServerExtension.uri(path1);
+        var uri1 = serverExtension.uri(path1);
         JdkHttpClients.get(httpClient, uri1);
 
         var path2 = "/create";
-        var uri2 = mockWebServerExtension.uri(path2);
+        var uri2 = serverExtension.uri(path2);
         var body = """
                     { "name": "Bob" }
                     """;

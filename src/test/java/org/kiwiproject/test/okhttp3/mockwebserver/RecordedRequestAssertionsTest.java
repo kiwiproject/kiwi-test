@@ -41,14 +41,14 @@ import javax.net.ssl.SSLHandshakeException;
 class RecordedRequestAssertionsTest {
 
     @RegisterExtension
-    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+    private final MockWebServerExtension serverExtension = new MockWebServerExtension();
 
     private MockWebServer server;
     private HttpClient httpClient;
 
     @BeforeEach
     void setUp() {
-        server = mockWebServerExtension.server();
+        server = serverExtension.server();
 
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(100))
@@ -656,6 +656,6 @@ class RecordedRequestAssertionsTest {
     }
 
     private URI uri(String path) {
-        return mockWebServerExtension.uri(path);
+        return serverExtension.uri(path);
     }
 }

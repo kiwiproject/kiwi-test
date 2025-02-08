@@ -39,13 +39,13 @@ import java.util.concurrent.TimeUnit;
 class RecordedRequestsTest {
 
     @RegisterExtension
-    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+    private final MockWebServerExtension serverExtension = new MockWebServerExtension();
 
     private MockWebServer server;
 
     @BeforeEach
     void setUp() {
-        server = mockWebServerExtension.server();
+        server = serverExtension.server();
     }
 
     @Nested
@@ -172,7 +172,7 @@ class RecordedRequestsTest {
                 .connectTimeout(Duration.ofMillis(100))
                 .build();
 
-        var uri = mockWebServerExtension.uri(path);
+        var uri = serverExtension.uri(path);
 
         try {
             var request = HttpRequest.newBuilder().GET().uri(uri).build();

@@ -17,13 +17,13 @@ import java.net.URI;
 class MockWebServersTest {
 
     @RegisterExtension
-    private final MockWebServerExtension mockWebServerExtension = new MockWebServerExtension();
+    private final MockWebServerExtension serverExtension = new MockWebServerExtension();
 
     private MockWebServer server;
 
     @BeforeEach
     void setUp() {
-        server = mockWebServerExtension.server();
+        server = serverExtension.server();
     }
 
     @Nested
