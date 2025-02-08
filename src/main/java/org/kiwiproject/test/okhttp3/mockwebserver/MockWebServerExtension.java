@@ -56,7 +56,18 @@ public class MockWebServerExtension implements BeforeEachCallback, AfterEachCall
      * use the builder instead of this constructor.
      */
     public MockWebServerExtension() {
-        this(new MockWebServer(), KiwiConsumers.noOp());
+        this(KiwiConsumers.noOp());
+    }
+
+    /**
+     * Create a new instance that will create a new {@link MockWebServer} and
+     * customize it using the {@code serverCustomizer}.
+     *
+     * @param serverCustomizer allows a test to configure the server, e.g., to customize the protocols
+     *                         it supports or to serve requests via HTTPS over TLS. Must not be {@code null}.
+     */
+    public MockWebServerExtension(Consumer<MockWebServer> serverCustomizer) {
+        this(new MockWebServer(), requireNotNull(serverCustomizer, "serverCustomizer must not be null"));
     }
 
     /**
