@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.kiwiproject</groupId>
         <artifactId>kiwi-parent</artifactId>
-        <version>3.0.24</version>
+        <version>3.0.25</version>
     </parent>
 
     <artifactId>kiwi-test</artifactId>
@@ -28,8 +28,8 @@
 
     <properties>
         <!-- Versions for required dependencies -->
-        <kiwi.version>4.8.0</kiwi.version>
-        <kiwi-bom.version>2.0.23</kiwi-bom.version>
+        <kiwi.version>4.9.0</kiwi.version>
+        <kiwi-bom.version>2.0.24</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
