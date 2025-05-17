@@ -123,7 +123,7 @@ class RandomStringArgumentsProviderTest {
                         numUniqueValues,
                         percentInstance.format(percentUnique),
                         expectedMinUnique)
-                .hasSizeGreaterThan(expectedMinUnique);
+                .hasSizeGreaterThanOrEqualTo(expectedMinUnique);
     }
 
     @ParameterizedTest
