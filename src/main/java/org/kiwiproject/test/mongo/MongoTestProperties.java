@@ -18,7 +18,7 @@ import com.mongodb.client.MongoClients;
 import lombok.Builder;
 import lombok.Value;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.kiwiproject.net.KiwiUrls;
 
 /**

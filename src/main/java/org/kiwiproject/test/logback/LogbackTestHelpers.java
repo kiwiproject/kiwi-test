@@ -12,7 +12,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import com.google.common.io.Resources;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.collections4.ListUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
