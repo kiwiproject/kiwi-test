@@ -16,9 +16,9 @@ class MongoServerExtensionTestHelpers {
 
     static final String TEST_COLLECTION_NAME = "testCollection";
 
-    static boolean anyServerVersionSupportsWireVersion7() {
+    static boolean anyServerVersionSupportsWireVersion8() {
         return Arrays.stream(ServerVersion.values())
-                .anyMatch(serverVersion -> serverVersion.getWireVersion() > 6);
+                .anyMatch(serverVersion -> serverVersion.getWireVersion() == 8);
     }
 
     static MongoCollection<Document> getTestCollection(MongoDatabase testDatabase) {

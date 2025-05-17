@@ -34,10 +34,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * to enable tests to get various objects such as the connection string, the test database name, a
  * {@link MongoDatabase} for the test database, a {@link MongoClient}, and more.
  * <p>
- * By default, the in-memory Mongo server will be set to the 4.0 flavor of Mongo.  If you need to use the 3.6 version of
- * Mongo, then the {@link ServerVersion} can be passed into the constructor to set the version. You will also need
- * to make sure you are using a Mongo driver version before 5.2.0, which changes to require Mongo server 4.0 and
- * wire version 7.
+ * <strong>Warning about Mongo versions</strong>
+ * <p>
+ * By default, the in-memory Mongo server will be set to the 4.0 flavor of Mongo. This requires a Mongo driver
+ * that supports wire version 7. If you need to use the 3.6 version of Mongo, then the {@link ServerVersion} can be
+ * passed into the constructor to set the version. You will also need to make sure you are using a Mongo driver
+ * version before 5.2.0, which changes to require Mongo server 4.0 and wire version 7. If you are using a Mongo
+ * driver that supports a higher wire version, then this extension will not work. Wire version 8 started
+ * in Mongo 4.2, and Mongo driver 5.5.0 and higher requires that wire version.
  * <p>
  * Usage:
  * <pre>

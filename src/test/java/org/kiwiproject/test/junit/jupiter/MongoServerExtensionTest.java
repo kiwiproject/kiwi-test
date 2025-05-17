@@ -15,8 +15,8 @@ import java.util.Optional;
 
 @DisplayName("MongoServerExtension")
 @EnabledIf(
-        value = "org.kiwiproject.test.junit.jupiter.MongoServerExtensionTestHelpers#anyServerVersionSupportsWireVersion7",
-        disabledReason = "Must support wire version 7 or higher")
+        value = "org.kiwiproject.test.junit.jupiter.MongoServerExtensionTestHelpers#anyServerVersionSupportsWireVersion8",
+        disabledReason = "Must support wire version 8 or higher")
 class MongoServerExtensionTest {
 
     @RegisterExtension
