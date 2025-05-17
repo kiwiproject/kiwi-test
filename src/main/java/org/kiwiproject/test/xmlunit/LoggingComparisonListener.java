@@ -4,7 +4,7 @@ import static java.util.Objects.nonNull;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.xmlunit.diff.Comparison;

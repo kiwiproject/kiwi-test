@@ -2,7 +2,7 @@ package org.kiwiproject.test.logback;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides utilities for Logback-related functionality.

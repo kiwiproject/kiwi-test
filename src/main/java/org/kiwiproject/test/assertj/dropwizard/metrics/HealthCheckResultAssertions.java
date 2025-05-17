@@ -13,7 +13,7 @@ import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.kiwiproject.base.KiwiStrings;
 
 import java.util.Arrays;
