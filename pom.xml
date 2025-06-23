@@ -37,7 +37,7 @@
         <!-- This version must match the okhttp version in kiwi-bom. TODO: Consider adding this to kiwi-bom. -->
         <okhttp3.mockwebserver.version>4.12.0</okhttp3.mockwebserver.version>
 
-        <xmlunit.version>2.10.2</xmlunit.version>
+        <xmlunit.version>2.10.3</xmlunit.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
