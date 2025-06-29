@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.AnnotationConsumer;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
@@ -35,7 +36,7 @@ class RandomIntArgumentsProvider implements ArgumentsProvider, AnnotationConsume
      * {@link ThreadLocalRandom#nextInt(int, int)}.
      */
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) {
         checkArgument(randomIntSource.min() <= randomIntSource.max(), "min must be equal or less than max");
 
         var random = ThreadLocalRandom.current();

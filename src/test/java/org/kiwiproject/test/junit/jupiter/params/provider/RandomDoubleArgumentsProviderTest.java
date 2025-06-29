@@ -26,7 +26,7 @@ class RandomDoubleArgumentsProviderTest {
         provider.accept(randomDoubleSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("min must be equal or less than max");
     }
 
@@ -40,7 +40,7 @@ class RandomDoubleArgumentsProviderTest {
         var provider = new RandomDoubleArgumentsProvider();
         provider.accept(randomDoubleSource);
 
-        var arguments = provider.provideArguments(null)
+        var arguments = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .mapToDouble(value -> (double) value)
@@ -63,7 +63,7 @@ class RandomDoubleArgumentsProviderTest {
         var provider = new RandomDoubleArgumentsProvider();
         provider.accept(randomDoubleSource);
 
-        var arguments = provider.provideArguments(null)
+        var arguments = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .mapToDouble(value -> (double) value)

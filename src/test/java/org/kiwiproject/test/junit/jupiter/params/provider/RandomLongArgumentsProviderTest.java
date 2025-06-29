@@ -21,7 +21,7 @@ class RandomLongArgumentsProviderTest {
         provider.accept(randomLongSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("min must be equal or less than max");
     }
 
@@ -32,7 +32,7 @@ class RandomLongArgumentsProviderTest {
         var provider = new RandomLongArgumentsProvider();
         provider.accept(randomLongSource);
 
-        var arguments = provider.provideArguments(null)
+        var arguments = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .mapToLong(value -> (long) value)
