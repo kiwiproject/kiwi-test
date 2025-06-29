@@ -36,12 +36,13 @@ import java.util.concurrent.ThreadLocalRandom;
  * <p>
  * <strong>Warning about Mongo versions</strong>
  * <p>
- * By default, the in-memory Mongo server will be set to the 4.0 flavor of Mongo. This requires a Mongo driver
- * that supports wire version 7. If you need to use the 3.6 version of Mongo, then the {@link ServerVersion} can be
- * passed into the constructor to set the version. You will also need to make sure you are using a Mongo driver
- * version before 5.2.0, which changes to require Mongo server 4.0 and wire version 7. If you are using a Mongo
- * driver that supports a higher wire version, then this extension will not work. Wire version 8 started
- * in Mongo 4.2, and Mongo driver 5.5.0 and higher requires that wire version.
+ * By default, the in-memory Mongo server will be set to the 5.0 flavor of Mongo. This requires a Mongo driver
+ * that supports wire version 8. If you need to use the 3.6 or 4.0 version of Mongo, then the {@link ServerVersion}
+ * can be passed into the constructor to set the version. You will also need to make sure you are using a Mongo driver
+ * version that os compatible with the Mongo version. For example, to use the Mongo 3.6 version, you need a version
+ * of the Mongo driver before 5.2.0, which changes to require Mongo server 4.0 and wire version 7. If you are using
+ * a Mongo driver that supports a higher wire version than 8, then this extension will not work. See
+ * {@link ServerVersion} for the Mongo version and wire protocols supported by the {@link MongoServer}.
  * <p>
  * Usage:
  * <pre>
@@ -65,7 +66,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback, AfterEachCallback {
 
-    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_4_0;
+    private static final ServerVersion DEFAULT_SERVER_VERSION = ServerVersion.MONGO_5_0;
 
     /**
      * The in-memory {@link MongoServer} instance started by this extension.
