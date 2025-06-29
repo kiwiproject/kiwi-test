@@ -79,8 +79,8 @@ class MongoServerExtensionTest {
     }
 
     @Test
-    void shouldCreateServerExtensionWithDefaultMongo4_0() {
+    void shouldCreateServerExtensionWithDefaultMongo5_0() {
         var extension = new MongoServerExtension();
-        assertThat(extension.getServerVersion()).isEqualTo(ServerVersion.MONGO_4_0);
+        assertThat(extension.getServerVersion()).isEqualTo(ServerVersion.MONGO_5_0);
     }
 }
