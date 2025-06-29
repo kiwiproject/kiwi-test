@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.AnnotationConsumer;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 import org.kiwiproject.test.junit.jupiter.params.provider.RandomStringSource.CountStrategy;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class RandomStringArgumentsProvider implements ArgumentsProvider, Annotat
     }
 
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) {
         checkArgument(randomStringSource.minLength() <= randomStringSource.maxLength(),
                 "minLength must be equal or less than maxLength");
 

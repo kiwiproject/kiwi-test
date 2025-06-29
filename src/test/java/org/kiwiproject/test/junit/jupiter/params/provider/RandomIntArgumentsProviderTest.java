@@ -22,7 +22,7 @@ class RandomIntArgumentsProviderTest {
         provider.accept(randomIntSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("min must be equal or less than max");
     }
 
@@ -33,7 +33,7 @@ class RandomIntArgumentsProviderTest {
         var provider = new RandomIntArgumentsProvider();
         provider.accept(randomIntSource);
 
-        var arguments = provider.provideArguments(null)
+        var arguments = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .mapToInt(value -> (int) value)

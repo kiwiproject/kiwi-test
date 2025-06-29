@@ -96,7 +96,7 @@ class RandomStringArgumentsProviderTest {
 
         var provider = createAndInitProvider(randomStringSource);
 
-        var values = provider.provideArguments(null)
+        var values = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .map(String.class::cast)
@@ -144,7 +144,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("count must be greater than zero");
     }
 
@@ -169,7 +169,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("minLength must be equal or less than maxLength");
     }
 
@@ -194,7 +194,7 @@ class RandomStringArgumentsProviderTest {
 
         var provider = createAndInitProvider(randomStringSource);
 
-        var arguments = provider.provideArguments(null)
+        var arguments = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .map(String.class::cast)
@@ -221,7 +221,7 @@ class RandomStringArgumentsProviderTest {
 
         var provider = createAndInitProvider(randomStringSource);
 
-        var arguments = provider.provideArguments(null)
+        var arguments = provider.provideArguments(null, null)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .map(String.class::cast)
@@ -249,7 +249,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("minCount must be greater than zero, and maxCount must be greater or equal to minCount");
     }
 
@@ -312,7 +312,7 @@ class RandomStringArgumentsProviderTest {
         // we need to force the stream to terminate for this test
         //noinspection ResultOfMethodCallIgnored
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null).toList())
+                .isThrownBy(() -> provider.provideArguments(null, null).toList())
                 .withMessage("chars must have at least one character");
     }
 
@@ -346,7 +346,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("endChar must be higher than beginChar");
     }
 
@@ -382,7 +382,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null))
+                .isThrownBy(() -> provider.provideArguments(null, null))
                 .withMessage("beginChars and endChars must have the same length");
     }
 

@@ -5,6 +5,7 @@ import static java.util.Collections.unmodifiableList;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,7 +69,7 @@ public class AsciiOnlyBlankStringArgumentsProvider implements ArgumentsProvider 
      * exhausted. So don't do that.
      */
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) {
         return ASCII_ONLY_BLANK_STRINGS.stream().map(Arguments::of);
     }
 }
