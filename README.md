@@ -1,4 +1,4 @@
-### Kiwi Test
+# Kiwi Test
 [![Build](https://github.com/kiwiproject/kiwi-test/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/kiwiproject/kiwi-test/actions/workflows/build.yml?query=branch%3Amain)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_kiwi-test&metric=alert_status)](https://sonarcloud.io/dashboard?id=kiwiproject_kiwi-test)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kiwiproject_kiwi-test&metric=coverage)](https://sonarcloud.io/dashboard?id=kiwiproject_kiwi-test)
