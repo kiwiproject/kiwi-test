@@ -13,7 +13,6 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import lombok.AllArgsConstructor;
@@ -26,14 +25,13 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
+import org.kiwiproject.test.junit.jupiter.DropwizardExtensionsSupportWithLoggingReset;
 
 import java.util.List;
 
 @DisplayName("DropwizardAppTests")
 @ExtendWith(SoftAssertionsExtension.class)
-@ExtendWith(DropwizardExtensionsSupport.class)
-@ExtendWith(ResetLogbackLoggingExtension.class)
+@DropwizardExtensionsSupportWithLoggingReset
 class DropwizardAppTestsTest {
 
     @Getter
