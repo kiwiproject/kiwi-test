@@ -43,6 +43,8 @@ class PostgresAppTestExtensionCustomPropertyTest {
         }
     }
 
+    // Do NOT annotate this with RegisterExtension.
+    // This test executes the extension programmatically.
     private static final PostgresAppTestExtension<Config> EXTENSION = new PostgresAppTestExtension<>(
             "PostgresAppTestExtensionTest/test-migrations.xml",
             "PostgresAppTestExtensionTest/test-config.yml",

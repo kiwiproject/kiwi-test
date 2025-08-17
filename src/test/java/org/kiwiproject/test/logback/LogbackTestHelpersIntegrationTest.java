@@ -10,7 +10,6 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +18,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension;
+import org.kiwiproject.test.junit.jupiter.DropwizardExtensionsSupportWithLoggingReset;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -41,8 +39,7 @@ import org.slf4j.LoggerFactory;
  * is therefore a bit circular.
  */
 @DisplayName("LogbackTestHelpers (Integration Test)")
-@ExtendWith(DropwizardExtensionsSupport.class)
-@ExtendWith(ResetLogbackLoggingExtension.class)
+@DropwizardExtensionsSupportWithLoggingReset
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Slf4j
 class LogbackTestHelpersIntegrationTest {
