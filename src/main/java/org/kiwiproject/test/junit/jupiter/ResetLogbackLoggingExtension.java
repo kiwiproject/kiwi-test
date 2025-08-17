@@ -47,6 +47,16 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  *       // test code that uses DropwizardClientExtension or DropwizardAppExtension
  *   }
  * </pre>
+ * You can also use the {@link DropwizardExtensionsSupportWithLoggingReset} meta-annotation
+ * which guarantees the correct order:
+ * <pre>
+ *   {@literal @}DropwizardExtensionsSupportWithLoggingReset
+ *    class SomeTest {
+ *
+ *        // test code that uses DropwizardClientExtension or DropwizardAppExtension
+ *    }
+ * </pre>
+ * <p>
  * Alternatively, you can register the extension programmatically to use a custom
  * logging configuration. When doing this, you must register {@code DropwizardExtensionsSupport}
  * and similar extensions programmatically as well to ensure the correct order using
@@ -74,6 +84,9 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  * in the JUnit reference manual. To be sure of the extension order when using programmatic
  * registration, use explicit {@code @Order} annotations. It's also more clear and does not require
  * remembering the registration order or the differences between static and instance fields.
+ *
+ * @see io.dropwizard.testing.junit5.DropwizardExtensionsSupport
+ * @see DropwizardExtensionsSupportWithLoggingReset
  */
 @Builder
 @NoArgsConstructor
