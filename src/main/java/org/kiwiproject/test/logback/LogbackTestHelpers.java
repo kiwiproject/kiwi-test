@@ -11,13 +11,13 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import com.google.common.io.Resources;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.collections4.ListUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Static test utilities that provide Logback-related functionality.
@@ -72,10 +72,10 @@ public class LogbackTestHelpers {
     }
 
     private static URL getFirstLogbackConfigOrThrow(String logbackConfigFilePath, String... fallbackConfigFilePaths) {
-        var allConfigs = ListUtils.union(
-                List.of(logbackConfigFilePath),
-                List.of(fallbackConfigFilePaths)
-        );
+        var allConfigs = Stream.concat(
+                Stream.of(logbackConfigFilePath),
+                Arrays.stream(fallbackConfigFilePaths)
+        ).toList();
 
         return allConfigs.stream()
                 .map(LogbackTestHelpers::getResourceOrNull)
