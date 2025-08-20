@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.entry;
+import static org.kiwiproject.test.dropwizard.resource.DropwizardResourceTests.resourceBuilderPreservingLogbackConfig;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
@@ -107,8 +108,7 @@ class JaxrsExceptionTestHelperTest {
     @ExtendWith(DropwizardExtensionsSupport.class)
     class ToJaxrsExceptionInboundResponse {
 
-        private final ResourceExtension resources = ResourceExtension.builder()
-                .bootstrapLogging(false)
+        private final ResourceExtension resources = resourceBuilderPreservingLogbackConfig()
                 .addResource(new ResourceForInboundResponseTests())
                 .build();
 
