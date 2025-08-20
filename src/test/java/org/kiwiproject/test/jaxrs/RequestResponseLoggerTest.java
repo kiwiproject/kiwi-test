@@ -3,6 +3,7 @@ package org.kiwiproject.test.jaxrs;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kiwiproject.collect.KiwiLists.first;
 import static org.kiwiproject.collect.KiwiLists.second;
+import static org.kiwiproject.test.dropwizard.resource.DropwizardResourceTests.resourceBuilderPreservingLogbackConfig;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
@@ -50,8 +51,7 @@ class RequestResponseLoggerTest {
         }
     }
 
-    private static final ResourceExtension RESOURCES = ResourceExtension.builder()
-            .bootstrapLogging(false)
+    private static final ResourceExtension RESOURCES = resourceBuilderPreservingLogbackConfig()
             .addResource(new RequestResponseLoggerTestResource())
             .build();
 
