@@ -20,7 +20,7 @@ public class DropwizardResourceTests {
      * @return a new {@link ResourceExtension.Builder} instance
      * @see ResourceExtension.Builder#bootstrapLogging(boolean)
      */
-    public static ResourceExtension.Builder resourceBuilderPreservingLogbackConfig() {
+    public ResourceExtension.Builder resourceBuilderPreservingLogbackConfig() {
         return ResourceExtension.builder().bootstrapLogging(false);
     }
 }
