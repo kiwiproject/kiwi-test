@@ -1,5 +1,6 @@
 package org.kiwiproject.test.junit.jupiter;
 
+import ch.qos.logback.classic.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,9 +22,11 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  * extensions both stop and detach all appenders after all tests complete! Both of those extensions
  * reset Logback in
  * <a href="https://github.com/dropwizard/dropwizard/blob/297870e3b4b43ea9fb19417dd90ed78151cf6f5d/dropwizard-testing/src/main/java/io/dropwizard/testing/DropwizardTestSupport.java#L244">DropwizardTestSupport</a>.
- * Once this happens, there is <em>no logging output</em> from later tests (since there are no more appenders).
- * We consider this to be <em>bad</em>, since logging output is useful to track down causes if
- * there are other test failures. And, it's just not nice behavior to completely hijack logging!
+ * Once this happens, there is either a minimal configuration that only logs at {@code INFO} and higher levels,
+ * or worse, there is <em>no logging output</em> from later tests (in the case where it calls
+ * {@link Logger#detachAndStopAllAppenders()}). We consider this to be <em>bad</em>, since logging output is
+ * useful to track down causes if there are other test failures. And, it's just not nice behavior to completely
+ * hijack logging!
  * <p>
  * You can use this extension in tests that are using misbehaving components to ensure that Logback
  * is reset after all tests complete, so that later tests have log output.
