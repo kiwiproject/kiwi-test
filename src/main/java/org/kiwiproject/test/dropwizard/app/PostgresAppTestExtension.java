@@ -46,7 +46,7 @@ import org.postgresql.Driver;
  *          Since this uses {@link DropwizardAppExtension}, the Logback configuration is reset to a minimal
  *          configuration or completely wiped out. When using this, consider also using the
  *          {@link org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension ResetLogbackLoggingExtension},
- *          so that the original Logback configuration is retained after the test. To use the reset extension,
+ *          so that the original Logback configuration is restored after the test. To use the reset extension,
  *          you can add {@code @ExtendWith(ResetLogbackLoggingExtension.class} to the test class.
  *      </li>
  * </ul>
