@@ -42,6 +42,13 @@ import org.postgresql.Driver;
  *          You should <strong>not</strong> register {@code DropwizardExtensionsSupport} or the embedded Postgres
  *          extension. See the WARNING below.
  *      </li>
+ *      <li>
+ *          Since this uses {@link DropwizardAppExtension}, the Logback configuration is reset to a minimal
+ *          configuration or completely wiped out. When using this, consider also using the
+ *          {@link org.kiwiproject.test.junit.jupiter.ResetLogbackLoggingExtension ResetLogbackLoggingExtension},
+ *          so that the original Logback configuration is restored after the test. To use the reset extension,
+ *          you can add {@code @ExtendWith(ResetLogbackLoggingExtension.class} to the test class.
+ *      </li>
  * </ul>
  * <p>
  * To include this extension in an Application test, add the following at the top of the class:
