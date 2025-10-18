@@ -28,8 +28,8 @@
 
     <properties>
         <!-- Versions for required dependencies -->
-        <kiwi.version>4.13.0</kiwi.version>
-        <kiwi-bom.version>2.1.1</kiwi-bom.version>
+        <kiwi.version>4.14.0</kiwi.version>
+        <kiwi-bom.version>2.2.0</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
@@ -261,13 +261,13 @@
 
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mongodb</artifactId>
+            <artifactId>testcontainers-mongodb</artifactId>
             <scope>test</scope>
         </dependency>
 
