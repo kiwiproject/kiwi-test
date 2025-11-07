@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 import org.bson.Document;
 import org.junit.jupiter.api.TestInfo;
 import org.kiwiproject.test.mongo.MongoTestProperties;
-import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 import java.util.List;
 
