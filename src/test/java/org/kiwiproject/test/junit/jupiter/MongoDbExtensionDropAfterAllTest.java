@@ -25,9 +25,9 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.test.mongo.MongoTestProperties;
-import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 @DisplayName("MongoDbExtension: Drop @AfterAll")
 @Testcontainers(disabledWithoutDocker = true)

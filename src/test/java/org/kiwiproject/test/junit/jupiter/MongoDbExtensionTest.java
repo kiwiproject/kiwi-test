@@ -19,9 +19,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.mongo.MongoTestProperties;
 import org.kiwiproject.test.mongo.MongoTestProperties.ServiceHostDomain;
-import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
