@@ -5,9 +5,9 @@ import static java.util.Objects.isNull;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 @UtilityClass
 @Slf4j
