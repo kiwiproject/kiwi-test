@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.kiwiproject.time.KiwiInstants.minusDays;
 import static org.kiwiproject.time.KiwiInstants.plusDays;
 
+import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
 import org.assertj.core.data.TemporalUnitOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -52,11 +56,32 @@ class CertOptionsTest {
     }
 
     @Test
-    void shouldThrow_WhenCertDirIsInvalid() {
+    void shouldThrow_WhenCertDir_DoesNotExist() {
         var dir = Path.of("/this/does/not/exist");
         assertThatIllegalStateException()
                 .isThrownBy(() -> CertOptions.builder().certDir(dir).build())
                 .withMessage("%s is not a directory or is not writable", dir);
+    }
+
+    @Test
+    void shouldThrow_WhenCertDir_IsNotADirectory(@TempDir Path certDir) throws IOException {
+        var file = certDir.resolve("a-file");
+        Files.writeString(file, "some text");
+        assertThatIllegalStateException()
+                .isThrownBy(() -> CertOptions.builder().certDir(file).build())
+                .withMessage("%s is not a directory or is not writable", file);
+    }
+
+    @Test
+    void shouldThrow_WhenCertDir_IsNotWritable() throws IOException {
+        try (var fileSystem = MemoryFileSystemBuilder.newLinux().build()) {
+            var certDir = fileSystem.getPath("/certs");
+            Files.createDirectories(certDir);
+            Files.setPosixFilePermissions(certDir, PosixFilePermissions.fromString("r-x------"));
+            assertThatIllegalStateException()
+                    .isThrownBy(() -> CertOptions.builder().certDir(certDir).build())
+                    .withMessage("%s is not a directory or is not writable", certDir);
+        }
     }
 
     @Nested
