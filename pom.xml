@@ -33,9 +33,10 @@
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
-        <memoryfilesystem.version>2.8.2</memoryfilesystem.version>
-
         <xmlunit.version>2.11.0</xmlunit.version>
+
+        <!-- Versions for test dependencies -->
+        <memoryfilesystem.version>2.8.2</memoryfilesystem.version>
 
         <!-- Sonar properties -->
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
