@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>kiwi-test</artifactId>
-    <version>3.12.3-SNAPSHOT</version>
+    <version>3.13.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -33,6 +33,7 @@
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+        <memoryfilesystem.version>2.8.2</memoryfilesystem.version>
 
         <xmlunit.version>2.11.0</xmlunit.version>
 
@@ -214,6 +215,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.marschall</groupId>
+            <artifactId>memoryfilesystem</artifactId>
+            <version>${memoryfilesystem.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
             <scope>provided</scope>
@@ -247,6 +255,12 @@
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>mongo-java-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-pkitesting</artifactId>
             <scope>provided</scope>
         </dependency>
 
