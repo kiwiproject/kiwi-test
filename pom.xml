@@ -215,13 +215,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.marschall</groupId>
-            <artifactId>memoryfilesystem</artifactId>
-            <version>${memoryfilesystem.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
             <scope>provided</scope>
@@ -273,6 +266,13 @@
 
         <!-- test dependencies -->
 
+        <dependency>
+            <groupId>com.github.marschall</groupId>
+            <artifactId>memoryfilesystem</artifactId>
+            <version>${memoryfilesystem.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-junit-jupiter</artifactId>
