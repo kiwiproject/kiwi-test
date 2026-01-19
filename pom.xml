@@ -28,7 +28,7 @@
 
     <properties>
         <!-- Versions for required dependencies -->
-        <kiwi.version>4.15.0</kiwi.version>
+        <kiwi.version>5.0.0</kiwi.version>
         <kiwi-bom.version>3.0.0</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
