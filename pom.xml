@@ -28,8 +28,8 @@
 
     <properties>
         <!-- Versions for required dependencies -->
-        <kiwi.version>5.0.0</kiwi.version>
-        <kiwi-bom.version>3.0.1</kiwi-bom.version>
+        <kiwi.version>5.1.0</kiwi.version>
+        <kiwi-bom.version>3.0.2</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
