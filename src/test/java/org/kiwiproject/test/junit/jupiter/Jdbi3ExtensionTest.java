@@ -117,6 +117,22 @@ class Jdbi3ExtensionTest {
                 .execute()).isOne();
     }
 
+    @Test
+    @Order(9)
+    void shouldApplyJdbiCustomizer() {
+        var customizerHandle = Jdbi3Extension.builder()
+                .dataSource(DATABASE_EXTENSION.getDataSource())
+                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new NameValueArgumentFactory()))
+                .build();
+
+        try (var h = customizerHandle.getJdbi().open()) {
+            assertThat(h.createUpdate("insert into test_table values (:col1, :col2)")
+                    .bindByType("col1", new NameValue("via-customizer"), NameValue.class)
+                    .bind("col2", 99)
+                    .execute()).isOne();
+        }
+    }
+
     private record NameValue(String value) {}
 
     private static class NameValueArgumentFactory implements ArgumentFactory {

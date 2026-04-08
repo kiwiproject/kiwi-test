@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -131,7 +132,8 @@ class Jdbi3Helpers {
                           ConnectionFactory connectionFactory,
                           String url, String username, String password,
                           List<JdbiPlugin> plugins,
-                          List<ArgumentFactory> argumentFactories) {
+                          List<ArgumentFactory> argumentFactories,
+                          Consumer<Jdbi> jdbiCustomizer) {
 
         var jdbi = buildJdbi(dataSource, connectionFactory, url, username, password);
 
@@ -147,6 +149,10 @@ class Jdbi3Helpers {
                 .forEach(jdbi::installPlugin);
 
         argumentFactories.forEach(jdbi::registerArgument);
+
+        if (jdbiCustomizer != null) {
+            jdbiCustomizer.accept(jdbi);
+        }
 
         return jdbi;
     }

@@ -158,6 +158,23 @@ class Jdbi3MultiDaoExtensionTest {
                 .execute()).isOne();
     }
 
+    @Test
+    @Order(9)
+    void shouldApplyJdbiCustomizer() {
+        var customizerExtension = Jdbi3MultiDaoExtension.builder()
+                .dataSource(DATABASE_EXTENSION.getDataSource())
+                .daoType(PersonDao.class)
+                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new NameValueArgumentFactory()))
+                .build();
+
+        try (var h = customizerExtension.getJdbi().open()) {
+            assertThat(h.createUpdate("insert into test_people values (:name, :age)")
+                    .bindByType("name", new NameValue("via-customizer"), NameValue.class)
+                    .bind("age", 42)
+                    .execute()).isOne();
+        }
+    }
+
     private void assertNoPeopleOrPlacesOrThingsExist() {
         assertThat(personDao.findAll()).isEmpty();
         assertThat(placeDao.findAll()).isEmpty();

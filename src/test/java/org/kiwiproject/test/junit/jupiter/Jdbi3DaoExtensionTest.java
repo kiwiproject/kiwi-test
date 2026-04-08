@@ -124,6 +124,23 @@ class Jdbi3DaoExtensionTest {
                 .execute()).isOne();
     }
 
+    @Test
+    @Order(9)
+    void shouldApplyJdbiCustomizer() {
+        var customizerExtension = Jdbi3DaoExtension.<TestTableDao>builder()
+                .daoType(TestTableDao.class)
+                .dataSource(DATABASE_EXTENSION.getDataSource())
+                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new NameValueArgumentFactory()))
+                .build();
+
+        try (var h = customizerExtension.getJdbi().open()) {
+            assertThat(h.createUpdate("insert into test_table values (:col1, :col2)")
+                    .bindByType("col1", new NameValue("via-customizer"), NameValue.class)
+                    .bind("col2", 99)
+                    .execute()).isOne();
+        }
+    }
+
     private record NameValue(String value) {}
 
     private static class NameValueArgumentFactory implements ArgumentFactory {
