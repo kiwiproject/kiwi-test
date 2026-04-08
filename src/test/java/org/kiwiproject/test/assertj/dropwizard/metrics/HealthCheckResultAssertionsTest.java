@@ -621,6 +621,62 @@ class HealthCheckResultAssertionsTest {
         }
 
         @Nested
+        class HasDetailWithEnumValue {
+
+            enum Severity { OK, WARN, ERROR }
+
+            @Test
+            void shouldPass_WhenDetailsContainExpectedKeyAndEnumValue() {
+                var mockHealthCheck = MockHealthCheck.builder()
+                        .detail("severity", Severity.WARN.name())
+                        .build();
+
+                assertThatCode(() ->
+                        assertThat(mockHealthCheck)
+                                .isHealthy()
+                                .hasDetailWithEnumValue("severity", Severity.WARN))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldFail_WhenDetailsDoesNotContainExpectedEnumValue() {
+                var mockHealthCheck = MockHealthCheck.builder()
+                        .detail("severity", Severity.OK.name())
+                        .build();
+
+                assertThatThrownBy(() ->
+                        assertThat(mockHealthCheck)
+                                .isHealthy()
+                                .hasDetailWithEnumValue("severity", Severity.ERROR))
+                        .hasMessageContaining("Expected detail not found");
+            }
+
+            @Test
+            void shouldFail_WhenDetailsDoesNotContainExpectedKey() {
+                var mockHealthCheck = MockHealthCheck.builder()
+                        .detail("level", Severity.OK.name())
+                        .build();
+
+                assertThatThrownBy(() ->
+                        assertThat(mockHealthCheck)
+                                .isHealthy()
+                                .hasDetailWithEnumValue("severity", Severity.OK))
+                        .hasMessageContaining("Expected detail not found");
+            }
+
+            @Test
+            void shouldFail_WhenDetailsIsNull() {
+                var theHealthCheck = newHealthCheckWithNullDetails();
+
+                assertThatThrownBy(() ->
+                        assertThat(theHealthCheck)
+                                .isHealthy()
+                                .hasDetailWithEnumValue("severity", Severity.OK))
+                        .hasMessageContaining("Expected detail not found");
+            }
+        }
+
+        @Nested
         class HasDetailAtPath {
 
             private HealthCheck.Result result;
