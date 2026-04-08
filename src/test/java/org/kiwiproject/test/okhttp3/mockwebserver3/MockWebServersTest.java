@@ -26,7 +26,7 @@ class MockWebServersTest {
     }
 
     @AfterEach
-    void tearDown() throws IOException {
+    void tearDown() {
         server.close();
     }
 
