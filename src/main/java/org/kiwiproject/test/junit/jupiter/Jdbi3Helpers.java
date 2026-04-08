@@ -150,7 +150,7 @@ class Jdbi3Helpers {
 
         argumentFactories.forEach(jdbi::registerArgument);
 
-        if (jdbiCustomizer != null) {
+        if (nonNull(jdbiCustomizer)) {
             jdbiCustomizer.accept(jdbi);
         }
 
