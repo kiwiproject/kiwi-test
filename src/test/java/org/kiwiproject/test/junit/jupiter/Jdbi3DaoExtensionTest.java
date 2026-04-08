@@ -48,6 +48,7 @@ class Jdbi3DaoExtensionTest {
             .slf4jLoggerName(Jdbi3DaoExtensionTest.class.getName())
             .plugin(new H2DatabasePlugin())
             .argumentFactory(new NameValueArgumentFactory())
+            .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
             .build();
 
     private Handle handle;
@@ -127,20 +128,10 @@ class Jdbi3DaoExtensionTest {
     @Test
     @Order(9)
     void shouldApplyJdbiCustomizer() {
-        var customizerExtension = Jdbi3DaoExtension.<TestTableDao>builder()
-                .daoType(TestTableDao.class)
-                .dataSource(DATABASE_EXTENSION.getDataSource())
-                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
-                .build();
-
-        try (var h = customizerExtension.getJdbi().open()) {
-            h.begin();
-            assertThat(h.createUpdate("insert into test_table values (:col1, :col2)")
-                    .bindByType("col1", new TaggedValue("via-customizer"), TaggedValue.class)
-                    .bind("col2", 99)
-                    .execute()).isOne();
-            h.rollback();
-        }
+        assertThat(handle.createUpdate("insert into test_table values (:col1, :col2)")
+                .bindByType("col1", new TaggedValue("via-customizer"), TaggedValue.class)
+                .bind("col2", 99)
+                .execute()).isOne();
     }
 
     private record NameValue(String value) {}

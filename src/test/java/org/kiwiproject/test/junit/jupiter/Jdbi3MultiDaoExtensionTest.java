@@ -48,6 +48,7 @@ class Jdbi3MultiDaoExtensionTest {
             .daoType(PlaceDao.class)
             .daoType(ThingDao.class)
             .argumentFactory(new NameValueArgumentFactory())
+            .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
             .build();
 
     private Handle handle;
@@ -161,20 +162,10 @@ class Jdbi3MultiDaoExtensionTest {
     @Test
     @Order(9)
     void shouldApplyJdbiCustomizer() {
-        var customizerExtension = Jdbi3MultiDaoExtension.builder()
-                .dataSource(DATABASE_EXTENSION.getDataSource())
-                .daoType(PersonDao.class)
-                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
-                .build();
-
-        try (var h = customizerExtension.getJdbi().open()) {
-            h.begin();
-            assertThat(h.createUpdate("insert into test_people values (:name, :age)")
-                    .bindByType("name", new TaggedValue("via-customizer"), TaggedValue.class)
-                    .bind("age", 42)
-                    .execute()).isOne();
-            h.rollback();
-        }
+        assertThat(handle.createUpdate("insert into test_people values (:name, :age)")
+                .bindByType("name", new TaggedValue("via-customizer"), TaggedValue.class)
+                .bind("age", 42)
+                .execute()).isOne();
     }
 
     private void assertNoPeopleOrPlacesOrThingsExist() {
