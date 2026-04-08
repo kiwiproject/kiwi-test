@@ -124,13 +124,12 @@ class Jdbi3DaoExtensionTest {
                 .argumentFactory(new NameValueArgumentFactory())
                 .build();
         try (var testHandle = extensionWithFactory.getJdbi().open()) {
-            testHandle.begin();
-            var count = testHandle.createUpdate("insert into test_table values (:col1, :col2)")
-                    .bindByType("col1", new NameValue("test-value"), NameValue.class)
-                    .bind("col2", 1)
-                    .execute();
-            assertThat(count).isOne();
-            testHandle.rollback();
+            var count = testHandle.createQuery("select count(*) as cnt from test_table where col_1 = :col1")
+                    .bindByType("col1", new NameValue("nonexistent"), NameValue.class)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElseThrow();
+            assertThat(count).isZero();
         }
     }
 

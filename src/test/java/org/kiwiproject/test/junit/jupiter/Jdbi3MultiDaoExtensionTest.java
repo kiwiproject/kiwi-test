@@ -158,13 +158,12 @@ class Jdbi3MultiDaoExtensionTest {
                 .argumentFactory(new NameValueArgumentFactory())
                 .build();
         try (var testHandle = extensionWithFactory.getJdbi().open()) {
-            testHandle.begin();
-            var count = testHandle.createUpdate("insert into test_people values (:name, :age)")
-                    .bindByType("name", new NameValue("John"), NameValue.class)
-                    .bind("age", 30)
-                    .execute();
-            assertThat(count).isOne();
-            testHandle.rollback();
+            var count = testHandle.createQuery("select count(*) as cnt from test_people where name = :name")
+                    .bindByType("name", new NameValue("nonexistent"), NameValue.class)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElseThrow();
+            assertThat(count).isZero();
         }
     }
 
