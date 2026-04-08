@@ -43,6 +43,7 @@ class Jdbi3ExtensionTest {
             .slf4jLoggerName(Jdbi3ExtensionTest.class.getName())
             .plugin(new H2DatabasePlugin())
             .argumentFactory(new NameValueArgumentFactory())
+            .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
             .build();
 
     private Handle handle;
@@ -117,6 +118,15 @@ class Jdbi3ExtensionTest {
                 .execute()).isOne();
     }
 
+    @Test
+    @Order(9)
+    void shouldApplyJdbiCustomizer() {
+        assertThat(handle.createUpdate("insert into test_table values (:col1, :col2)")
+                .bindByType("col1", new TaggedValue("via-customizer"), TaggedValue.class)
+                .bind("col2", 99)
+                .execute()).isOne();
+    }
+
     private record NameValue(String value) {}
 
     private static class NameValueArgumentFactory implements ArgumentFactory {
@@ -125,6 +135,19 @@ class Jdbi3ExtensionTest {
             if (type == NameValue.class) {
                 var nameValue = (NameValue) value;
                 return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
+        }
+    }
+
+    private record TaggedValue(String value) {}
+
+    private static class TaggedValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == TaggedValue.class) {
+                var taggedValue = (TaggedValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, taggedValue.value()));
             }
             return Optional.empty();
         }

@@ -48,6 +48,7 @@ class Jdbi3MultiDaoExtensionTest {
             .daoType(PlaceDao.class)
             .daoType(ThingDao.class)
             .argumentFactory(new NameValueArgumentFactory())
+            .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
             .build();
 
     private Handle handle;
@@ -158,6 +159,15 @@ class Jdbi3MultiDaoExtensionTest {
                 .execute()).isOne();
     }
 
+    @Test
+    @Order(9)
+    void shouldApplyJdbiCustomizer() {
+        assertThat(handle.createUpdate("insert into test_people values (:name, :age)")
+                .bindByType("name", new TaggedValue("via-customizer"), TaggedValue.class)
+                .bind("age", 42)
+                .execute()).isOne();
+    }
+
     private void assertNoPeopleOrPlacesOrThingsExist() {
         assertThat(personDao.findAll()).isEmpty();
         assertThat(placeDao.findAll()).isEmpty();
@@ -172,6 +182,19 @@ class Jdbi3MultiDaoExtensionTest {
             if (type == NameValue.class) {
                 var nameValue = (NameValue) value;
                 return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
+        }
+    }
+
+    private record TaggedValue(String value) {}
+
+    private static class TaggedValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == TaggedValue.class) {
+                var taggedValue = (TaggedValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, taggedValue.value()));
             }
             return Optional.empty();
         }

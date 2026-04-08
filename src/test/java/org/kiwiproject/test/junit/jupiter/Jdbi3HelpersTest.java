@@ -43,6 +43,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @DisplayName("Jdbi3Helpers")
 @Slf4j
@@ -108,22 +109,38 @@ class Jdbi3HelpersTest {
         @Test
         void shouldThrow_WhenNoArgumentsProvided() {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> Jdbi3Helpers.buildJdbi(null, null, null, null, null, List.of(), List.of()));
+                    .isThrownBy(() -> Jdbi3Helpers.buildJdbi(null, null, null, null, null, List.of(), List.of(), null));
         }
 
         @Test
         void shouldAcceptConnectionFactory(@H2Database H2FileBasedDatabase database) {
             var connectionFactory = new DataSourceConnectionFactory(database.getDataSource());
-            var jdbi = Jdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of(), List.of());
+            var jdbi = Jdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of(), List.of(), null);
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
         }
 
         @Test
         void shouldAcceptJdbcConnectionProperties(@H2Database H2FileBasedDatabase database) {
-            var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of(), List.of());
+            var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of(), List.of(), null);
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
+        }
+
+        @Test
+        void shouldApplyJdbiCustomizer(@H2Database H2FileBasedDatabase database) {
+            var customizerInvoked = new AtomicBoolean(false);
+            var jdbi = Jdbi3Helpers.buildJdbi(database.getDataSource(), null, null, null, null,
+                    List.of(), List.of(), j -> customizerInvoked.set(true));
+            assertThat(jdbi).isNotNull();
+            assertThat(customizerInvoked).isTrue();
+        }
+
+        @Test
+        void shouldNotRequireJdbiCustomizer(@H2Database H2FileBasedDatabase database) {
+            var jdbi = Jdbi3Helpers.buildJdbi(database.getDataSource(), null, null, null, null,
+                    List.of(), List.of(), null);
+            assertThat(jdbi).isNotNull();
         }
 
         @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})

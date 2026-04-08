@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -71,6 +72,9 @@ public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
      * @param plugins           a list containing the JDBI 3 plugins to install
      *                          (a {@link org.jdbi.v3.sqlobject.SqlObjectPlugin SqlObjectPlugin} is always installed)
      * @param argumentFactories a list containing the JDBI 3 {@link ArgumentFactory} instances to register
+     * @param jdbiCustomizer    an optional {@link Consumer} that accepts the configured {@link Jdbi} instance for
+     *                          arbitrary customization after all other configuration has been applied (optional,
+     *                          defaults to no-op)
      * @implNote At present the {@link org.jdbi.v3.core.statement.SqlLogger SqlLogger} for the given
      * {@code slf4jLoggerName} logs at TRACE level only.
      */
@@ -83,13 +87,14 @@ public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
                            DataSource dataSource,
                            String slf4jLoggerName,
                            @Singular List<JdbiPlugin> plugins,
-                           @Singular List<ArgumentFactory> argumentFactories) {
+                           @Singular List<ArgumentFactory> argumentFactories,
+                           Consumer<Jdbi> jdbiCustomizer) {
 
         LOG.trace("A new {} is being instantiated", Jdbi3Extension.class.getSimpleName());
 
         var nonNullPlugins = isNull(plugins) ? List.<JdbiPlugin>of() : plugins;
         var nonNullArgumentFactories = isNull(argumentFactories) ? List.<ArgumentFactory>of() : argumentFactories;
-        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins, nonNullArgumentFactories);
+        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins, nonNullArgumentFactories, jdbiCustomizer);
 
         configureSqlLogger(jdbi, slf4jLoggerName);
     }

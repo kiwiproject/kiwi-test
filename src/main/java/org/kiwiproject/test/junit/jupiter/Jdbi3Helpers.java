@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -127,11 +128,15 @@ class Jdbi3Helpers {
         }
     }
 
+    @SuppressWarnings("java:S107")  // large number of args OK here; not worth refactoring to a parameter object
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
-                          String url, String username, String password,
+                          String url, 
+                          String username, 
+                          String password,
                           List<JdbiPlugin> plugins,
-                          List<ArgumentFactory> argumentFactories) {
+                          List<ArgumentFactory> argumentFactories,
+                          Consumer<Jdbi> jdbiCustomizer) {
 
         var jdbi = buildJdbi(dataSource, connectionFactory, url, username, password);
 
@@ -147,6 +152,10 @@ class Jdbi3Helpers {
                 .forEach(jdbi::installPlugin);
 
         argumentFactories.forEach(jdbi::registerArgument);
+
+        if (nonNull(jdbiCustomizer)) {
+            jdbiCustomizer.accept(jdbi);
+        }
 
         return jdbi;
     }
@@ -171,7 +180,9 @@ class Jdbi3Helpers {
 
     private static Jdbi buildJdbi(DataSource dataSource,
                                   ConnectionFactory connectionFactory,
-                                  String url, String username, String password) {
+                                  String url, 
+                                  String username, 
+                                  String password) {
 
         if (nonNull(dataSource)) {
             LOG.trace("Create Jdbi from DataSource");
