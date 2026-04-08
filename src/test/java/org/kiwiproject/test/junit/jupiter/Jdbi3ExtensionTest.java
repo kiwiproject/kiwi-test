@@ -120,16 +120,18 @@ class Jdbi3ExtensionTest {
     @Test
     @Order(9)
     void shouldApplyJdbiCustomizer() {
-        var customizerHandle = Jdbi3Extension.builder()
+        var customizerExtension = Jdbi3Extension.builder()
                 .dataSource(DATABASE_EXTENSION.getDataSource())
-                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new NameValueArgumentFactory()))
+                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
                 .build();
 
-        try (var h = customizerHandle.getJdbi().open()) {
+        try (var h = customizerExtension.getJdbi().open()) {
+            h.begin();
             assertThat(h.createUpdate("insert into test_table values (:col1, :col2)")
-                    .bindByType("col1", new NameValue("via-customizer"), NameValue.class)
+                    .bindByType("col1", new TaggedValue("via-customizer"), TaggedValue.class)
                     .bind("col2", 99)
                     .execute()).isOne();
+            h.rollback();
         }
     }
 
@@ -141,6 +143,19 @@ class Jdbi3ExtensionTest {
             if (type == NameValue.class) {
                 var nameValue = (NameValue) value;
                 return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
+        }
+    }
+
+    private record TaggedValue(String value) {}
+
+    private static class TaggedValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == TaggedValue.class) {
+                var taggedValue = (TaggedValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, taggedValue.value()));
             }
             return Optional.empty();
         }

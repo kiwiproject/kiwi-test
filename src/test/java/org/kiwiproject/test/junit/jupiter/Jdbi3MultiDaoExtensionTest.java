@@ -164,14 +164,16 @@ class Jdbi3MultiDaoExtensionTest {
         var customizerExtension = Jdbi3MultiDaoExtension.builder()
                 .dataSource(DATABASE_EXTENSION.getDataSource())
                 .daoType(PersonDao.class)
-                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new NameValueArgumentFactory()))
+                .jdbiCustomizer(jdbi -> jdbi.registerArgument(new TaggedValueArgumentFactory()))
                 .build();
 
         try (var h = customizerExtension.getJdbi().open()) {
+            h.begin();
             assertThat(h.createUpdate("insert into test_people values (:name, :age)")
-                    .bindByType("name", new NameValue("via-customizer"), NameValue.class)
+                    .bindByType("name", new TaggedValue("via-customizer"), TaggedValue.class)
                     .bind("age", 42)
                     .execute()).isOne();
+            h.rollback();
         }
     }
 
@@ -189,6 +191,19 @@ class Jdbi3MultiDaoExtensionTest {
             if (type == NameValue.class) {
                 var nameValue = (NameValue) value;
                 return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
+        }
+    }
+
+    private record TaggedValue(String value) {}
+
+    private static class TaggedValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == TaggedValue.class) {
+                var taggedValue = (TaggedValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, taggedValue.value()));
             }
             return Optional.empty();
         }
