@@ -130,14 +130,6 @@ class Jdbi3Helpers {
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
                           String url, String username, String password,
-                          List<JdbiPlugin> plugins) {
-
-        return buildJdbi(dataSource, connectionFactory, url, username, password, plugins, List.of());
-    }
-
-    static Jdbi buildJdbi(DataSource dataSource,
-                          ConnectionFactory connectionFactory,
-                          String url, String username, String password,
                           List<JdbiPlugin> plugins,
                           List<ArgumentFactory> argumentFactories) {
 
