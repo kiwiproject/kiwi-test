@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.ArgumentFactory;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -89,6 +90,7 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
      * @param daoTypes          The types of JDBI 3 DAO to attach
      * @param plugins           a list containing the JDBI 3 plugins to install
      *                          (a {@link org.jdbi.v3.sqlobject.SqlObjectPlugin SqlObjectPlugin} is always installed)
+     * @param argumentFactories a list containing the JDBI 3 {@link ArgumentFactory} instances to register
      * @implNote At present the {@link org.jdbi.v3.core.statement.SqlLogger} for the given {@code slf4jLoggerName} logs
      * at TRACE level only.
      */
@@ -101,14 +103,16 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
                                    DataSource dataSource,
                                    String slf4jLoggerName,
                                    @Singular List<Class<?>> daoTypes,
-                                   @Singular List<JdbiPlugin> plugins) {
+                                   @Singular List<JdbiPlugin> plugins,
+                                   @Singular List<ArgumentFactory> argumentFactories) {
 
         LOG.trace("A new {} is being instantiated", Jdbi3MultiDaoExtension.class.getSimpleName());
 
         this.daoTypes = daoTypes;
 
         var nonNullPlugins = isNull(plugins) ? List.<JdbiPlugin>of() : plugins;
-        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins);
+        var nonNullArgumentFactories = isNull(argumentFactories) ? List.<ArgumentFactory>of() : argumentFactories;
+        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins, nonNullArgumentFactories);
 
         configureSqlLogger(jdbi, slf4jLoggerName);
     }

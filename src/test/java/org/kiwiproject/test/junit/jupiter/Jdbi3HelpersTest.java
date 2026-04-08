@@ -19,6 +19,9 @@ import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.Argument;
+import org.jdbi.v3.core.argument.ArgumentFactory;
+import org.jdbi.v3.core.config.ConfigRegistry;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.jdbi.v3.core.statement.Binding;
@@ -39,6 +42,7 @@ import org.kiwiproject.test.h2.H2FileBasedDatabase;
 import org.mockito.stubbing.OngoingStubbing;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -124,6 +128,21 @@ class Jdbi3HelpersTest {
             var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of());
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
+        }
+
+        @Test
+        @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
+        void shouldRegisterArgumentFactory(@H2Database H2FileBasedDatabase database) {
+            var jdbi = Jdbi3Helpers.buildJdbi(database.getDataSource(), null, null, null, null,
+                    List.of(), List.of(new NameValueArgumentFactory()));
+            assertThat(jdbi).isNotNull();
+            try (var testHandle = jdbi.open()) {
+                var count = testHandle.createUpdate("insert into test_table values (:col1, :col2)")
+                        .bindByType("col1", new NameValue("test"), NameValue.class)
+                        .bind("col2", 1)
+                        .execute();
+                assertThat(count).isOne();
+            }
         }
 
         @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
@@ -438,6 +457,19 @@ class Jdbi3HelpersTest {
         @Override
         public Connection openConnection() throws SQLException {
             return dataSource.getConnection();
+        }
+    }
+
+    record NameValue(String value) {}
+
+    static class NameValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == NameValue.class) {
+                var nameValue = (NameValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
         }
     }
 }
