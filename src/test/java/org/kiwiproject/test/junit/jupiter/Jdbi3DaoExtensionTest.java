@@ -6,6 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.argument.Argument;
+import org.jdbi.v3.core.argument.ArgumentFactory;
+import org.jdbi.v3.core.config.ConfigRegistry;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -23,9 +26,11 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @DisplayName("Jdbi3DaoExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -42,6 +47,7 @@ class Jdbi3DaoExtensionTest {
             .dataSource(DATABASE_EXTENSION.getDataSource())
             .slf4jLoggerName(Jdbi3DaoExtensionTest.class.getName())
             .plugin(new H2DatabasePlugin())
+            .argumentFactory(new NameValueArgumentFactory())
             .build();
 
     private Handle handle;
@@ -107,6 +113,28 @@ class Jdbi3DaoExtensionTest {
         assertThat(dao.insert("hello", 42)).isOne();
         assertThat(dao.insert("world", 84)).isOne();
         assertThat(dao.findAll()).hasSize(2);
+    }
+
+    @Test
+    @Order(8)
+    void shouldRegisterArgumentFactory() {
+        assertThat(handle.createUpdate("insert into test_table values (:col1, :col2)")
+                .bindByType("col1", new NameValue("test-value"), NameValue.class)
+                .bind("col2", 1)
+                .execute()).isOne();
+    }
+
+    private record NameValue(String value) {}
+
+    private static class NameValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == NameValue.class) {
+                var nameValue = (NameValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
+        }
     }
 
     @Value

@@ -16,6 +16,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.ArgumentFactory;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.jdbi.v3.core.statement.SqlLogger;
@@ -129,7 +130,8 @@ class Jdbi3Helpers {
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
                           String url, String username, String password,
-                          List<JdbiPlugin> plugins) {
+                          List<JdbiPlugin> plugins,
+                          List<ArgumentFactory> argumentFactories) {
 
         var jdbi = buildJdbi(dataSource, connectionFactory, url, username, password);
 
@@ -143,6 +145,8 @@ class Jdbi3Helpers {
         plugins.stream()
                 .filter(not(Jdbi3Helpers::isSqlObjectPlugin))
                 .forEach(jdbi::installPlugin);
+
+        argumentFactories.forEach(jdbi::registerArgument);
 
         return jdbi;
     }

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.ConnectionFactory;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.ArgumentFactory;
 import org.jdbi.v3.core.spi.JdbiPlugin;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -69,6 +70,7 @@ public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
      * @param slf4jLoggerName   The SLF4J {@link org.slf4j.Logger} name (optional, defaults to the FQCN of {@link Jdbi}
      * @param plugins           a list containing the JDBI 3 plugins to install
      *                          (a {@link org.jdbi.v3.sqlobject.SqlObjectPlugin SqlObjectPlugin} is always installed)
+     * @param argumentFactories a list containing the JDBI 3 {@link ArgumentFactory} instances to register
      * @implNote At present the {@link org.jdbi.v3.core.statement.SqlLogger SqlLogger} for the given
      * {@code slf4jLoggerName} logs at TRACE level only.
      */
@@ -80,12 +82,14 @@ public class Jdbi3Extension implements BeforeEachCallback, AfterEachCallback {
                            ConnectionFactory connectionFactory,
                            DataSource dataSource,
                            String slf4jLoggerName,
-                           @Singular List<JdbiPlugin> plugins) {
+                           @Singular List<JdbiPlugin> plugins,
+                           @Singular List<ArgumentFactory> argumentFactories) {
 
         LOG.trace("A new {} is being instantiated", Jdbi3Extension.class.getSimpleName());
 
         var nonNullPlugins = isNull(plugins) ? List.<JdbiPlugin>of() : plugins;
-        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins);
+        var nonNullArgumentFactories = isNull(argumentFactories) ? List.<ArgumentFactory>of() : argumentFactories;
+        this.jdbi = buildJdbi(dataSource, connectionFactory, url, username, password, nonNullPlugins, nonNullArgumentFactories);
 
         configureSqlLogger(jdbi, slf4jLoggerName);
     }

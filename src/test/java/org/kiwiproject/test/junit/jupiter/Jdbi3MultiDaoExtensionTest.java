@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.argument.Argument;
+import org.jdbi.v3.core.argument.ArgumentFactory;
+import org.jdbi.v3.core.config.ConfigRegistry;
 import org.jdbi.v3.core.h2.H2DatabasePlugin;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -22,9 +25,11 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @DisplayName("Jdbi3MultiDaoExtension")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -42,6 +47,7 @@ class Jdbi3MultiDaoExtensionTest {
             .daoType(PersonDao.class)
             .daoType(PlaceDao.class)
             .daoType(ThingDao.class)
+            .argumentFactory(new NameValueArgumentFactory())
             .build();
 
     private Handle handle;
@@ -143,10 +149,32 @@ class Jdbi3MultiDaoExtensionTest {
         assertThat(handle.getConnection().getAutoCommit()).isFalse();
     }
 
+    @Test
+    @Order(8)
+    void shouldRegisterArgumentFactory() {
+        assertThat(handle.createUpdate("insert into test_people values (:name, :age)")
+                .bindByType("name", new NameValue("John"), NameValue.class)
+                .bind("age", 30)
+                .execute()).isOne();
+    }
+
     private void assertNoPeopleOrPlacesOrThingsExist() {
         assertThat(personDao.findAll()).isEmpty();
         assertThat(placeDao.findAll()).isEmpty();
         assertThat(thingDao.findAll()).isEmpty();
+    }
+
+    private record NameValue(String value) {}
+
+    private static class NameValueArgumentFactory implements ArgumentFactory {
+        @Override
+        public Optional<Argument> build(Type type, Object value, ConfigRegistry config) {
+            if (type == NameValue.class) {
+                var nameValue = (NameValue) value;
+                return Optional.of((pos, stmt, ctx) -> stmt.setString(pos, nameValue.value()));
+            }
+            return Optional.empty();
+        }
     }
 
     // Model classes (must be public for JDBI to bind)

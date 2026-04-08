@@ -108,20 +108,20 @@ class Jdbi3HelpersTest {
         @Test
         void shouldThrow_WhenNoArgumentsProvided() {
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> Jdbi3Helpers.buildJdbi(null, null, null, null, null, List.of()));
+                    .isThrownBy(() -> Jdbi3Helpers.buildJdbi(null, null, null, null, null, List.of(), List.of()));
         }
 
         @Test
         void shouldAcceptConnectionFactory(@H2Database H2FileBasedDatabase database) {
             var connectionFactory = new DataSourceConnectionFactory(database.getDataSource());
-            var jdbi = Jdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of());
+            var jdbi = Jdbi3Helpers.buildJdbi(null, connectionFactory, null, null, null, List.of(), List.of());
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
         }
 
         @Test
         void shouldAcceptJdbcConnectionProperties(@H2Database H2FileBasedDatabase database) {
-            var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of());
+            var jdbi = Jdbi3Helpers.buildJdbi(null, null, database.getUrl(), "", "", List.of(), List.of());
             assertThat(jdbi).isNotNull();
             assertCanExecuteQuery(jdbi);
         }
@@ -440,4 +440,5 @@ class Jdbi3HelpersTest {
             return dataSource.getConnection();
         }
     }
+
 }
