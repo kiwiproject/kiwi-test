@@ -128,9 +128,12 @@ class Jdbi3Helpers {
         }
     }
 
+    @SuppressWarnings("java:S107")  // large number of args OK here; not worth refactoring to a parameter object
     static Jdbi buildJdbi(DataSource dataSource,
                           ConnectionFactory connectionFactory,
-                          String url, String username, String password,
+                          String url, 
+                          String username, 
+                          String password,
                           List<JdbiPlugin> plugins,
                           List<ArgumentFactory> argumentFactories,
                           Consumer<Jdbi> jdbiCustomizer) {
@@ -177,7 +180,9 @@ class Jdbi3Helpers {
 
     private static Jdbi buildJdbi(DataSource dataSource,
                                   ConnectionFactory connectionFactory,
-                                  String url, String username, String password) {
+                                  String url, 
+                                  String username, 
+                                  String password) {
 
         if (nonNull(dataSource)) {
             LOG.trace("Create Jdbi from DataSource");
