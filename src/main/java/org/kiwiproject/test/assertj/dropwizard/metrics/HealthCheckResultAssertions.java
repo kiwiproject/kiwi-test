@@ -412,6 +412,25 @@ public class HealthCheckResultAssertions {
     }
 
     /**
+     * Asserts the health check result has a detail with the given key whose value equals
+     * the {@link Enum#name()} of the given enum constant.
+     * <p>
+     * This is useful when the detail value was stored as a String (e.g. via {@link Enum#name()})
+     * but you want to assert against the enum constant directly.
+     *
+     * @param key       the expected key
+     * @param enumValue the enum constant whose {@link Enum#name()} is compared against the detail value
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasDetailWithEnumValue(String key, Enum<?> enumValue) {
+        Assertions.assertThat(result.getDetails())
+                .describedAs("Expected detail not found")
+                .containsEntry(key, enumValue.name());
+
+        return this;
+    }
+
+    /**
      * Asserts the health check result has a detail at the specified path with the given value.
      * <p>
      * The path is dot-delimited, for example {@code error.exceptionType.description} represents
