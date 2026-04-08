@@ -42,6 +42,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @DisplayName("Jdbi3Helpers")
 @Slf4j
