@@ -116,11 +116,13 @@ class Jdbi3ExtensionTest {
                 .argumentFactory(new NameValueArgumentFactory())
                 .build();
         try (var testHandle = extensionWithFactory.getJdbi().open()) {
+            testHandle.begin();
             var count = testHandle.createUpdate("insert into test_table values (:col1, :col2)")
                     .bindByType("col1", new NameValue("test-value"), NameValue.class)
                     .bind("col2", 1)
                     .execute();
             assertThat(count).isOne();
+            testHandle.rollback();
         }
     }
 
