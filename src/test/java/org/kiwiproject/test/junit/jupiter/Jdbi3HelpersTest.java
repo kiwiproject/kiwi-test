@@ -137,12 +137,12 @@ class Jdbi3HelpersTest {
                     List.of(), List.of(new NameValueArgumentFactory()));
             assertThat(jdbi).isNotNull();
             try (var testHandle = jdbi.open()) {
-                var count = testHandle.createQuery("select count(*) as cnt from test_table where col_1 = :col1")
-                        .bindByType("col1", new NameValue("nonexistent"), NameValue.class)
-                        .mapTo(Integer.class)
-                        .findOne()
-                        .orElseThrow();
-                assertThat(count).isZero();
+                testHandle.begin();
+                assertThat(testHandle.createUpdate("insert into test_table values (:col1, :col2)")
+                        .bindByType("col1", new NameValue("test"), NameValue.class)
+                        .bind("col2", 1)
+                        .execute()).isOne();
+                testHandle.rollback();
             }
         }
 

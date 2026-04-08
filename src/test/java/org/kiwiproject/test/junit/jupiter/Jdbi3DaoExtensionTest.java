@@ -47,6 +47,7 @@ class Jdbi3DaoExtensionTest {
             .dataSource(DATABASE_EXTENSION.getDataSource())
             .slf4jLoggerName(Jdbi3DaoExtensionTest.class.getName())
             .plugin(new H2DatabasePlugin())
+            .argumentFactory(new NameValueArgumentFactory())
             .build();
 
     private Handle handle;
@@ -116,21 +117,11 @@ class Jdbi3DaoExtensionTest {
 
     @Test
     @Order(8)
-    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     void shouldRegisterArgumentFactory() {
-        var extensionWithFactory = Jdbi3DaoExtension.<TestTableDao>builder()
-                .daoType(TestTableDao.class)
-                .dataSource(DATABASE_EXTENSION.getDataSource())
-                .argumentFactory(new NameValueArgumentFactory())
-                .build();
-        try (var testHandle = extensionWithFactory.getJdbi().open()) {
-            var count = testHandle.createQuery("select count(*) as cnt from test_table where col_1 = :col1")
-                    .bindByType("col1", new NameValue("nonexistent"), NameValue.class)
-                    .mapTo(Integer.class)
-                    .findOne()
-                    .orElseThrow();
-            assertThat(count).isZero();
-        }
+        assertThat(handle.createUpdate("insert into test_table values (:col1, :col2)")
+                .bindByType("col1", new NameValue("test-value"), NameValue.class)
+                .bind("col2", 1)
+                .execute()).isOne();
     }
 
     private record NameValue(String value) {}

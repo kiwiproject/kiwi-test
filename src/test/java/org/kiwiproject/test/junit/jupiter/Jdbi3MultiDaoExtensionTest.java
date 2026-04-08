@@ -47,6 +47,7 @@ class Jdbi3MultiDaoExtensionTest {
             .daoType(PersonDao.class)
             .daoType(PlaceDao.class)
             .daoType(ThingDao.class)
+            .argumentFactory(new NameValueArgumentFactory())
             .build();
 
     private Handle handle;
@@ -150,21 +151,11 @@ class Jdbi3MultiDaoExtensionTest {
 
     @Test
     @Order(8)
-    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     void shouldRegisterArgumentFactory() {
-        var extensionWithFactory = Jdbi3MultiDaoExtension.builder()
-                .dataSource(DATABASE_EXTENSION.getDataSource())
-                .daoType(PersonDao.class)
-                .argumentFactory(new NameValueArgumentFactory())
-                .build();
-        try (var testHandle = extensionWithFactory.getJdbi().open()) {
-            var count = testHandle.createQuery("select count(*) as cnt from test_people where name = :name")
-                    .bindByType("name", new NameValue("nonexistent"), NameValue.class)
-                    .mapTo(Integer.class)
-                    .findOne()
-                    .orElseThrow();
-            assertThat(count).isZero();
-        }
+        assertThat(handle.createUpdate("insert into test_people values (:name, :age)")
+                .bindByType("name", new NameValue("John"), NameValue.class)
+                .bind("age", 30)
+                .execute()).isOne();
     }
 
     private void assertNoPeopleOrPlacesOrThingsExist() {
