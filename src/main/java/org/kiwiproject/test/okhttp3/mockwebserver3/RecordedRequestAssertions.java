@@ -14,6 +14,7 @@ import org.kiwiproject.json.JsonHelper;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -259,8 +260,8 @@ public class RecordedRequestAssertions {
      */
     public RecordedRequestAssertions hasNoBody() {
         var body = recordedRequest.getBody();
-        var bodySize = body == null ? 0L : body.size();
-        var bodyUtf8 = body == null ? "" : body.utf8();
+        var bodySize = Objects.isNull(body) ? 0L : body.size();
+        var bodyUtf8 = Objects.isNull(body) ? "" : body.utf8();
         Assertions.assertThat(bodySize)
                 .describedAs("Expected there not to be a request body but found: %s", bodyUtf8)
                 .isZero();
@@ -372,7 +373,7 @@ public class RecordedRequestAssertions {
 
     private String bodyUtf8() {
         var body = recordedRequest.getBody();
-        return body == null ? "" : body.utf8();
+        return Objects.isNull(body) ? "" : body.utf8();
     }
 
     private void checkMethodAllowsBody() {
