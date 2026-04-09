@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
+import okhttp3.Handshake;
 import okio.ByteString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -592,6 +593,39 @@ class RecordedRequestAssertionsTest {
                     .hasFailureCauseInstanceOf(SSLHandshakeException.class))
                     .isNotNull()
                     .hasMessageContaining("Expected request to have failure of type: javax.net.ssl.SSLHandshakeException");
+        }
+    }
+
+    @Nested
+    class Tls {
+
+        @Test
+        void shouldPassWhenRequestIsTls() {
+            var tlsRequest = mock(RecordedRequest.class);
+            when(tlsRequest.getHandshake()).thenReturn(mock(Handshake.class));
+
+            assertThatCode(() -> assertThatRecordedRequest(tlsRequest).isTls())
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldFailWhenRequestIsNotTls_ButTlsExpected() {
+            var nonTlsRequest = mock(RecordedRequest.class);
+            when(nonTlsRequest.getHandshake()).thenReturn(null);
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(nonTlsRequest).isTls())
+                    .isNotNull()
+                    .hasMessageContaining("Expected request to use TLS");
+        }
+
+        @Test
+        void shouldFailWhenRequestIsTls_ButNotTlsExpected() {
+            var tlsRequest = mock(RecordedRequest.class);
+            when(tlsRequest.getHandshake()).thenReturn(mock(Handshake.class));
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(tlsRequest).isNotTls())
+                    .isNotNull()
+                    .hasMessageContaining("Expected request not to use TLS");
         }
     }
 
