@@ -42,6 +42,7 @@
         <sonar.projectKey>kiwiproject_kiwi-test</sonar.projectKey>
         <sonar.organization>kiwiproject</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.cpd.exclusions>**/okhttp3/mockwebserver3/**</sonar.cpd.exclusions>
     </properties>
 
     <dependencyManagement>
