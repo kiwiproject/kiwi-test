@@ -259,11 +259,8 @@ public class RecordedRequestAssertions {
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">HTTP request methods</a>
      */
     public RecordedRequestAssertions hasNoBody() {
-        var body = recordedRequest.getBody();
-        var bodySize = Objects.isNull(body) ? 0L : body.size();
-        var bodyUtf8 = Objects.isNull(body) ? "" : body.utf8();
-        Assertions.assertThat(bodySize)
-                .describedAs("Expected there not to be a request body but found: %s", bodyUtf8)
+        Assertions.assertThat(recordedRequest.getBodySize())
+                .describedAs("Expected there not to be a request body but found: %s", bodyUtf8())
                 .isZero();
 
         return this;
