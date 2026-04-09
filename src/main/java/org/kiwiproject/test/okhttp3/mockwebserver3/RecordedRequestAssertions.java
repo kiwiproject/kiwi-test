@@ -229,6 +229,7 @@ public class RecordedRequestAssertions {
      * @param targetTemplate the template to use when constructing the expected target
      * @param arguments      the arguments for the template
      * @return this instance
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1">RFC 7230 - Request Line</a>
      */
     public RecordedRequestAssertions hasTarget(String targetTemplate, Object... arguments) {
         var expectedTarget = f(targetTemplate, arguments);
