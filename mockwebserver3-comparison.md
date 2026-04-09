@@ -96,14 +96,16 @@ var actualBodyUtf8 = bodyBuffer.readUtf8();   // okio.Buffer
 var actualBodyUtf8 = body.utf8();              // okio.ByteString
 ```
 
-`hasNoBody()` also changed — it now uses `getBodySize()` (a non-null `long`) for the size check
-rather than going through `getBody()` (which can be null):
+`hasNoBody()` also changed. Both APIs have `getBodySize()` — the original's `hasBodySize()` already
+uses it — but `hasNoBody()` in the original happened to reach through `getBody()` to call
+`Buffer.size()`. In mockwebserver3 that pattern is unsafe because `getBody()` returns `null` for
+bodyless requests, so `hasNoBody()` switches to `getBodySize()` directly:
 
 ```java
-// original
+// original — getBodySize() exists, but hasNoBody() went through the Buffer
 Assertions.assertThat(bodyBuffer.size()).isZero();
 
-// mockwebserver3
+// mockwebserver3 — getBody() can be null, so use getBodySize() directly
 Assertions.assertThat(recordedRequest.getBodySize()).isZero();
 ```
 
@@ -137,7 +139,7 @@ or `hasBodySatisfying` to access the `Handshake` directly.
 | Request URL | `hasRequestUrl(URI/String)` | `hasUrl(URI/String)` |
 | Header lookup | `getHeader(name)` (internal) | `getHeaders().get(name)` (internal) |
 | Body type | `okio.Buffer.readUtf8()` | `okio.ByteString.utf8()` |
-| No-body check | `bodyBuffer.size()` | `getBodySize()` |
+| No-body check | `getBody().size()` (both have `getBodySize()`; see note) | `getBodySize()` directly — `getBody()` can be `null` |
 | Not TLS | `isNotTls()` via `getTlsVersion()` | `isNotTls()` via `getHandshake()` |
 | Is TLS | `hasTlsVersion(TlsVersion)` | `isTls()` via `getHandshake()` |
 | Server close | `KiwiIO.closeQuietly(server)` | `server.close()` |
