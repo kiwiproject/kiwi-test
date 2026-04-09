@@ -7,7 +7,6 @@ import static org.apache.commons.lang3.StringUtils.firstNonBlank;
 import static org.kiwiproject.time.KiwiInstants.minusDays;
 import static org.kiwiproject.time.KiwiInstants.plusDays;
 
-import com.google.common.annotations.Beta;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
 import org.kiwiproject.security.KeyStoreType;
@@ -37,7 +36,6 @@ import java.time.Instant;
  * @param certDir             the directory where the key and trust store will be written; if null, the key and trust
  *                            stores will be in-memory and not written to disk
  */
-@Beta
 @Builder(toBuilder = true)
 public record CertOptions(
         Instant notBefore,
