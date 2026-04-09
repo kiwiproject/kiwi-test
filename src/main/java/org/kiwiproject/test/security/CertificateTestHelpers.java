@@ -3,7 +3,6 @@ package org.kiwiproject.test.security;
 import static java.util.Objects.nonNull;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 
-import com.google.common.annotations.Beta;
 import io.netty.pkitesting.CertificateBuilder;
 import io.netty.pkitesting.X509Bundle;
 import lombok.experimental.UtilityClass;
@@ -30,7 +29,6 @@ import java.util.function.Consumer;
  *
  * @implNote Uses {@code netty-pkitesting} under the hood, so it must be available on the classpath.
  */
-@Beta
 @UtilityClass
 public class CertificateTestHelpers {
 

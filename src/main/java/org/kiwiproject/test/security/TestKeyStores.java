@@ -3,7 +3,6 @@ package org.kiwiproject.test.security;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotBlank;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 
-import com.google.common.annotations.Beta;
 import io.netty.pkitesting.X509Bundle;
 import lombok.Builder;
 import org.jspecify.annotations.Nullable;
@@ -25,7 +24,6 @@ import java.util.Optional;
  * @param issuerBundle       the {@link X509Bundle} that represents the CA that issued the certs
  * @param leafBundle         the {@link X509Bundle} that represents the issued certs (key and trust store)
  */
-@Beta
 @Builder(toBuilder = true)
 public record TestKeyStores(
         KeyStore keyStore,
