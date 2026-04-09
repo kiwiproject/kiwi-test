@@ -1,5 +1,6 @@
 package org.kiwiproject.test.okhttp3.mockwebserver3;
 
+import static java.util.Objects.isNull;
 import static org.kiwiproject.base.KiwiPreconditions.checkArgumentNotNull;
 import static org.kiwiproject.base.KiwiPreconditions.requireNotNull;
 import static org.kiwiproject.base.KiwiStrings.f;
@@ -14,7 +15,6 @@ import org.kiwiproject.json.JsonHelper;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -370,7 +370,7 @@ public class RecordedRequestAssertions {
 
     private String bodyUtf8() {
         var body = recordedRequest.getBody();
-        return Objects.isNull(body) ? "" : body.utf8();
+        return isNull(body) ? "" : body.utf8();
     }
 
     private void checkMethodAllowsBody() {
