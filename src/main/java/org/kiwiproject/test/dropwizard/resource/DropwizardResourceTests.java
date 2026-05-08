@@ -25,10 +25,26 @@ public class DropwizardResourceTests {
      * @see #resourceBuilderPreservingLogbackConfig()
      */
     public static ResourceExtension resourceExtensionFor(Object resource) {
+        return resourceExtensionBuilderFor(resource).build();
+    }
+
+    /**
+     * Create a {@link ResourceExtension.Builder} for the given Jakarta REST {@code resource}
+     * instance, preserving the existing Logback configuration by disabling the logging bootstrap.
+     * <p>
+     * This is useful when you need to add providers or other configuration beyond a single
+     * resource instance. If you don't need further customization, use
+     * {@link #resourceExtensionFor(Object)} instead.
+     *
+     * @param resource the Jakarta REST resource instance
+     * @return a new {@link ResourceExtension.Builder} instance with the resource already added
+     * @see #resourceExtensionFor(Object)
+     * @see #resourceBuilderPreservingLogbackConfig()
+     */
+    public static ResourceExtension.Builder resourceExtensionBuilderFor(Object resource) {
         checkArgumentNotNull(resource, "resource must not be null");
         return resourceBuilderPreservingLogbackConfig()
-                .addResource(resource)
-                .build();
+                .addResource(resource);
     }
 
     /**
