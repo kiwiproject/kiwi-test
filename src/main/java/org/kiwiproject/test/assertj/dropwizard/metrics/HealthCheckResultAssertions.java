@@ -288,6 +288,72 @@ public class HealthCheckResultAssertions {
         return this;
     }
 
+    /**
+     * Asserts the health check result has an error whose message starts with the given prefix.
+     *
+     * @param messagePrefix the expected message prefix
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasErrorWithMessageStartingWith(String messagePrefix) {
+        assertResultHasError();
+
+        Assertions.assertThat(result.getError().getMessage())
+                .describedAs("Wrong error message prefix")
+                .startsWith(messagePrefix);
+
+        return this;
+    }
+
+    /**
+     * Asserts the health check result has an error whose message ends with the given suffix.
+     *
+     * @param messageSuffix the expected message suffix
+     * @return this instance
+     */
+    public HealthCheckResultAssertions hasErrorWithMessageEndingWith(String messageSuffix) {
+        assertResultHasError();
+
+        Assertions.assertThat(result.getError().getMessage())
+                .describedAs("Wrong error message suffix")
+                .endsWith(messageSuffix);
+
+        return this;
+    }
+
+    /**
+     * Asserts the health check result has an error whose cause is an instance of the given type.
+     *
+     * @param type the expected cause type
+     * @return this instance
+     * @implNote Uses {@link org.assertj.core.api.AbstractAssert#isInstanceOf(Class)}
+     */
+    public HealthCheckResultAssertions hasErrorWithCauseInstanceOf(Class<?> type) {
+        assertResultHasError();
+
+        Assertions.assertThat(result.getError().getCause())
+                .describedAs("Wrong error cause type")
+                .isInstanceOf(type);
+
+        return this;
+    }
+
+    /**
+     * Asserts the health check result has an error whose cause is EXACTLY the given type.
+     *
+     * @param type the expected exact cause type
+     * @return this instance
+     * @implNote Uses {@link org.assertj.core.api.AbstractAssert#isExactlyInstanceOf(Class)}
+     */
+    public HealthCheckResultAssertions hasErrorWithCauseExactlyInstanceOf(Class<?> type) {
+        assertResultHasError();
+
+        Assertions.assertThat(result.getError().getCause())
+                .describedAs("Wrong exact error cause type")
+                .isExactlyInstanceOf(type);
+
+        return this;
+    }
+
     private void assertResultHasError() {
         Assertions.assertThat(result.getError())
                 .describedAs("Expected to have an error")
