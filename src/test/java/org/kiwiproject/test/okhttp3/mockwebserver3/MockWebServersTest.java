@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 import java.net.URI;
 
-@DisplayName("MockWebServers")
+@DisplayName("MockWebServers (mockwebserver3)")
 class MockWebServersTest {
 
     private MockWebServer server;

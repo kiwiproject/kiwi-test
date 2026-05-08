@@ -33,7 +33,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@DisplayName("RecordedRequests")
+@DisplayName("RecordedRequests (mockwebserver3)")
 class RecordedRequestsTest {
 
     private MockWebServer server;
