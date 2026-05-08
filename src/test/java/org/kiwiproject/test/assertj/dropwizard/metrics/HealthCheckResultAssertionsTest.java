@@ -404,6 +404,112 @@ class HealthCheckResultAssertionsTest {
                         .hasMessageContaining("Wrong error message fragment");
             }
         }
+
+        @Nested
+        class HasErrorWithMessageStartingWith {
+
+            @Test
+            void shouldPass_WhenErrorMessageStartsWith() {
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isUnhealthy()
+                                .hasErrorWithMessageStartingWith("it's way"))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldFail_WhenErrorMessageDoesNotStartWith() {
+                assertThatThrownBy(() ->
+                        assertThat(healthCheck)
+                                .hasErrorWithMessageStartingWith("way out"))
+                        .hasMessageContaining("Wrong error message prefix");
+            }
+        }
+
+        @Nested
+        class HasErrorWithMessageEndingWith {
+
+            @Test
+            void shouldPass_WhenErrorMessageEndsWith() {
+                assertThatCode(() ->
+                        assertThat(healthCheck)
+                                .isUnhealthy()
+                                .hasErrorWithMessageEndingWith("out of date"))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldFail_WhenErrorMessageDoesNotEndWith() {
+                assertThatThrownBy(() ->
+                        assertThat(healthCheck)
+                                .hasErrorWithMessageEndingWith("it's way"))
+                        .hasMessageContaining("Wrong error message suffix");
+            }
+        }
+
+        @Nested
+        class HasErrorWithCauseInstanceOf {
+
+            private HealthCheck causeHealthCheck;
+
+            @BeforeEach
+            void setUp() {
+                var cause = new IllegalStateException("underlying cause");
+                var error = new CertificateExpiredException("it's way out of date");
+                error.initCause(cause);
+                causeHealthCheck = MockHealthCheck.builder().healthy(false).error(error).build();
+            }
+
+            @Test
+            void shouldPass_WhenErrorCauseIsInstanceOfType() {
+                assertThatCode(() ->
+                        assertThat(causeHealthCheck)
+                                .isUnhealthy()
+                                .hasErrorWithCauseInstanceOf(RuntimeException.class))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldFail_WhenErrorCauseHasIncorrectType() {
+                assertThatThrownBy(() ->
+                        assertThat(causeHealthCheck)
+                                .isUnhealthy()
+                                .hasErrorWithCauseInstanceOf(IllegalArgumentException.class))
+                        .hasMessageContaining("Wrong error cause type");
+            }
+        }
+
+        @Nested
+        class HasErrorWithCauseExactlyInstanceOf {
+
+            private HealthCheck causeHealthCheck;
+
+            @BeforeEach
+            void setUp() {
+                var cause = new IllegalStateException("underlying cause");
+                var error = new CertificateExpiredException("it's way out of date");
+                error.initCause(cause);
+                causeHealthCheck = MockHealthCheck.builder().healthy(false).error(error).build();
+            }
+
+            @Test
+            void shouldPass_WhenErrorCauseIsExactType() {
+                assertThatCode(() ->
+                        assertThat(causeHealthCheck)
+                                .isUnhealthy()
+                                .hasErrorWithCauseExactlyInstanceOf(IllegalStateException.class))
+                        .doesNotThrowAnyException();
+            }
+
+            @Test
+            void shouldFail_WhenErrorCauseHasIncorrectType() {
+                assertThatThrownBy(() ->
+                        assertThat(causeHealthCheck)
+                                .isUnhealthy()
+                                .hasErrorWithCauseExactlyInstanceOf(RuntimeException.class))
+                        .hasMessageContaining("Wrong exact error cause type");
+            }
+        }
     }
 
     @Nested
