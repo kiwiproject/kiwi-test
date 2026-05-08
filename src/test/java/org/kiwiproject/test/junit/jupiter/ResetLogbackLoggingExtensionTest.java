@@ -2,7 +2,6 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -74,7 +73,7 @@ class ResetLogbackLoggingExtensionTest {
 
             extension.beforeAll(extensionContext);
 
-            verify(helper).resetLogbackWithDefaultOrConfig(eq(customConfig));
+            verify(helper).resetLogbackWithDefaultOrConfig(customConfig);
         }
     }
 
@@ -111,7 +110,7 @@ class ResetLogbackLoggingExtensionTest {
 
             extension.afterAll(extensionContext);
 
-            verify(helper).resetLogbackWithDefaultOrConfig(eq(customConfig));
+            verify(helper).resetLogbackWithDefaultOrConfig(customConfig);
         }
     }
 }
