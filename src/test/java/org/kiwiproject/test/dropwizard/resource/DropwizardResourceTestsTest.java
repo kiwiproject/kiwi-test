@@ -106,6 +106,47 @@ class DropwizardResourceTestsTest {
     }
 
     @Nested
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class ResourceExtensionBuilderFor {
+
+        private static final ResourceExtension RESOURCES =
+                DropwizardResourceTests.resourceExtensionBuilderFor(new MyTestResource()).build();
+
+        @Test
+        void shouldCreateRegisteredResource() {
+            var response = RESOURCES.target("/test").request().get();
+
+            assertAll(
+                    () -> assertOkResponse(response),
+                    () -> assertThat(response.readEntity(String.class)).isEqualTo("hello"));
+        }
+
+        @Test
+        void shouldNotAllowNullResourceObject() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> DropwizardResourceTests.resourceExtensionBuilderFor(null))
+                    .withMessage("resource must not be null");
+        }
+
+        @ClearBoxTest("this directly accesses a private field and assumes a specific class structure")
+        void shouldSet_bootstrapLogging_toFalse() throws NoSuchFieldException, IllegalAccessException {
+            var builder = DropwizardResourceTests.resourceExtensionBuilderFor(new MyTestResource());
+            var field = builder.getClass().getSuperclass().getDeclaredField("bootstrapLogging");
+            assertThat(field)
+                    .describedAs("We did not find the 'bootstrapLogging' field. Dropwizard might have moved it.")
+                    .isNotNull();
+
+            field.setAccessible(true);
+
+            var value = field.get(builder);
+            var booleanValue = assertIsExactType(value, Boolean.class);
+            assertThat(booleanValue)
+                    .describedAs("bootstrapLogging should be false")
+                    .isFalse();
+        }
+    }
+
+    @Nested
     class ResourceBuilderPreservingLogbackConfig {
 
         private ResourceExtension.Builder builder;
