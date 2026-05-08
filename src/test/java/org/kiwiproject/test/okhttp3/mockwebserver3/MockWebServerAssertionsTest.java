@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.http.HttpClient;
 import java.time.Duration;
 
-@DisplayName("MockWebServerAssertions")
+@DisplayName("MockWebServerAssertions (mockwebserver3)")
 class MockWebServerAssertionsTest {
 
     private MockWebServer server;

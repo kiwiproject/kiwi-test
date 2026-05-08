@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.net.http.HttpClient;
 import java.time.Duration;
 
-@DisplayName("MockWebServerAssertions")
+@DisplayName("MockWebServerAssertions (mockwebserver)")
 class MockWebServerAssertionsTest {
 
     @RegisterExtension

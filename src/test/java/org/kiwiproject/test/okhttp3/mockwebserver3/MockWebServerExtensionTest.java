@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Consumer;
 
-@DisplayName("MockWebServerExtension")
+@DisplayName("MockWebServerExtension (mockwebserver3)")
 class MockWebServerExtensionTest {
 
     @Nested
