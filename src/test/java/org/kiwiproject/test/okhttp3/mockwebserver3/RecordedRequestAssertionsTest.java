@@ -36,7 +36,7 @@ import java.util.function.UnaryOperator;
 
 import javax.net.ssl.SSLHandshakeException;
 
-@DisplayName("RecordedRequestAssertions")
+@DisplayName("RecordedRequestAssertions (mockwebserver3)")
 class RecordedRequestAssertionsTest {
 
     private MockWebServer server;
@@ -504,6 +504,68 @@ class RecordedRequestAssertionsTest {
             assertThatThrownBy(() -> fn.apply(assertions))
                     .isNotNull()
                     .hasMessageContaining("Expected method to be " + method);
+        }
+    }
+
+    @Nested
+    class Headers {
+
+        private RecordedRequest recordedRequest;
+
+        @BeforeEach
+        void setUp() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.send(httpClient, HttpRequest.newBuilder()
+                    .GET()
+                    .uri(uri("/"))
+                    .header("Accept", "text/html; charset=utf-8")
+                    .build());
+            recordedRequest = takeRequest();
+        }
+
+        @Test
+        void shouldCheckHeaderValueStartingWith() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueStartingWith("Accept", "text/html"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidHeaderValueStartingWith() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueStartingWith("Accept", "application/json"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected Accept header to have value starting with: application/json");
+        }
+
+        @Test
+        void shouldCheckHeaderValueContaining() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueContaining("Accept", "charset"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidHeaderValueContaining() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueContaining("Accept", "application/json"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected Accept header to have value containing: application/json");
+        }
+
+        @Test
+        void shouldCheckHeader() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeader("Accept", "text/html; charset=utf-8"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidHeader() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeader("Accept", "application/json"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected Accept header to have value: application/json");
         }
     }
 

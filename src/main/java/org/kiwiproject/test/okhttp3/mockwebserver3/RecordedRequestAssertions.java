@@ -252,6 +252,38 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a header with the given name and whose value
+     * starts with the given prefix.
+     *
+     * @param name   the HTTP header name
+     * @param prefix the expected prefix of the HTTP header value
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasHeaderValueStartingWith(String name, String prefix) {
+        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+                .describedAs("Expected %s header to have value starting with: %s", name, prefix)
+                .startsWith(prefix);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a header with the given name and whose value
+     * contains the given substring.
+     *
+     * @param name      the HTTP header name
+     * @param substring the expected substring of the HTTP header value
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasHeaderValueContaining(String name, String substring) {
+        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+                .describedAs("Expected %s header to have value containing: %s", name, substring)
+                .contains(substring);
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request does not have a request body.
      * <p>
      * Only DELETE, PATCH, POST, and PUT may have a body.
