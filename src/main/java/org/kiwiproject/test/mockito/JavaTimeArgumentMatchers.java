@@ -169,7 +169,7 @@ public class JavaTimeArgumentMatchers {
             T lowerBound,
             T upperBound) {
 
-        LOG.trace("expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}",
+        LOG.trace("expectedTime: {} ; actualTime: {} ; Duration.between(expectedTime, actualTime): {}",
                 expectedTime, actualTime,
                 lazy(() -> Duration.between(expectedTime, actualTime)));
 
