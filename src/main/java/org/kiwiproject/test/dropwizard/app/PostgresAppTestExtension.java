@@ -10,6 +10,7 @@ import io.zonky.test.db.postgres.junit5.EmbeddedPostgresExtension;
 import io.zonky.test.db.postgres.junit5.PreparedDbExtension;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -186,13 +187,13 @@ public class PostgresAppTestExtension<T extends Configuration> implements Before
     }
 
     @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+    public void beforeAll(@NonNull ExtensionContext extensionContext) throws Exception {
         postgres.beforeAll(extensionContext);
         app.before();
     }
 
     @Override
-    public void afterAll(ExtensionContext extensionContext) {
+    public void afterAll(@NonNull ExtensionContext extensionContext) {
         app.after();
         postgres.afterAll(extensionContext);
     }

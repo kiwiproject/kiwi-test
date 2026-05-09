@@ -4,6 +4,7 @@ import static org.kiwiproject.concurrent.Async.Mode.DISABLED;
 import static org.kiwiproject.concurrent.Async.Mode.ENABLED;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -39,13 +40,13 @@ import org.kiwiproject.concurrent.Async;
 public class AsyncModeDisablingExtension implements BeforeEachCallback, AfterEachCallback {
 
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeEach(@NonNull ExtensionContext context) {
         LOG.trace("Setting async mode to DISABLED");
         Async.setUnitTestAsyncMode(DISABLED);
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         LOG.trace("Setting async mode to ENABLED");
         Async.setUnitTestAsyncMode(ENABLED);
     }

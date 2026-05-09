@@ -1,6 +1,7 @@
 package org.kiwiproject.test.junit.jupiter;
 
 import jakarta.validation.Validator;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.kiwiproject.validation.KiwiValidations;
@@ -15,7 +16,7 @@ import org.kiwiproject.validation.KiwiValidations;
 public class ResetKiwiValidationExtension implements AfterAllCallback {
 
     @Override
-    public void afterAll(ExtensionContext context) {
+    public void afterAll(@NonNull ExtensionContext context) {
         var freshValidator = KiwiValidations.newValidator();
         KiwiValidations.setValidator(freshValidator);
     }

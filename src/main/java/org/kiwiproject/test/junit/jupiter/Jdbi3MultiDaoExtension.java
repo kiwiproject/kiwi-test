@@ -15,6 +15,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.argument.ArgumentFactory;
 import org.jdbi.v3.core.spi.JdbiPlugin;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -132,7 +133,7 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
      * @see Handle#begin()
      */
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeEach(@NonNull ExtensionContext context) {
         LOG.trace("Setting up for JDBI multi-DAO test");
 
         LOG.trace("Opening handle");
@@ -170,7 +171,7 @@ public class Jdbi3MultiDaoExtension implements BeforeEachCallback, AfterEachCall
      * @see Handle#close()
      */
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         Jdbi3Helpers.rollbackAndClose(handle, LOG);
     }
 

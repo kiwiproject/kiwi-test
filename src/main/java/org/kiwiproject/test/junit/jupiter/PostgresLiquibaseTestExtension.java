@@ -8,6 +8,7 @@ import io.zonky.test.db.postgres.junit5.EmbeddedPostgresExtension;
 import io.zonky.test.db.postgres.junit5.PreparedDbExtension;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -89,7 +90,7 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
      * @throws Exception if any error occurs while initializing the embedded Postgres or connecting to it
      */
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeAll(@NonNull ExtensionContext context) throws Exception {
         LOG.trace("Invoke PreparedDbExtension.beforeAll() to initialize the embedded Postgres");
         postgres.beforeAll(context);
 
@@ -106,7 +107,7 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
      * @param context the extension context
      */
     @Override
-    public void afterAll(ExtensionContext context) {
+    public void afterAll(@NonNull ExtensionContext context) {
         if (nonNull(testDataSource)) {
             LOG.trace("Closing test DataSource");
             testDataSource.close();

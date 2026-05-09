@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -127,14 +128,14 @@ public class ResetLogbackLoggingExtension implements BeforeAllCallback, AfterAll
     private String logbackConfigFilePath;
 
     @Override
-    public void beforeAll(ExtensionContext context) {
+    public void beforeAll(@NonNull ExtensionContext context) {
         getLogbackTestHelper().resetLogbackWithDefaultOrConfig(logbackConfigFilePath);
         LOG.debug("Logback was reset (before all tests) using configuration: {} (if null, the Logback defaults are used)",
                 logbackConfigFilePath);
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {
+    public void afterAll(@NonNull ExtensionContext context) {
         getLogbackTestHelper().resetLogbackWithDefaultOrConfig(logbackConfigFilePath);
         LOG.debug("Logback was reset (after all tests) using configuration: {} (if null, the Logback defaults are used)",
                 logbackConfigFilePath);

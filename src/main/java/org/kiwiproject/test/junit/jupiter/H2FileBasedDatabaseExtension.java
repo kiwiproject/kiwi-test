@@ -8,6 +8,7 @@ import static org.kiwiproject.test.junit.jupiter.JupiterHelpers.testClassNameOrN
 import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -86,7 +87,7 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
      * @param context extension context
      */
     @Override
-    public void beforeAll(ExtensionContext context) {
+    public void beforeAll(@NonNull ExtensionContext context) {
         if (nonNull(database)) {
             LOG.trace("A database already exists (we are probably inside a @Nested test class) so not doing anything");
             return;
@@ -107,7 +108,7 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
      * @throws Exception if the database directory could not be deleted
      */
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
+    public void afterAll(@NonNull ExtensionContext context) throws Exception {
         if (isTestClassNested(context)) {
             LOG.trace("We're in nested class {}, so NOT deleting the database", testClassNameOrNull(context));
         } else {
@@ -140,7 +141,8 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
      * @return true if the {@code parameterContext} is annotated with {@link H2Database}
      */
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+    public boolean supportsParameter(ParameterContext parameterContext,
+            @NonNull ExtensionContext extensionContext) {
         return parameterContext.isAnnotated(H2Database.class);
     }
 
@@ -152,7 +154,8 @@ public class H2FileBasedDatabaseExtension implements BeforeAllCallback, AfterAll
      * @return the resolved {@link H2FileBasedDatabase}
      */
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+    public Object resolveParameter(@NonNull ParameterContext parameterContext,
+            @NonNull ExtensionContext extensionContext) {
         var namespace = createNamespace();
 
         return getDatabase(extensionContext, namespace);

@@ -11,6 +11,7 @@ import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.ServerVersion;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -176,7 +177,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) {
+    public void beforeAll(@NonNull ExtensionContext context) {
         mongoServer = startInMemoryMongoServer(serverVersion);
         connectionString = MongoServerTests.getConnectionString(mongoServer);
         testDatabaseName = generateTestDatabaseName();
@@ -192,7 +193,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         if (dropTime == DropTime.AFTER_EACH) {
             dropAndRecreateTestDatabase();
             LOG.trace("@AfterEach: Database {} was dropped and re-created", testDatabaseName);
@@ -205,7 +206,7 @@ public class MongoServerExtension implements BeforeAllCallback, AfterAllCallback
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {
+    public void afterAll(@NonNull ExtensionContext context) {
         LOG.trace("@AfterAll: Closing Mongo client and shutting in-memory MongoServer down");
         mongoClient.close();
         mongoServer.shutdownNow();

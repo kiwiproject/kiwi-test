@@ -2,6 +2,7 @@ package org.kiwiproject.test.junit.jupiter.params.provider;
 
 import static java.util.Collections.unmodifiableList;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -40,7 +41,8 @@ public class MinimalBlankStringArgumentsProvider implements ArgumentsProvider {
     );
 
     @Override
-    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) {
+    public @NonNull Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
+            @NonNull ExtensionContext context) {
         return BLANK_STRINGS.stream().map(Arguments::of);
     }
 }

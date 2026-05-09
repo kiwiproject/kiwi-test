@@ -9,6 +9,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryOneTime;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,7 +53,7 @@ class CuratorTestingServerExtensionImmediateStartTest {
          * Creates a new Curator client and attempts to connect to the testing server.
          */
         @Override
-        public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        public void beforeAll(@NonNull ExtensionContext extensionContext) throws Exception {
             var sessionTimeoutMs = 2_000;
             var connectionTimeoutMs = 1_000;
             var sleepMsBetweenRetry = 500;

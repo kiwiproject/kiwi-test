@@ -3,6 +3,7 @@ package org.kiwiproject.test.junit.jupiter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -21,12 +22,12 @@ public class H2DatabaseTestExtension implements BeforeEachCallback, AfterEachCal
     private final H2FileBasedDatabase database;
 
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeEach(@NonNull ExtensionContext context) {
         LOG.debug("Database in beforeEach: {}", database);
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         LOG.debug("Database in afterEach: {}", database);
     }
 }
