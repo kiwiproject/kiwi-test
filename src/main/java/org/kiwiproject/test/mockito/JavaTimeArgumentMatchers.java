@@ -86,9 +86,12 @@ public class JavaTimeArgumentMatchers {
         checkArgumentNotNull(expectedTime, EXPECTED_TIME_CANNOT_BE_NULL);
         checkPositive(slackMillis);
 
-        return actualTime -> assertIsNear(expectedTime, actualTime,
+        return actualTime -> assertIsNear(
+                expectedTime,
+                actualTime,
                 expectedTime.minus(slackMillis, ChronoUnit.MILLIS),
-                expectedTime.plus(slackMillis, ChronoUnit.MILLIS));
+                expectedTime.plus(slackMillis, ChronoUnit.MILLIS)
+        );
     }
 
     /**
@@ -152,9 +155,12 @@ public class JavaTimeArgumentMatchers {
         checkArgumentNotNull(expectedTime, EXPECTED_TIME_CANNOT_BE_NULL);
         checkPositive(slackMillis);
 
-        return actualTime -> assertIsNear(expectedTime, actualTime,
+        return actualTime -> assertIsNear(
+                expectedTime,
+                actualTime,
                 expectedTime.minusMillis(slackMillis),
-                expectedTime.plusMillis(slackMillis));
+                expectedTime.plusMillis(slackMillis)
+        );
     }
 
     private static <T extends Temporal & Comparable<? super T>> boolean assertIsNear(
