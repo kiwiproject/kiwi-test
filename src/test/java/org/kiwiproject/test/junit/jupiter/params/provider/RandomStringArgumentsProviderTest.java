@@ -9,18 +9,22 @@ import static org.apache.commons.lang3.CharUtils.isAsciiPrintable;
 import static org.apache.commons.lang3.StringUtils.containsOnly;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.mock;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 import org.junitpioneer.jupiter.params.IntRangeSource;
 import org.kiwiproject.test.junit.jupiter.params.provider.RandomStringSource.CountStrategy;
 import org.kiwiproject.test.junit.jupiter.params.provider.RandomStringSource.RandomSecurity;
@@ -36,6 +40,15 @@ import java.util.stream.IntStream;
 @DisplayName("RandomStringArgumentsProvider")
 @Slf4j
 class RandomStringArgumentsProviderTest {
+
+    private ExtensionContext extensionContext;
+    private ParameterDeclarations parameterDeclarations;
+
+    @BeforeEach
+    void setUp() {
+        extensionContext = mock(ExtensionContext.class);
+        parameterDeclarations = mock(ParameterDeclarations.class);
+    }
 
     @ParameterizedTest
     @RandomStringSource(randomSecurity = RandomSecurity.SECURE)
@@ -96,7 +109,7 @@ class RandomStringArgumentsProviderTest {
 
         var provider = createAndInitProvider(randomStringSource);
 
-        var values = provider.provideArguments(null, null)
+        var values = provider.provideArguments(parameterDeclarations, extensionContext)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .map(String.class::cast)
@@ -144,7 +157,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null))
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext))
                 .withMessage("count must be greater than zero");
     }
 
@@ -169,7 +182,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null))
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext))
                 .withMessage("minLength must be equal or less than maxLength");
     }
 
@@ -194,7 +207,7 @@ class RandomStringArgumentsProviderTest {
 
         var provider = createAndInitProvider(randomStringSource);
 
-        var arguments = provider.provideArguments(null, null)
+        var arguments = provider.provideArguments(parameterDeclarations, extensionContext)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .map(String.class::cast)
@@ -221,7 +234,7 @@ class RandomStringArgumentsProviderTest {
 
         var provider = createAndInitProvider(randomStringSource);
 
-        var arguments = provider.provideArguments(null, null)
+        var arguments = provider.provideArguments(parameterDeclarations, extensionContext)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .map(String.class::cast)
@@ -249,7 +262,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null))
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext))
                 .withMessage("minCount must be greater than zero, and maxCount must be greater or equal to minCount");
     }
 
@@ -312,7 +325,7 @@ class RandomStringArgumentsProviderTest {
         // we need to force the stream to terminate for this test
         //noinspection ResultOfMethodCallIgnored
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null).toList())
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext).toList())
                 .withMessage("chars must have at least one character");
     }
 
@@ -346,7 +359,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null))
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext))
                 .withMessage("endChar must be higher than beginChar");
     }
 
@@ -382,7 +395,7 @@ class RandomStringArgumentsProviderTest {
         var provider = createAndInitProvider(randomStringSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null))
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext))
                 .withMessage("beginChars and endChars must have the same length");
     }
 
