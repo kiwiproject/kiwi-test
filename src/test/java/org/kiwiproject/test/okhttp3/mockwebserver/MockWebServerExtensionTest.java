@@ -14,9 +14,11 @@ import static org.mockito.Mockito.when;
 import com.google.common.base.Strings;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.junit.jupiter.params.provider.MinimalBlankStringSource;
@@ -28,6 +30,14 @@ import java.util.function.Consumer;
 
 @DisplayName("MockWebServerExtension (mockwebserver)")
 class MockWebServerExtensionTest {
+
+    private ExtensionContext extensionContext;
+
+    @BeforeEach
+    void setUp() {
+        extensionContext = mock(ExtensionContext.class,
+                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
+    }
 
     @Nested
     class NoArgsConstructor {
@@ -119,7 +129,7 @@ class MockWebServerExtensionTest {
             when(server.url(anyString())).thenReturn(mock(HttpUrl.class));
 
             var extension = MockWebServerExtension.builder().server(server).build();
-            extension.beforeEach(null);
+            extension.beforeEach(extensionContext);
 
             verify(server).start();
         }
@@ -135,7 +145,7 @@ class MockWebServerExtensionTest {
                     .server(server)
                     .serverCustomizer(customizer)
                     .build();
-            extension.beforeEach(null);
+            extension.beforeEach(extensionContext);
 
             verify(customizer, only()).accept(server);
         }
@@ -149,7 +159,7 @@ class MockWebServerExtensionTest {
             when(server.url(anyString())).thenReturn(httpUrl);
 
             var extension = MockWebServerExtension.builder().server(server).build();
-            extension.beforeEach(null);
+            extension.beforeEach(extensionContext);
 
             assertThat(extension.uri()).isSameAs(uri);
         }
@@ -163,7 +173,7 @@ class MockWebServerExtensionTest {
             var server = mock(MockWebServer.class);
 
             var extension = MockWebServerExtension.builder().server(server).build();
-            extension.afterEach(null);
+            extension.afterEach(extensionContext);
 
             verify(server, only()).close();
         }
@@ -216,7 +226,7 @@ class MockWebServerExtensionTest {
                     .server(server)
                     .build();
 
-            extension.beforeEach(null);
+            extension.beforeEach(extensionContext);
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> extension.uri(null))
@@ -231,7 +241,7 @@ class MockWebServerExtensionTest {
                     .server(server)
                     .build();
 
-            extension.beforeEach(null);
+            extension.beforeEach(extensionContext);
 
             // MinimalBlankStringSource gives us a null, which we need to ignore,
             // so convert it to an empty string.
@@ -255,7 +265,7 @@ class MockWebServerExtensionTest {
                     .server(server)
                     .build();
 
-            extension.beforeEach(null);
+            extension.beforeEach(extensionContext);
 
             // handle the special case of an empty string; the resulting
             // path should end with a slash

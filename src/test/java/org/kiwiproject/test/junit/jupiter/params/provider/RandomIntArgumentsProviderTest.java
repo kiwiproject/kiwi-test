@@ -3,17 +3,32 @@ package org.kiwiproject.test.junit.jupiter.params.provider;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 @DisplayName("RandomIntArgumentsProvider")
 class RandomIntArgumentsProviderTest {
+
+    private ExtensionContext extensionContext;
+    private ParameterDeclarations parameterDeclarations;
+
+    @BeforeEach
+    void setUp() {
+        extensionContext = mock(ExtensionContext.class,
+                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
+        parameterDeclarations = mock(ParameterDeclarations.class,
+                invocation -> { throw new AssertionError("ParameterDeclarations should not be called"); });
+    }
 
     @Test
     void shouldThrowIllegalArgumentException_WhenMaxLessThanMin() {
@@ -22,7 +37,7 @@ class RandomIntArgumentsProviderTest {
         provider.accept(randomIntSource);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> provider.provideArguments(null, null))
+                .isThrownBy(() -> provider.provideArguments(parameterDeclarations, extensionContext))
                 .withMessage("min must be equal or less than max");
     }
 
@@ -33,7 +48,7 @@ class RandomIntArgumentsProviderTest {
         var provider = new RandomIntArgumentsProvider();
         provider.accept(randomIntSource);
 
-        var arguments = provider.provideArguments(null, null)
+        var arguments = provider.provideArguments(parameterDeclarations, extensionContext)
                 .map(Arguments::get)
                 .flatMap(Arrays::stream)
                 .mapToInt(value -> (int) value)
