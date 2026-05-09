@@ -55,14 +55,14 @@ class PostgresLiquibaseTestExtensionTest {
     @Test
     @Order(2)
     void shouldAlwaysReturnSameConnection() {
-        var handle1 = jdbi.open();
-        var handle2 = jdbi.open();
-
-        assertThat(handle1.getConnection())
-                .isSameAs(handle2.getConnection())
-                .isSameAs(handle.getConnection());
+        try (var handle1 = jdbi.open(); var handle2 = jdbi.open()) {
+            assertThat(handle1.getConnection())
+                    .isSameAs(handle2.getConnection())
+                    .isSameAs(handle.getConnection());
+        }
     }
 
+    @SuppressWarnings("resource")
     @Test
     @Order(3)
     void shouldUseSameConnection() {
