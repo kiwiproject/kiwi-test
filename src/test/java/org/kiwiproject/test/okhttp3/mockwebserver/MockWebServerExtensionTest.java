@@ -187,7 +187,7 @@ class MockWebServerExtensionTest {
 
             var extension = MockWebServerExtension.builder().server(server).build();
 
-            assertThatCode(() -> extension.afterEach(null))
+            assertThatCode(() -> extension.afterEach(extensionContext))
                     .doesNotThrowAnyException();
 
             verify(server, only()).close();
