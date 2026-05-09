@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
+import okio.ByteString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -80,7 +81,10 @@ class MockWebServerAssertionsTest {
                         .hasRecordedRequest(recordedRequest -> {
                             assertThat(recordedRequest.getMethod()).isEqualTo("POST");
                             assertThat(recordedRequest.getTarget()).isEqualTo(path2);
-                            assertThat(recordedRequest.getBody().utf8()).isEqualTo(body);
+                            assertThat(recordedRequest.getBody())
+                                    .isNotNull()
+                                    .extracting(ByteString::utf8)
+                                    .isEqualTo(body);
                         }))
                 .doesNotThrowAnyException();
     }
