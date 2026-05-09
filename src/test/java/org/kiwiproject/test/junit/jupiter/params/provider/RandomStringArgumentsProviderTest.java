@@ -414,49 +414,49 @@ class RandomStringArgumentsProviderTest {
     static class RandomStringSourceForTesting implements RandomStringSource {
 
         @Builder.Default
-        int minLength = 5;
+        final int minLength = 5;
 
         @Builder.Default
-        int maxLength = 20;
+        final int maxLength = 20;
 
         @Builder.Default
-        String prefix = "";
+        final String prefix = "";
 
         @Builder.Default
-        String suffix = "";
+        final String suffix = "";
 
         @Builder.Default
-        StringType stringType = StringType.ALPHANUMERIC;
+        final StringType stringType = StringType.ALPHANUMERIC;
 
         @Builder.Default
-        RandomSecurity randomSecurity = RandomSecurity.INSECURE;
+        final RandomSecurity randomSecurity = RandomSecurity.INSECURE;
 
         @Builder.Default
-        int count = 5;
+        final int count = 5;
 
         @Builder.Default
-        int minCount = 1;
+        final int minCount = 1;
 
         @Builder.Default
-        int maxCount = 10;
+        final int maxCount = 10;
 
         @Builder.Default
-        char[] chars = { 'a', 'b', 'c', 'd', 'e' };
+        final char[] chars = { 'a', 'b', 'c', 'd', 'e' };
 
         @Builder.Default
-        char beginChar = 'a';
+        final char beginChar = 'a';
 
         @Builder.Default
-        char endChar = 'e';
+        final char endChar = 'e';
 
         @Builder.Default
-        char[] beginChars = { 'a', '1' };
+        final char[] beginChars = { 'a', '1' };
 
         @Builder.Default
-        char[] endChars = { 'e', '5' };
+        final char[] endChars = { 'e', '5' };
 
         @Builder.Default
-        CountStrategy countStrategy = CountStrategy.FIXED;
+        final CountStrategy countStrategy = CountStrategy.FIXED;
 
         @Override
         public Class<? extends Annotation> annotationType() {
