@@ -24,6 +24,8 @@ public class JavaTimeArgumentMatchers {
     private static final int DEFAULT_SLACK_MILLIS = 500;
     private static final String EXPECTED_TIME_CANNOT_BE_NULL = "expectedTime cannot be null";
     private static final String SLACK_CANNOT_BE_NULL = "slack cannot be null";
+    private static final String LOG_TRACE_TEMPLATE =
+            "expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}";
 
     /**
      * Matches an {@link ZonedDateTime} near the given expected time within +/- 500 milliseconds.
@@ -86,7 +88,7 @@ public class JavaTimeArgumentMatchers {
         checkPositive(slackMillis);
 
         return actualTime -> {
-            LOG.trace("expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}",
+            LOG.trace(LOG_TRACE_TEMPLATE,
                     expectedTime,
                     actualTime,
                     lazy(() -> Duration.between(expectedTime, actualTime)));
@@ -164,7 +166,7 @@ public class JavaTimeArgumentMatchers {
         checkPositive(slackMillis);
 
         return actualTime -> {
-            LOG.trace("expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}",
+            LOG.trace(LOG_TRACE_TEMPLATE,
                     expectedTime,
                     actualTime,
                     lazy(() -> Duration.between(expectedTime, actualTime)));
