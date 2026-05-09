@@ -81,7 +81,7 @@ public record CertOptions(
      * Derives certificate validity dates based on the provided inputs.
      * <ul>
      *   <li>
-     *       If both dates are null, defaults to plus and minues 1 day around now.
+     *       If both dates are null, defaults to plus and minus 1 day around now.
      *   </li>
      *   <li>
      *       If only one bound is provided, the other is derived using a

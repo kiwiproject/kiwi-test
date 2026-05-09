@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * <pre>
  * {@literal @}ParameterizedTest
  * {@literal @}BlankStringSource
- *  void testThatEachProvidedArgumentIsBlank(String blankString) 1
+ *  void testThatEachProvidedArgumentIsBlank(String blankString) {
  *      assertThat(blankString).isBlank();
  *      // or whatever else you need to test where you need a blank String...
  *  }

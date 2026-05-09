@@ -20,10 +20,10 @@ import org.kiwiproject.concurrent.Async;
  * <p>
  * You should only use it in cases when changing the code under test from asynchronous to synchronous behavior
  * will not change the results of a method. For example, a common situation where we use this is HTTP endpoints
- * that receive a payload, use {@link Async} to perform some operation asynchronously, and immediately return a
+ * that receive a payload: use {@link Async} to perform some operation asynchronously, and immediately return a
  * {@code 202 Accepted} response with some kind of status entity to allow clients to check back about the status. In
  * a situation like this, we think that changing the background operation to synchronous during a unit test is
- * acceptable, and makes testing easier so long as the operation in question does not take long during the test.
+ * acceptable and makes testing easier so long as the operation in question does not take long during the test.
  * For example, maybe in the test it calls a mocked out business service class.
  * <p>
  * Use like this:

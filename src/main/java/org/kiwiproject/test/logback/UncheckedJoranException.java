@@ -14,7 +14,7 @@ public class UncheckedJoranException extends RuntimeException {
      *
      * @param message the message, which can be null
      * @param cause   the cause, which cannot be null
-     * @throws IllegalArgumentException if cause is null
+     * @throws IllegalArgumentException if {@code cause} is null
      */
     public UncheckedJoranException(String message, JoranException cause) {
         super(message, requireNotNull(cause));
@@ -24,7 +24,7 @@ public class UncheckedJoranException extends RuntimeException {
      * Construct an instance.
      *
      * @param cause the cause, which cannot be null
-     * @throws IllegalArgumentException if cause is null
+     * @throws IllegalArgumentException if {@code cause} is null
      */
     public UncheckedJoranException(JoranException cause) {
         super(requireNotNull(cause));

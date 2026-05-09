@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  * <pre>
  * {@literal @}ParameterizedTest
  * {@literal @}ArgumentsSource(BlankStringArgumentsProvider.class)
- *  void testThatEachProvidedArgumentIsBlank(String blankString) 1
+ *  void testThatEachProvidedArgumentIsBlank(String blankString) {
  *      assertThat(blankString).isBlank();
  *      // or whatever else you need to test where you need a blank String...
  *  }

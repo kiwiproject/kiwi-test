@@ -60,7 +60,7 @@ class RandomStringArgumentsProviderTest {
 
     /**
      * This is NOT intended as a test of the Java PRNGs but rather to
-     * verify that the argument provider is using a PRNG at all.
+     * verify that the argument provider is using a PRNG.
      * <p>
      * Plus, it was interesting coming up with this pseudo-test with the help of ChatGPT.
      * Though, I only skimmed some sources it gave me, such as
