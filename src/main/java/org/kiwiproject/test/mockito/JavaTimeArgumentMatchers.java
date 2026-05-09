@@ -158,13 +158,19 @@ public class JavaTimeArgumentMatchers {
     }
 
     private static <T extends Temporal & Comparable<? super T>> boolean assertIsNear(
-            T expectedTime, T actualTime, T lowerBound, T upperBound) {
+            T expectedTime,
+            T actualTime,
+            T lowerBound,
+            T upperBound) {
+
         LOG.trace("expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}",
                 expectedTime, actualTime,
                 lazy(() -> Duration.between(expectedTime, actualTime)));
+
         assertThat(actualTime)
                 .describedAs("actual time %s not between [ %s, %s ]", actualTime, lowerBound, upperBound)
                 .isBetween(lowerBound, upperBound);
+
         return true;
     }
 }
