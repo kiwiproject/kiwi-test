@@ -21,7 +21,7 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  * <a href="https://www.dropwizard.io/en/stable/manual/testing.html#testing-client-implementations">DropwizardClientExtension</a>
  * reset Logback during bootstrap (silencing DEBUG and INFO logs during test execution) and again
  * after all tests complete (stopping and detaching all appenders, which can leave later test
- * classes with no log output at all). Both of those extensions reset Logback in
+ * classes with no log output). Both of those extensions reset Logback in
  * <a href="https://github.com/dropwizard/dropwizard/blob/297870e3b4b43ea9fb19417dd90ed78151cf6f5d/dropwizard-testing/src/main/java/io/dropwizard/testing/DropwizardTestSupport.java#L244">DropwizardTestSupport</a>.
  * Once this happens, there is either a minimal configuration that only logs at {@code INFO} and higher levels,
  * or worse, there is <em>no logging output</em> from later tests (in the case where it calls Logback's
@@ -67,14 +67,14 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  *
  * <h2>Using {@code @ExtendWith} for both extensions</h2>
  * <p>
- * If you only need the {@code afterAll} reset (i.e. you do not need logging restored before tests
+ * If you only need the {@code afterAll} reset (i.e., you do not need logging restored before tests
  * run), you can still use {@code @ExtendWith} for both extensions. However, the ordering is
  * critical: {@code ResetLogbackLoggingExtension} <em>must</em> be declared first so that its
  * {@code afterAll} executes last (after Dropwizard has finished resetting Logback).
  * The {@code beforeAll} in this case fires before Dropwizard's bootstrap reset, so it is a
  * harmless no-op rather than a fix for in-test logging.
  * <pre>
- *  {@literal @}ExtendWith(ResetLogbackLoggingExtension.class)  // must be first
+ *  {@literal @}ExtendWith(ResetLogbackLoggingExtension.class) // must be first
  *  {@literal @}ExtendWith(DropwizardExtensionsSupport.class)
  *   class SomeTest {
  *
@@ -82,7 +82,9 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
  *   }
  * </pre>
  * You can also use the {@link DropwizardExtensionsSupportWithLoggingReset} meta-annotation,
- * which guarantees the correct order:
+ * which guarantees the correct order. Note that it only provides the {@code afterAll}
+ * reset - logging is not restored during the test run itself (see that annotation's
+ * Javadoc for details):
  * <pre>
  *  {@literal @}DropwizardExtensionsSupportWithLoggingReset
  *   class SomeTest {
