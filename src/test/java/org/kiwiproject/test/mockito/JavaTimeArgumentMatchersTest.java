@@ -83,7 +83,8 @@ class JavaTimeArgumentMatchersTest {
                 var anInstant = callAnnounce(millis);
 
                 assertThatThrownBy(() -> verify(timekeeper).announce(argThat(isNear(anInstant))))
-                        .isInstanceOf(AssertionError.class);
+                        .isInstanceOf(AssertionError.class)
+                        .hasMessageContaining("not between");
             }
         }
 
@@ -195,7 +196,8 @@ class JavaTimeArgumentMatchersTest {
                 var zonedDateTime = callAnnounce(millis);
 
                 assertThatThrownBy(() -> verify(timekeeper).announce(argThat(isNear(zonedDateTime))))
-                        .isInstanceOf(AssertionError.class);
+                        .isInstanceOf(AssertionError.class)
+                        .hasMessageContaining("not between");
             }
         }
 
