@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 
 /**
  * Static utility methods to create {@link ArgumentMatcher} instances for types in the {@code java.time} package.
@@ -24,8 +25,6 @@ public class JavaTimeArgumentMatchers {
     private static final int DEFAULT_SLACK_MILLIS = 500;
     private static final String EXPECTED_TIME_CANNOT_BE_NULL = "expectedTime cannot be null";
     private static final String SLACK_CANNOT_BE_NULL = "slack cannot be null";
-    private static final String LOG_TRACE_TEMPLATE =
-            "expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}";
 
     /**
      * Matches an {@link ZonedDateTime} near the given expected time within +/- 500 milliseconds.
@@ -87,21 +86,9 @@ public class JavaTimeArgumentMatchers {
         checkArgumentNotNull(expectedTime, EXPECTED_TIME_CANNOT_BE_NULL);
         checkPositive(slackMillis);
 
-        return actualTime -> {
-            LOG.trace(LOG_TRACE_TEMPLATE,
-                    expectedTime,
-                    actualTime,
-                    lazy(() -> Duration.between(expectedTime, actualTime)));
-
-            var lowerBound = expectedTime.minus(slackMillis, ChronoUnit.MILLIS);
-            var upperBound = expectedTime.plus(slackMillis, ChronoUnit.MILLIS);
-
-            assertThat(actualTime)
-                    .describedAs("actual time %s not between [ %s, %s ]", actualTime, lowerBound, upperBound)
-                    .isBetween(lowerBound, upperBound);
-
-            return true;
-        };
+        return actualTime -> assertIsNear(expectedTime, actualTime,
+                expectedTime.minus(slackMillis, ChronoUnit.MILLIS),
+                expectedTime.plus(slackMillis, ChronoUnit.MILLIS));
     }
 
     /**
@@ -165,20 +152,19 @@ public class JavaTimeArgumentMatchers {
         checkArgumentNotNull(expectedTime, EXPECTED_TIME_CANNOT_BE_NULL);
         checkPositive(slackMillis);
 
-        return actualTime -> {
-            LOG.trace(LOG_TRACE_TEMPLATE,
-                    expectedTime,
-                    actualTime,
-                    lazy(() -> Duration.between(expectedTime, actualTime)));
+        return actualTime -> assertIsNear(expectedTime, actualTime,
+                expectedTime.minusMillis(slackMillis),
+                expectedTime.plusMillis(slackMillis));
+    }
 
-            var lowerBound = expectedTime.minusMillis(slackMillis);
-            var upperBound = expectedTime.plusMillis(slackMillis);
-
-            assertThat(actualTime)
-                    .describedAs("actual time %s not between [ %s, %s ]", actualTime, lowerBound, upperBound)
-                    .isBetween(lowerBound, upperBound);
-
-            return true;
-        };
+    private static <T extends Temporal & Comparable<? super T>> boolean assertIsNear(
+            T expectedTime, T actualTime, T lowerBound, T upperBound) {
+        LOG.trace("expectedTime: {} ; actualTime: {} ; Duration.between(expectedTimeTime, actualTime): {}",
+                expectedTime, actualTime,
+                lazy(() -> Duration.between(expectedTime, actualTime)));
+        assertThat(actualTime)
+                .describedAs("actual time %s not between [ %s, %s ]", actualTime, lowerBound, upperBound)
+                .isBetween(lowerBound, upperBound);
+        return true;
     }
 }
