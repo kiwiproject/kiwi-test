@@ -115,7 +115,6 @@ import org.kiwiproject.test.logback.LogbackTestHelper;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Slf4j
-@SuppressWarnings("LombokGetterMayBeUsed")
 public class ResetLogbackLoggingExtension implements BeforeAllCallback, AfterAllCallback {
 
     /**
