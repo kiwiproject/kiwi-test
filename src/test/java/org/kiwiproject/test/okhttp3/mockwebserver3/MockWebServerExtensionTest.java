@@ -34,7 +34,8 @@ class MockWebServerExtensionTest {
 
     @BeforeEach
     void setUp() {
-        extensionContext = mock(ExtensionContext.class);
+        extensionContext = mock(ExtensionContext.class,
+                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
     }
 
     @Nested

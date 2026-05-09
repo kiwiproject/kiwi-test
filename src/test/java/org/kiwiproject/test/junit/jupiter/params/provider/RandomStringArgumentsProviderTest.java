@@ -46,8 +46,10 @@ class RandomStringArgumentsProviderTest {
 
     @BeforeEach
     void setUp() {
-        extensionContext = mock(ExtensionContext.class);
-        parameterDeclarations = mock(ParameterDeclarations.class);
+        extensionContext = mock(ExtensionContext.class,
+                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
+        parameterDeclarations = mock(ParameterDeclarations.class,
+                invocation -> { throw new AssertionError("ParameterDeclarations should not be called"); });
     }
 
     @ParameterizedTest
