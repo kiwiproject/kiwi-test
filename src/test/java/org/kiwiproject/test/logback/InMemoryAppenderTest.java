@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("LoggingSimilarMessage")
 @DisplayName("InMemoryAppender")
 @Slf4j
 class InMemoryAppenderTest {
