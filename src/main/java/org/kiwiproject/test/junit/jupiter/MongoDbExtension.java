@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -264,7 +265,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeEach(@NonNull ExtensionContext context) {
         if (dropTime == DropTime.BEFORE_EACH) {
             dropDatabase();
             LOG.debug("@BeforeEach: Database {} was dropped", databaseName);
@@ -272,7 +273,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         if (dropTime == DropTime.AFTER_ALL) {
             clearCollections(databaseName, cleanupOption);
             LOG.debug("@AfterEach: Collections cleaned with option {} in database {} @AfterEach", cleanupOption, databaseName);
@@ -283,7 +284,7 @@ public class MongoDbExtension implements BeforeEachCallback, AfterEachCallback, 
     }
 
     @Override
-    public void afterAll(ExtensionContext extensionContext) {
+    public void afterAll(@NonNull ExtensionContext extensionContext) {
         if (dropTime == DropTime.AFTER_ALL) {
             dropDatabase();
             LOG.debug("@AfterAll: Database {} was dropped", databaseName);

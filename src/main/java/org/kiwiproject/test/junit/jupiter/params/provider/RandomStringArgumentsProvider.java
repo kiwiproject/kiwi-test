@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -31,7 +32,8 @@ public class RandomStringArgumentsProvider implements ArgumentsProvider, Annotat
     }
 
     @Override
-    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) {
+    public @NonNull Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
+            @NonNull ExtensionContext context) {
         checkArgument(randomStringSource.minLength() <= randomStringSource.maxLength(),
                 "minLength must be equal or less than maxLength");
 

@@ -11,6 +11,7 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.CommandExecutionException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -109,7 +110,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      * @throws Exception if any error occurs initializing the H2 database, executing migrations, or connecting
      */
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeAll(@NonNull ExtensionContext context) throws Exception {
         if (nonNull(database)) {
             LOG.trace("Database exists (we are probably inside a @Nested test class) so not doing anything");
             return;
@@ -141,7 +142,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      * @throws Exception if any error occurs deleting the test database directory
      */
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
+    public void afterAll(@NonNull ExtensionContext context) throws Exception {
         LOG.trace("Invoke H2FileBasedDatabaseExtension.afterAll() to shut down H2 database (if not in nested class)");
         h2Extension.afterAll(context);
     }
@@ -154,7 +155,8 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      * @return true if the {@code parameterContext} is annotated with {@link H2Database}
      */
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+    public boolean supportsParameter(@NonNull ParameterContext parameterContext,
+            @NonNull ExtensionContext extensionContext) {
         return h2Extension.supportsParameter(parameterContext, extensionContext);
     }
 
@@ -166,7 +168,8 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
      * @return the resolved {@link H2FileBasedDatabase}
      */
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
+    public Object resolveParameter(@NonNull ParameterContext parameterContext,
+            @NonNull ExtensionContext extensionContext) {
         return h2Extension.resolveParameter(parameterContext, extensionContext);
     }
 

@@ -9,6 +9,7 @@ import ch.qos.logback.core.Appender;
 import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -151,7 +152,7 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * @param context the current extension context; never {@code null}
      */
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeEach(@NonNull ExtensionContext context) {
         var logbackLogger = (Logger) LoggerFactory.getLogger(loggerClass);
         var rawAppender = getAppender(logbackLogger);
 
@@ -199,7 +200,7 @@ public class InMemoryAppenderExtension implements BeforeEachCallback, AfterEachC
      * @see InMemoryAppender#clearEvents()
      */
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         appender.clearEvents();
     }
 }

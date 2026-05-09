@@ -2,6 +2,7 @@ package org.kiwiproject.test.junit.jupiter.params.provider;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -36,7 +37,8 @@ class RandomIntArgumentsProvider implements ArgumentsProvider, AnnotationConsume
      * {@link ThreadLocalRandom#nextInt(int, int)}.
      */
     @Override
-    public Stream<? extends Arguments> provideArguments(ParameterDeclarations parameters, ExtensionContext context) {
+    public @NonNull Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
+            @NonNull ExtensionContext context) {
         checkArgument(randomIntSource.min() <= randomIntSource.max(), "min must be equal or less than max");
 
         var random = ThreadLocalRandom.current();

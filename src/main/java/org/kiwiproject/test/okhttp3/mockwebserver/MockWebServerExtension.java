@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import okhttp3.mockwebserver.MockWebServer;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -92,7 +93,7 @@ public class MockWebServerExtension implements BeforeEachCallback, AfterEachCall
      * @throws IOException if an error occurs starting the {@link MockWebServer}
      */
     @Override
-    public void beforeEach(ExtensionContext context) throws IOException {
+    public void beforeEach(@NonNull ExtensionContext context) throws IOException {
         serverCustomizer.accept(server);
         server.start();
         uri = MockWebServers.uri(server);
@@ -104,7 +105,7 @@ public class MockWebServerExtension implements BeforeEachCallback, AfterEachCall
      * @param context the current extension context; never {@code null}
      */
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(@NonNull ExtensionContext context) {
         KiwiIO.closeQuietly(server);
     }
 
