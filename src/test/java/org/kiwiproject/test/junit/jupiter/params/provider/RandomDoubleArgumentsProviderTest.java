@@ -2,7 +2,7 @@ package org.kiwiproject.test.junit.jupiter.params.provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.mockito.Mockito.mock;
+import static org.kiwiproject.test.mockito.MockitoHelpers.mockNeverCalled;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +28,8 @@ class RandomDoubleArgumentsProviderTest {
 
     @BeforeEach
     void setUp() {
-        extensionContext = mock(ExtensionContext.class,
-                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
-        parameterDeclarations = mock(ParameterDeclarations.class,
-                invocation -> { throw new AssertionError("ParameterDeclarations should not be called"); });
+        extensionContext = mockNeverCalled(ExtensionContext.class);
+        parameterDeclarations = mockNeverCalled(ParameterDeclarations.class);
     }
 
     @Test
