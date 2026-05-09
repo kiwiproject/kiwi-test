@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.CharUtils.isAsciiPrintable;
 import static org.apache.commons.lang3.StringUtils.containsOnly;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.mockito.Mockito.mock;
+import static org.kiwiproject.test.mockito.MockitoHelpers.mockNeverCalled;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -46,10 +46,8 @@ class RandomStringArgumentsProviderTest {
 
     @BeforeEach
     void setUp() {
-        extensionContext = mock(ExtensionContext.class,
-                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
-        parameterDeclarations = mock(ParameterDeclarations.class,
-                invocation -> { throw new AssertionError("ParameterDeclarations should not be called"); });
+        extensionContext = mockNeverCalled(ExtensionContext.class);
+        parameterDeclarations = mockNeverCalled(ParameterDeclarations.class);
     }
 
     @ParameterizedTest

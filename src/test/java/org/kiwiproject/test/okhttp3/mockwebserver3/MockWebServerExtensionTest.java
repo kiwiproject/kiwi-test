@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.kiwiproject.test.mockito.MockitoHelpers.mockNeverCalled;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -34,8 +35,7 @@ class MockWebServerExtensionTest {
 
     @BeforeEach
     void setUp() {
-        extensionContext = mock(ExtensionContext.class,
-                invocation -> { throw new AssertionError("ExtensionContext should not be called"); });
+        extensionContext = mockNeverCalled(ExtensionContext.class);
     }
 
     @Nested
