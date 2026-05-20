@@ -284,6 +284,39 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a header with the given name (regardless of value).
+     *
+     * @param name the HTTP header name
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasHeader(String name) {
+        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+                .describedAs("Expected header %s to be present", name)
+                .isNotNull();
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a header with the given name and whose value
+     * satisfies assertions in the given consumer.
+     *
+     * @param name          the HTTP header name
+     * @param valueConsumer a {@link Consumer} containing one or more assertions on the header value
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasHeaderSatisfying(String name, Consumer<String> valueConsumer) {
+        var value = recordedRequest.getHeaders().get(name);
+        Assertions.assertThat(value)
+                .describedAs("Expected header %s to be present", name)
+                .isNotNull();
+
+        valueConsumer.accept(value);
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request does not have a request body.
      * <p>
      * Only DELETE, PATCH, POST, and PUT may have a body.

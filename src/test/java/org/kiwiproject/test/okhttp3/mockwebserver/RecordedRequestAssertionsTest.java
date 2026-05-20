@@ -579,6 +579,49 @@ class RecordedRequestAssertionsTest {
                     .isNotNull()
                     .hasMessageContaining("Expected Accept header to have value: application/json");
         }
+
+        @Test
+        void shouldCheckHeaderPresence() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeader("Accept"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckHeaderPresence_WhenHeaderIsAbsent() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeader("Authorization"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected header Authorization to be present");
+        }
+
+        @Test
+        void shouldCheckHeaderSatisfying_WhenValueSatisfiesCondition() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderSatisfying("Accept", value -> {
+                        assertThat(value).startsWith("text/html");
+                        assertThat(value).contains("charset");
+                    }))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckHeaderSatisfying_WhenValueDoesNotSatisfyCondition() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderSatisfying("Accept", value ->
+                            assertThat(value).isEqualTo("application/json")))
+                    .isNotNull()
+                    .hasMessageContaining("application/json");
+        }
+
+        @Test
+        void shouldCheckHeaderSatisfying_WhenHeaderIsAbsent() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderSatisfying("Authorization", value ->
+                            assertThat(value).isNotNull()))
+                    .isNotNull()
+                    .hasMessageContaining("Expected header Authorization to be present");
+        }
     }
 
     @Nested
