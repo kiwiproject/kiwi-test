@@ -838,6 +838,81 @@ class RecordedRequestAssertionsTest {
                     .isNotNull()
                     .hasMessageContaining("Expected path to be: /users/84");
         }
+
+        @Test
+        void shouldCheckPathStartingWith() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathStartingWith("/users"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidPathStartingWith() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathStartingWith("/orders"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected path to start with: /orders");
+        }
+
+        @Test
+        void shouldCheckPathContaining() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42/settings"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathContaining("/42/"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidPathContaining() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42/settings"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathContaining("/99/"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected path to contain: /99/");
+        }
+
+        @Test
+        void shouldCheckPathEndingWith() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathEndingWith("/42"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidPathEndingWith() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathEndingWith("/99"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected path to end with: /99");
+        }
     }
 
     private RecordedRequest takeRequest() {

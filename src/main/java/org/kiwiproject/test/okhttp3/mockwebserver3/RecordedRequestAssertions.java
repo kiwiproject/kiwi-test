@@ -239,6 +239,51 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a target starting with the given prefix.
+     *
+     * @param prefix the expected target prefix
+     * @return this instance
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1">RFC 7230 - Request Line</a>
+     */
+    public RecordedRequestAssertions hasTargetStartingWith(String prefix) {
+        Assertions.assertThat(recordedRequest.getTarget())
+                .describedAs("Expected target to start with: %s", prefix)
+                .startsWith(prefix);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a target containing the given substring.
+     *
+     * @param substring the expected target substring
+     * @return this instance
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1">RFC 7230 - Request Line</a>
+     */
+    public RecordedRequestAssertions hasTargetContaining(String substring) {
+        Assertions.assertThat(recordedRequest.getTarget())
+                .describedAs("Expected target to contain: %s", substring)
+                .contains(substring);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a target ending with the given suffix.
+     *
+     * @param suffix the expected target suffix
+     * @return this instance
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1">RFC 7230 - Request Line</a>
+     */
+    public RecordedRequestAssertions hasTargetEndingWith(String suffix) {
+        Assertions.assertThat(recordedRequest.getTarget())
+                .describedAs("Expected target to end with: %s", suffix)
+                .endsWith(suffix);
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has the expected header name and value.
      *
      * @param name  the expected HTTP header name
