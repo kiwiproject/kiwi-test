@@ -584,6 +584,21 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckNoHeader_WhenHeaderIsAbsent() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasNoHeader("Authorization"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckNoHeader_WhenHeaderIsPresent() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasNoHeader("Accept"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected header Accept not to be present");
+        }
+
+        @Test
         void shouldCheckHeaderSatisfying_WhenValueSatisfiesCondition() {
             assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
                     .hasHeaderSatisfying("Accept", value -> {
