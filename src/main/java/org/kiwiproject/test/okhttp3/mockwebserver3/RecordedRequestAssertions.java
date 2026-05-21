@@ -284,6 +284,22 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a header with the given name and whose value
+     * ends with the given suffix.
+     *
+     * @param name   the HTTP header name
+     * @param suffix the expected suffix of the HTTP header value
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasHeaderValueEndingWith(String name, String suffix) {
+        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+                .describedAs("Expected %s header to have value ending with: %s", name, suffix)
+                .endsWith(suffix);
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has a header with the given name (regardless of value).
      *
      * @param name the HTTP header name

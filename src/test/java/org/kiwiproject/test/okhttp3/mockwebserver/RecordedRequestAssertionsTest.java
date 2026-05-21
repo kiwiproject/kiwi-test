@@ -566,6 +566,21 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckHeaderValueEndingWith() {
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueEndingWith("Accept", "charset=utf-8"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidHeaderValueEndingWith() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueEndingWith("Accept", "application/json"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected Accept header to have value ending with: application/json");
+        }
+
+        @Test
         void shouldCheckHeader() {
             assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
                     .hasHeader("Accept", "text/html; charset=utf-8"))
