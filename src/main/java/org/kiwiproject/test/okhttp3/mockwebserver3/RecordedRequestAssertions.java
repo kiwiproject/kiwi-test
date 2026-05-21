@@ -9,6 +9,7 @@ import static org.kiwiproject.test.constants.KiwiTestConstants.JSON_HELPER;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import mockwebserver3.RecordedRequest;
+import okhttp3.TlsVersion;
 import org.assertj.core.api.Assertions;
 import org.kiwiproject.json.JsonHelper;
 
@@ -589,6 +590,24 @@ public class RecordedRequestAssertions {
         Assertions.assertThat(recordedRequest.getHandshake())
                 .describedAs("Expected request to use TLS")
                 .isNotNull();
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request is TLS with the expected version.
+     *
+     * @param tlsVersion the expected TLS version
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasTlsVersion(TlsVersion tlsVersion) {
+        var handshake = recordedRequest.getHandshake();
+        Assertions.assertThat(handshake)
+                .describedAs("Expected request to use TLS")
+                .isNotNull();
+        Assertions.assertThat(handshake.tlsVersion())
+                .describedAs("Expected TLS version to be %s", tlsVersion)
+                .isEqualTo(tlsVersion);
 
         return this;
     }

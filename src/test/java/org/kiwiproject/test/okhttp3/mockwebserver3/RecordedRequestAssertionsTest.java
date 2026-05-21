@@ -15,6 +15,7 @@ import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import mockwebserver3.RecordedRequest;
 import okhttp3.Handshake;
+import okhttp3.TlsVersion;
 import okio.ByteString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -802,6 +803,41 @@ class RecordedRequestAssertionsTest {
             assertThatThrownBy(() -> assertThatRecordedRequest(tlsRequest).isNotTls())
                     .isNotNull()
                     .hasMessageContaining("Expected request not to use TLS");
+        }
+
+        @Test
+        void shouldCheckTlsVersion() {
+            var handshake = mock(Handshake.class);
+            when(handshake.tlsVersion()).thenReturn(TlsVersion.TLS_1_3);
+
+            var tlsRequest = mock(RecordedRequest.class);
+            when(tlsRequest.getHandshake()).thenReturn(handshake);
+
+            assertThatCode(() -> assertThatRecordedRequest(tlsRequest).hasTlsVersion(TlsVersion.TLS_1_3))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidTlsVersion() {
+            var handshake = mock(Handshake.class);
+            when(handshake.tlsVersion()).thenReturn(TlsVersion.TLS_1_2);
+
+            var tlsRequest = mock(RecordedRequest.class);
+            when(tlsRequest.getHandshake()).thenReturn(handshake);
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(tlsRequest).hasTlsVersion(TlsVersion.TLS_1_3))
+                    .isNotNull()
+                    .hasMessageContaining("Expected TLS version to be TLS_1_3");
+        }
+
+        @Test
+        void shouldCheckTlsVersion_WhenRequestIsNotTls() {
+            var nonTlsRequest = mock(RecordedRequest.class);
+            when(nonTlsRequest.getHandshake()).thenReturn(null);
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(nonTlsRequest).hasTlsVersion(TlsVersion.TLS_1_3))
+                    .isNotNull()
+                    .hasMessageContaining("Expected request to use TLS");
         }
     }
 
