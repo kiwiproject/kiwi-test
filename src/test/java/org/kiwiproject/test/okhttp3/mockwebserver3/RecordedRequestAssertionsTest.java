@@ -817,6 +817,81 @@ class RecordedRequestAssertionsTest {
                     .isNotNull()
                     .hasMessageContaining("Expected target to be: /users/84");
         }
+
+        @Test
+        void shouldCheckTargetStartingWith() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetStartingWith("/users"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidTargetStartingWith() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetStartingWith("/orders"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected target to start with: /orders");
+        }
+
+        @Test
+        void shouldCheckTargetContaining() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42/settings"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetContaining("/42/"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidTargetContaining() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42/settings"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetContaining("/99/"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected target to contain: /99/");
+        }
+
+        @Test
+        void shouldCheckTargetEndingWith() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetEndingWith("/42"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidTargetEndingWith() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetEndingWith("/99"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected target to end with: /99");
+        }
     }
 
     private RecordedRequest takeRequest() {

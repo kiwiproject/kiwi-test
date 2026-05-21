@@ -237,6 +237,48 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a path starting with the given prefix.
+     *
+     * @param prefix the expected path prefix
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasPathStartingWith(String prefix) {
+        Assertions.assertThat(recordedRequest.getPath())
+                .describedAs("Expected path to start with: %s", prefix)
+                .startsWith(prefix);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a path containing the given substring.
+     *
+     * @param substring the expected path substring
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasPathContaining(String substring) {
+        Assertions.assertThat(recordedRequest.getPath())
+                .describedAs("Expected path to contain: %s", substring)
+                .contains(substring);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a path ending with the given suffix.
+     *
+     * @param suffix the expected path suffix
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasPathEndingWith(String suffix) {
+        Assertions.assertThat(recordedRequest.getPath())
+                .describedAs("Expected path to end with: %s", suffix)
+                .endsWith(suffix);
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has the expected header name and value.
      *
      * @param name  the expected HTTP header name
