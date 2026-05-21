@@ -836,6 +836,34 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckTargetSatisfying_WhenTargetSatisfiesCondition() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetSatisfying(target -> {
+                        assertThat(target).startsWith("/users");
+                        assertThat(target).endsWith("/42");
+                    }))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckTargetSatisfying_WhenTargetDoesNotSatisfyCondition() {
+            server.enqueue(new MockResponse.Builder().code(200).build());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasTargetSatisfying(target -> assertThat(target).startsWith("/orders")))
+                    .isNotNull()
+                    .hasMessageContaining("/orders");
+        }
+
+        @Test
         void shouldCheckTargetStartingWith() {
             server.enqueue(new MockResponse.Builder().code(200).build());
             JdkHttpClients.get(httpClient, uri("/users/42"));

@@ -857,6 +857,34 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckPathSatisfying_WhenPathSatisfiesCondition() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathSatisfying(path -> {
+                        assertThat(path).startsWith("/users");
+                        assertThat(path).endsWith("/42");
+                    }))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckPathSatisfying_WhenPathDoesNotSatisfyCondition() {
+            server.enqueue(new MockResponse());
+            JdkHttpClients.get(httpClient, uri("/users/42"));
+
+            var recordedRequest = takeRequest();
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasPathSatisfying(path -> assertThat(path).startsWith("/orders")))
+                    .isNotNull()
+                    .hasMessageContaining("/orders");
+        }
+
+        @Test
         void shouldCheckPathStartingWith() {
             server.enqueue(new MockResponse());
             JdkHttpClients.get(httpClient, uri("/users/42"));
