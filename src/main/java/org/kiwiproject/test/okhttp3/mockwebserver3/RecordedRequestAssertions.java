@@ -298,6 +298,20 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request does not have a header with the given name.
+     *
+     * @param name the HTTP header name
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasNoHeader(String name) {
+        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+                .describedAs("Expected header %s not to be present", name)
+                .isNull();
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has a header with the given name and whose value
      * satisfies assertions in the given consumer.
      *
