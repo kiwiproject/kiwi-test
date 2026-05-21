@@ -237,6 +237,18 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a path that satisfies assertions in the given consumer.
+     *
+     * @param pathConsumer a {@link Consumer} containing one or more assertions on the request path
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasPathSatisfying(Consumer<String> pathConsumer) {
+        pathConsumer.accept(recordedRequest.getPath());
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has a path starting with the given prefix.
      *
      * @param prefix the expected path prefix

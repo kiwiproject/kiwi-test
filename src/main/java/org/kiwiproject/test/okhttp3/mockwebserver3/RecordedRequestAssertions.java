@@ -239,6 +239,19 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a target that satisfies assertions in the given consumer.
+     *
+     * @param targetConsumer a {@link Consumer} containing one or more assertions on the request target
+     * @return this instance
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1">RFC 7230 - Request Line</a>
+     */
+    public RecordedRequestAssertions hasTargetSatisfying(Consumer<String> targetConsumer) {
+        targetConsumer.accept(recordedRequest.getTarget());
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has a target starting with the given prefix.
      *
      * @param prefix the expected target prefix
