@@ -11,6 +11,7 @@ import static org.kiwiproject.test.okhttp3.mockwebserver.RecordedRequestAssertio
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import okhttp3.TlsVersion;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -772,6 +773,39 @@ class RecordedRequestAssertionsTest {
                     .hasFailureCauseInstanceOf(SSLHandshakeException.class))
                     .isNotNull()
                     .hasMessageContaining("Expected request to have failure of type: javax.net.ssl.SSLHandshakeException");
+        }
+    }
+
+    @Nested
+    class Tls {
+
+        @Test
+        void shouldPassWhenRequestIsTls() {
+            var tlsRequest = mock(RecordedRequest.class);
+            when(tlsRequest.getTlsVersion()).thenReturn(TlsVersion.TLS_1_3);
+
+            assertThatCode(() -> assertThatRecordedRequest(tlsRequest).isTls())
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldFailWhenRequestIsNotTls_ButTlsExpected() {
+            var nonTlsRequest = mock(RecordedRequest.class);
+            when(nonTlsRequest.getTlsVersion()).thenReturn(null);
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(nonTlsRequest).isTls())
+                    .isNotNull()
+                    .hasMessageContaining("Expected request to use TLS");
+        }
+
+        @Test
+        void shouldFailWhenRequestIsTls_ButNotTlsExpected() {
+            var tlsRequest = mock(RecordedRequest.class);
+            when(tlsRequest.getTlsVersion()).thenReturn(TlsVersion.TLS_1_3);
+
+            assertThatThrownBy(() -> assertThatRecordedRequest(tlsRequest).isNotTls())
+                    .isNotNull()
+                    .hasMessageContaining("Expected request not to use TLS");
         }
     }
 

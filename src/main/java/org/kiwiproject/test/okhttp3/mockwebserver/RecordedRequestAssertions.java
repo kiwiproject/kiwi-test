@@ -491,6 +491,19 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request is TLS, i.e., is an HTTPS request.
+     *
+     * @return this instance
+     */
+    public RecordedRequestAssertions isTls() {
+        Assertions.assertThat(recordedRequest.getTlsVersion())
+                .describedAs("Expected request to use TLS")
+                .isNotNull();
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request is not TLS, i.e., is an HTTP request not HTTPS.
      *
      * @return this instance
