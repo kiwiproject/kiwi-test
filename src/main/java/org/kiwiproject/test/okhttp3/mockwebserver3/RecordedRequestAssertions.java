@@ -260,7 +260,11 @@ public class RecordedRequestAssertions {
      * @return this instance
      */
     public RecordedRequestAssertions hasHeaderValueStartingWith(String name, String prefix) {
-        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+        var value = recordedRequest.getHeaders().get(name);
+        Assertions.assertThat(value)
+                .describedAs("Expected header %s to be present", name)
+                .isNotNull();
+        Assertions.assertThat(value)
                 .describedAs("Expected %s header to have value starting with: %s", name, prefix)
                 .startsWith(prefix);
 
@@ -276,7 +280,11 @@ public class RecordedRequestAssertions {
      * @return this instance
      */
     public RecordedRequestAssertions hasHeaderValueContaining(String name, String substring) {
-        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+        var value = recordedRequest.getHeaders().get(name);
+        Assertions.assertThat(value)
+                .describedAs("Expected header %s to be present", name)
+                .isNotNull();
+        Assertions.assertThat(value)
                 .describedAs("Expected %s header to have value containing: %s", name, substring)
                 .contains(substring);
 
@@ -292,7 +300,11 @@ public class RecordedRequestAssertions {
      * @return this instance
      */
     public RecordedRequestAssertions hasHeaderValueEndingWith(String name, String suffix) {
-        Assertions.assertThat(recordedRequest.getHeaders().get(name))
+        var value = recordedRequest.getHeaders().get(name);
+        Assertions.assertThat(value)
+                .describedAs("Expected header %s to be present", name)
+                .isNotNull();
+        Assertions.assertThat(value)
                 .describedAs("Expected %s header to have value ending with: %s", name, suffix)
                 .endsWith(suffix);
 

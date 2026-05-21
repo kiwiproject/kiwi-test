@@ -551,6 +551,14 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckHeaderValueStartingWith_WhenHeaderIsAbsent() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueStartingWith("Authorization", "Bearer"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected header Authorization to be present");
+        }
+
+        @Test
         void shouldCheckHeaderValueContaining() {
             assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
                     .hasHeaderValueContaining("Accept", "charset"))
@@ -566,6 +574,14 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckHeaderValueContaining_WhenHeaderIsAbsent() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueContaining("Authorization", "Bearer"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected header Authorization to be present");
+        }
+
+        @Test
         void shouldCheckHeaderValueEndingWith() {
             assertThatCode(() -> assertThatRecordedRequest(recordedRequest)
                     .hasHeaderValueEndingWith("Accept", "charset=utf-8"))
@@ -578,6 +594,14 @@ class RecordedRequestAssertionsTest {
                     .hasHeaderValueEndingWith("Accept", "application/json"))
                     .isNotNull()
                     .hasMessageContaining("Expected Accept header to have value ending with: application/json");
+        }
+
+        @Test
+        void shouldCheckHeaderValueEndingWith_WhenHeaderIsAbsent() {
+            assertThatThrownBy(() -> assertThatRecordedRequest(recordedRequest)
+                    .hasHeaderValueEndingWith("Authorization", "token"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected header Authorization to be present");
         }
 
         @Test
