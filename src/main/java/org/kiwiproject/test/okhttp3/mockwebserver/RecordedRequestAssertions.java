@@ -32,6 +32,8 @@ public class RecordedRequestAssertions {
     // reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
     static final List<String> METHODS_ALLOWING_BODY = List.of("DELETE", "PATCH", "POST", "PUT");
 
+    private static final String HEADER_MUST_BE_PRESENT = "Expected header %s to be present";
+
     private final RecordedRequest recordedRequest;
 
     private RecordedRequestAssertions(RecordedRequest recordedRequest) {
@@ -258,7 +260,11 @@ public class RecordedRequestAssertions {
      * @return this instance
      */
     public RecordedRequestAssertions hasHeaderValueStartingWith(String name, String prefix) {
-        Assertions.assertThat(recordedRequest.getHeader(name))
+        var value = recordedRequest.getHeader(name);
+        Assertions.assertThat(value)
+                .describedAs(HEADER_MUST_BE_PRESENT, name)
+                .isNotNull();
+        Assertions.assertThat(value)
                 .describedAs("Expected %s header to have value starting with: %s", name, prefix)
                 .startsWith(prefix);
 
@@ -274,9 +280,33 @@ public class RecordedRequestAssertions {
      * @return this instance
      */
     public RecordedRequestAssertions hasHeaderValueContaining(String name, String substring) {
-        Assertions.assertThat(recordedRequest.getHeader(name))
+        var value = recordedRequest.getHeader(name);
+        Assertions.assertThat(value)
+                .describedAs(HEADER_MUST_BE_PRESENT, name)
+                .isNotNull();
+        Assertions.assertThat(value)
                 .describedAs("Expected %s header to have value containing: %s", name, substring)
                 .contains(substring);
+
+        return this;
+    }
+
+    /**
+     * Asserts the recorded request has a header with the given name and whose value
+     * ends with the given suffix.
+     *
+     * @param name   the HTTP header name
+     * @param suffix the expected suffix of the HTTP header value
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasHeaderValueEndingWith(String name, String suffix) {
+        var value = recordedRequest.getHeader(name);
+        Assertions.assertThat(value)
+                .describedAs(HEADER_MUST_BE_PRESENT, name)
+                .isNotNull();
+        Assertions.assertThat(value)
+                .describedAs("Expected %s header to have value ending with: %s", name, suffix)
+                .endsWith(suffix);
 
         return this;
     }
@@ -289,7 +319,7 @@ public class RecordedRequestAssertions {
      */
     public RecordedRequestAssertions hasHeader(String name) {
         Assertions.assertThat(recordedRequest.getHeader(name))
-                .describedAs("Expected header %s to be present", name)
+                .describedAs(HEADER_MUST_BE_PRESENT, name)
                 .isNotNull();
 
         return this;
@@ -320,7 +350,7 @@ public class RecordedRequestAssertions {
     public RecordedRequestAssertions hasHeaderSatisfying(String name, Consumer<String> valueConsumer) {
         var value = recordedRequest.getHeader(name);
         Assertions.assertThat(value)
-                .describedAs("Expected header %s to be present", name)
+                .describedAs(HEADER_MUST_BE_PRESENT, name)
                 .isNotNull();
 
         valueConsumer.accept(value);
