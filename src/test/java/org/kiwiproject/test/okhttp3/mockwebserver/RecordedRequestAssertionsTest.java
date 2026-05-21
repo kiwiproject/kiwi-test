@@ -208,6 +208,23 @@ class RecordedRequestAssertionsTest {
         }
 
         @Test
+        void shouldCheckBodyContaining() {
+            assertThatCode(() ->
+                    assertThatRecordedRequest(recordedRequest)
+                            .hasBodyContaining("alice"))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void shouldCheckInvalidBodyContaining() {
+            assertThatThrownBy(() ->
+                    assertThatRecordedRequest(recordedRequest)
+                            .hasBodyContaining("mallory"))
+                    .isNotNull()
+                    .hasMessageContaining("Expected body to contain: mallory");
+        }
+
+        @Test
         void shouldCheckInvalidBodySize() {
             assertThatThrownBy(() -> RecordedRequestAssertions.assertThat(recordedRequest).hasBodySize(2_567))
                     .isNotNull()
