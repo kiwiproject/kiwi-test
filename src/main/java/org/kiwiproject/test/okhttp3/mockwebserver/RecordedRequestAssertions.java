@@ -456,6 +456,24 @@ public class RecordedRequestAssertions {
     }
 
     /**
+     * Asserts the recorded request has a body containing the given substring.
+     *
+     * @param substring the expected substring of the request body
+     * @return this instance
+     */
+    public RecordedRequestAssertions hasBodyContaining(String substring) {
+        checkMethodAllowsBody();
+
+        var bodyBuffer = recordedRequest.getBody();
+        var actualBodyUtf8 = bodyBuffer.readUtf8();
+        Assertions.assertThat(actualBodyUtf8)
+                .describedAs("Expected body to contain: %s", substring)
+                .contains(substring);
+
+        return this;
+    }
+
+    /**
      * Asserts the recorded request has a JSON body that deserializes to the given entity.
      *
      * @param entity the expected request entity
