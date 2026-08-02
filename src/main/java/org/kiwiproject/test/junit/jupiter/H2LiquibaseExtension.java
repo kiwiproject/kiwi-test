@@ -2,13 +2,6 @@ package org.kiwiproject.test.junit.jupiter;
 
 import static java.util.Objects.nonNull;
 
-import liquibase.command.CommandScope;
-import liquibase.command.core.UpdateCommandStep;
-import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.CommandExecutionException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -18,10 +11,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.kiwiproject.test.h2.H2FileBasedDatabase;
-
-import java.io.File;
+import org.kiwiproject.test.liquibase.LiquibaseTestHelpers;
 
 import javax.sql.DataSource;
+import java.io.File;
 
 /**
  * This JUnit Jupiter extension provides a file-based H2 database and runs Liquibase migrations to allow testing
@@ -122,17 +115,7 @@ public class H2LiquibaseExtension implements BeforeAllCallback, AfterAllCallback
         database = h2Extension.getDatabase();
 
         LOG.trace("Running Liquibase migrations using migrations file: {}", migrationClassPathLocation);
-        try (var conn = database.getDataSource().getConnection()) {
-            var liquibaseDb = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn));
-            runLiquibaseUpdate(liquibaseDb, migrationClassPathLocation);
-        }
-    }
-
-    private static void runLiquibaseUpdate(Database database, String changeLogLocation) throws CommandExecutionException {
-        var updateCommand = new CommandScope(UpdateCommandStep.COMMAND_NAME)
-                .addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, database)
-                .addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changeLogLocation);
-        updateCommand.execute();
+        LiquibaseTestHelpers.runMigrations(getDataSource(), migrationClassPathLocation);
     }
 
     /**
