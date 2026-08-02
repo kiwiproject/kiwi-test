@@ -16,9 +16,12 @@ import org.kiwiproject.test.jdbc.JdbcTests;
 import org.kiwiproject.test.jdbc.SimpleSingleConnectionDataSource;
 
 /**
- * This JUnit Jupiter extension uses the Embedded Postgres Jupiter extension but always returns a
+ * A JUnit Jupiter extension for tests that need a Postgres database with Liquibase migrations applied
+ * before running.
+ * <p>
+ * This extension uses the Embedded Postgres Jupiter extension but always returns a
  * {@link SimpleSingleConnectionDataSource}. This ensures that classes under test all use the same
- * JDBC {@code Connection} which is useful when the test code executes in a transaction and thus
+ * JDBC {@code Connection} which is useful when the test code executes in a transaction, and thus
  * all those classes can all see the uncommitted data.
  * <p>
  * When registering this extension, you must use a {@code static} field because both {@link BeforeAllCallback}
@@ -33,7 +36,7 @@ import org.kiwiproject.test.jdbc.SimpleSingleConnectionDataSource;
  *             new PostgresLiquibaseTestExtension("migrations.xml");
  *
  *    {@literal @}RegisterExtension
- *     final Jdbi3Extension jdbi3Extension =  Jdbi3Extension.builder()
+ *     final Jdbi3Extension jdbi3Extension = Jdbi3Extension.builder()
  *             .dataSource(DATABASE_EXTENSION.getDataSource())
  *             .plugin(new PostgresPlugin())
  *             .build();
@@ -44,9 +47,9 @@ import org.kiwiproject.test.jdbc.SimpleSingleConnectionDataSource;
  * Note in the above that the {@link PostgresLiquibaseTestExtension} is declared both static and final, while the
  * {@link Jdbi3Extension} is not static but is final. This configuration ensures that the embedded Postgres database
  * is set up only one time before all tests run. The {@link Jdbi3Extension} is initialized before each test with
- * a new transaction that is rolled back after each test, which again ensures code running in the transaction
+ * a new transaction that is rolled back after each test. This ensures code running in the transaction
  * participates in the same transaction and can see uncommitted data, but also ensures no data is actually committed
- * since the transaction is rolled back. Each test therefore does not need to worry about cleaning up any data from
+ * since the transaction is rolled back. Each test, therefore, does not need to worry about cleaning up any data from
  * previous tests.
  *
  * @see PreparedDbExtension
@@ -73,7 +76,7 @@ public class PostgresLiquibaseTestExtension implements BeforeAllCallback, AfterA
     /**
      * Construct a new instance using the given classpath location of a Liquibase migrations file.
      *
-     * @param migrationClassPathLocation classpath location of Liquibase migrations file
+     * @param migrationClassPathLocation classpath location of the Liquibase migrations file
      */
     public PostgresLiquibaseTestExtension(String migrationClassPathLocation) {
         LOG.trace("Constructing new instance for migration path: {}", migrationClassPathLocation);
