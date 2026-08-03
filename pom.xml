@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>kiwi-test</artifactId>
-    <version>4.2.1-SNAPSHOT</version>
+    <version>4.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
