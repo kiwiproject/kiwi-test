@@ -32,6 +32,7 @@
         <kiwi-bom.version>3.3.2</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
+        <embedded-postgres-binaries-bom.version>18.4.0</embedded-postgres-binaries-bom.version>
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
         <xmlunit.version>2.12.0</xmlunit.version>
 
@@ -57,6 +58,14 @@
                 <groupId>org.kiwiproject</groupId>
                 <artifactId>kiwi-bom</artifactId>
                 <version>${kiwi-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.zonky.test.postgres</groupId>
+                <artifactId>embedded-postgres-binaries-bom</artifactId>
+                <version>${embedded-postgres-binaries-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
