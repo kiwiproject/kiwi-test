@@ -32,7 +32,7 @@
         <kiwi-bom.version>3.3.3</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
-        <embedded-postgres-binaries-bom.version>18.4.0</embedded-postgres-binaries-bom.version>
+        <embedded-postgres-binaries-bom.version>18.6.0</embedded-postgres-binaries-bom.version>
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
         <xmlunit.version>2.13.0</xmlunit.version>
 
