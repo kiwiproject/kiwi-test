@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.kiwiproject</groupId>
         <artifactId>kiwi-parent</artifactId>
-        <version>3.0.43</version>
+        <version>3.0.44</version>
     </parent>
 
     <artifactId>kiwi-test</artifactId>
@@ -29,7 +29,7 @@
     <properties>
         <!-- Versions for required dependencies -->
         <kiwi.version>5.4.0</kiwi.version>
-        <kiwi-bom.version>3.3.3</kiwi-bom.version>
+        <kiwi-bom.version>3.3.4</kiwi-bom.version>
 
         <!-- Versions for provided dependencies -->
         <embedded-postgres-binaries-bom.version>18.6.0</embedded-postgres-binaries-bom.version>
