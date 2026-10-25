@@ -11,6 +11,7 @@ import jakarta.validation.Validator;
 import org.assertj.core.api.SoftAssertions;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -348,12 +349,13 @@ public class ParameterizedValidationTestHelper {
      * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
+     * @implNote Uses the system default ZoneId when creating the {@link ZonedDateTime} input
      */
     public <T> void assertZonedDateTimePropertyCannotBeNull(String propertyName,
                                                             T object,
                                                             Consumer<ZonedDateTime> mutator,
                                                             Class<?>... groups) {
-        var inputs = inputs(ZonedDateTime.now(), null);
+        var inputs = inputs(ZonedDateTime.now(ZoneId.systemDefault()), null);
         var expectedViolations = expectedViolations(0, 1);
         assertPropertyViolationCounts(propertyName, inputs, expectedViolations, object, mutator, groups);
     }
@@ -370,12 +372,13 @@ public class ParameterizedValidationTestHelper {
      * @param mutator      the mutator function, e.g., a setter method
      * @param groups       the group or list of groups targeted for validation (defaults to Default)
      * @param <T>          the object type
+     * @implNote Uses the system default ZoneId when creating the {@link ZonedDateTime} input
      */
     public <T> void assertZonedDateTimePropertyMustBeNull(String propertyName,
                                                           T object,
                                                           Consumer<ZonedDateTime> mutator,
                                                           Class<?>... groups) {
-        var inputs = inputs(ZonedDateTime.now(), null);
+        var inputs = inputs(ZonedDateTime.now(ZoneId.systemDefault()), null);
         var expectedViolations = expectedViolations(1, 0);
         assertPropertyViolationCounts(propertyName, inputs, expectedViolations, object, mutator, groups);
     }
