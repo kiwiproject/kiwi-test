@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.kiwiproject.test.mockito.MockitoHelpers.mockNeverCalled;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
-import static org.kiwiproject.test.mockito.MockitoHelpers.mockNeverCalled;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
@@ -126,7 +126,8 @@ class MockWebServerExtensionTest {
         @Test
         void shouldStartServer() throws IOException {
             var server = mock(MockWebServer.class);
-            when(server.url(anyString())).thenReturn(mock(HttpUrl.class));
+            var httpUrl = mock(HttpUrl.class);
+            when(server.url(anyString())).thenReturn(httpUrl);
 
             var extension = MockWebServerExtension.builder().server(server).build();
             extension.beforeEach(extensionContext);
@@ -137,7 +138,8 @@ class MockWebServerExtensionTest {
         @Test
         void shouldCallCustomizer() throws IOException {
             var server = mock(MockWebServer.class);
-            when(server.url(anyString())).thenReturn(mock(HttpUrl.class));
+            var httpUrl = mock(HttpUrl.class);
+            when(server.url(anyString())).thenReturn(httpUrl);
 
             Consumer<MockWebServer> customizer = mock();
 

@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kiwiproject.test.constants.KiwiTestConstants;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
@@ -34,8 +35,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.time.Duration;
 import java.util.function.UnaryOperator;
-
-import javax.net.ssl.SSLHandshakeException;
 
 @DisplayName("RecordedRequestAssertions (mockwebserver3)")
 class RecordedRequestAssertionsTest {
@@ -779,7 +778,8 @@ class RecordedRequestAssertionsTest {
         @Test
         void shouldPassWhenRequestIsTls() {
             var tlsRequest = mock(RecordedRequest.class);
-            when(tlsRequest.getHandshake()).thenReturn(mock(Handshake.class));
+            var handshake = mock(Handshake.class);
+            when(tlsRequest.getHandshake()).thenReturn(handshake);
 
             assertThatCode(() -> assertThatRecordedRequest(tlsRequest).isTls())
                     .doesNotThrowAnyException();
@@ -798,7 +798,8 @@ class RecordedRequestAssertionsTest {
         @Test
         void shouldFailWhenRequestIsTls_ButNotTlsExpected() {
             var tlsRequest = mock(RecordedRequest.class);
-            when(tlsRequest.getHandshake()).thenReturn(mock(Handshake.class));
+            var handshake = mock(Handshake.class);
+            when(tlsRequest.getHandshake()).thenReturn(handshake);
 
             assertThatThrownBy(() -> assertThatRecordedRequest(tlsRequest).isNotTls())
                     .isNotNull()
