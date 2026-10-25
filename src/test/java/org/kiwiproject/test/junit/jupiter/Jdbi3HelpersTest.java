@@ -379,15 +379,17 @@ class Jdbi3HelpersTest {
     class RollbackAndClose {
 
         private Handle handle;
+        private Connection connection;
 
         @BeforeEach
         void setUp() {
             handle = mock(Handle.class);
+            connection = mock(Connection.class);
         }
 
         @Test
         void shouldRollbackAndCloseTheHandle() {
-            when(handle.getConnection()).thenReturn(mock(Connection.class));
+            when(handle.getConnection()).thenReturn(connection);
 
             Jdbi3Helpers.rollbackAndClose(handle, LOG);
 
@@ -402,7 +404,7 @@ class Jdbi3HelpersTest {
             var cause = new SQLException("Cannot rollback when autoCommit is enabled.");
             var exception = new TransactionException("Failed to rollback transaction", cause);
             when(handle.rollback()).thenThrow(exception);
-            when(handle.getConnection()).thenReturn(mock(Connection.class));
+            when(handle.getConnection()).thenReturn(connection);
 
             assertThatCode(() -> Jdbi3Helpers.rollbackAndClose(handle, LOG)).doesNotThrowAnyException();
 
@@ -417,7 +419,7 @@ class Jdbi3HelpersTest {
             var cause = new SQLException("Cannot close connection");
             var exception = new CloseException("Failed to close connection", cause);
             doThrow(exception).when(handle).close();
-            when(handle.getConnection()).thenReturn(mock(Connection.class));
+            when(handle.getConnection()).thenReturn(connection);
 
             assertThatCode(() -> Jdbi3Helpers.rollbackAndClose(handle, LOG)).doesNotThrowAnyException();
 
@@ -437,7 +439,7 @@ class Jdbi3HelpersTest {
             var closeException = new CloseException("Failed to close connection", closeExceptionCause);
             doThrow(closeException).when(handle).close();
 
-            when(handle.getConnection()).thenReturn(mock(Connection.class));
+            when(handle.getConnection()).thenReturn(connection);
 
             assertThatCode(() -> Jdbi3Helpers.rollbackAndClose(handle, LOG)).doesNotThrowAnyException();
 
