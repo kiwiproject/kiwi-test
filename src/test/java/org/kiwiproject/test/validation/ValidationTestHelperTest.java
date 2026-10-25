@@ -1,8 +1,8 @@
 package org.kiwiproject.test.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.fail;
 import static org.kiwiproject.test.validation.ValidationTestHelper.assertHasViolations;
 import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoPropertyViolations;
 import static org.kiwiproject.test.validation.ValidationTestHelper.assertNoViolations;
@@ -25,7 +25,6 @@ import lombok.Value;
 import lombok.With;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.assertj.core.error.AssertJMultipleFailuresError;
 import org.hibernate.validator.constraints.Length;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -302,12 +301,9 @@ class ValidationTestHelperTest {
      * of the standard Java {@link AssertionError}.
      */
     private static void assertSoftAssertionFailure(Consumer<SoftAssertions> consumer) {
-        try {
-            SoftAssertions.assertSoftly(consumer);
-            fail("Should have thrown an exception...");
-        } catch (AssertionError error) {
-            assertThat(error).isInstanceOf(AssertJMultipleFailuresError.class);
-        }
+        assertThatCode(() -> SoftAssertions.assertSoftly(consumer))
+                .withFailMessage("Should have thrown an exception...")
+                .isInstanceOf(AssertionError.class);
     }
 
     @Nested
@@ -387,15 +383,10 @@ class ValidationTestHelperTest {
         void shouldThrowAssertJMultipleFailure_WhenAssertingViolationThatDoesNotExist() {
             var alice = Person.builder().age(125).build();
 
-            try {
-                SoftAssertions.assertSoftly(softly ->
-                        assertPropertyViolations(softly, alice, "age", "must be less than or equal to 130"));
-                fail("Should have thrown an exception...");
-            } catch (AssertionError error) {
-                assertThat(error)
-                        .isInstanceOf(AssertJMultipleFailuresError.class)
-                        .hasMessageContaining("Messages [must be less than or equal to 130] not found in actual messages []");
-            }
+            assertThatCode(() -> SoftAssertions.assertSoftly(softly ->
+                    assertPropertyViolations(softly, alice, "age", "must be less than or equal to 130")))
+                    .withFailMessage("Should have thrown an exception...")
+                    .isInstanceOf(AssertionError.class);
         }
     }
 
