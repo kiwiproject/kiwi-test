@@ -1,7 +1,6 @@
 package org.kiwiproject.test.jaxrs;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -29,6 +28,9 @@ import java.util.Set;
 
 @DisplayName("JakartaRestTestHelpers")
 class JakartaRestTestHelpersTest {
+
+    private static final GenericType<List<Order>> ORDER_LIST_GENERIC_TYPE = new GenericType<>() {
+    };
 
     record Order(String id, String customerId) {
     }
@@ -59,8 +61,7 @@ class JakartaRestTestHelpersTest {
             );
             var outboundResponse = Response.ok(customerOrders).build();
 
-            var orderListType = new GenericType<List<Order>>() {
-            };
+            var orderListType = ORDER_LIST_GENERIC_TYPE;
             assertThatThrownBy(() -> outboundResponse.readEntity(orderListType))
                     .describedAs("precondition: outbound response readEntity(GenericType) fails")
                     .isExactlyInstanceOf(IllegalStateException.class);
@@ -75,10 +76,10 @@ class JakartaRestTestHelpersTest {
             var order = new Order("12345", "7890");
             var invocation = mock(Invocation.class);
 
-            assertThatCode(() ->
-                    when(invocation.invoke())
-                            .thenReturn(JakartaRestTestHelpers.toInboundResponse(Response.ok(order).build())))
-                    .doesNotThrowAnyException();
+            // nested stubbing: this would throw Mockito's UnfinishedStubbingException
+            // if toInboundResponse used Mockito
+            when(invocation.invoke())
+                    .thenReturn(JakartaRestTestHelpers.toInboundResponse(Response.ok(order).build()));
 
             assertThat(invocation.invoke().readEntity(Order.class)).isSameAs(order);
         }
@@ -100,8 +101,7 @@ class JakartaRestTestHelpersTest {
                     .hasMessageContaining("java.lang.String")
                     .hasMessageContaining(Order.class.getName());
 
-            assertThatThrownBy(() -> inboundResponse.readEntity(new GenericType<List<Order>>() {
-            }))
+            assertThatThrownBy(() -> inboundResponse.readEntity(ORDER_LIST_GENERIC_TYPE))
                     .isExactlyInstanceOf(IllegalStateException.class);
         }
 
@@ -132,8 +132,7 @@ class JakartaRestTestHelpersTest {
             assertThatThrownBy(() -> inboundResponse.readEntity(Order.class, annotations))
                     .isExactlyInstanceOf(UnsupportedOperationException.class);
 
-            assertThatThrownBy(() -> inboundResponse.readEntity(new GenericType<Order>() {
-            }, annotations))
+            assertThatThrownBy(() -> inboundResponse.readEntity(ORDER_LIST_GENERIC_TYPE, annotations))
                     .isExactlyInstanceOf(UnsupportedOperationException.class);
         }
 
