@@ -159,7 +159,6 @@ class JakartaRestTestHelpersTest {
         }
 
         @Test
-        @SuppressWarnings("java:S2143")  // Suppress "Use the java.time API" since Response API uses java.util.Date
         void shouldDelegateAllRemainingMethodsToOutboundResponse() {
             var delegate = mock(Response.class);
             var entityTag = new EntityTag("abc");

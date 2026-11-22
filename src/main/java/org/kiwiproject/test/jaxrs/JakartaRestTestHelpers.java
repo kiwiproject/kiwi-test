@@ -55,8 +55,6 @@ public class JakartaRestTestHelpers {
         return new InboundResponse(outboundResponse);
     }
 
-    // Suppress "Use the java.time API" since the Response API requires java.util.Date
-    @SuppressWarnings("java:S2143")
     private static class InboundResponse extends Response {
 
         private final Response delegate;
